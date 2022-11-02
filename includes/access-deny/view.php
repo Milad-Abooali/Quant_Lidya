@@ -1,0 +1,3 @@
+No View
+
+<?php die(); ?>

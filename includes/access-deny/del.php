@@ -1,0 +1,3 @@
+No Del
+
+<?php die(); ?>

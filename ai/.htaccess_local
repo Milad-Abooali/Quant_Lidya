@@ -1,0 +1,32 @@
+    <FilesMatch "^\.">
+        Order allow,deny
+        Deny from all
+    </FilesMatch>
+
+	<IfModule mod_headers.c>
+		Header set Access-Control-Allow-Origin *
+	</IfModule>
+
+    IndexIgnore *
+    DirectoryIndex index
+
+    Options +FollowSymlinks
+    RewriteEngine On
+
+    RewriteRule ^assets.php/(.*)$ /ai/loader.php?get=$1 [NC,L]
+    RewriteRule ^run.php/assets(.*)$ /ai/loader.php?get=$1 [NC,L]
+    RewriteRule ^run.php/(.*)$ /ai/run.php?get=$1 [NC,L]
+    RewriteRule ^ajax.php/(.*)$ /ai/ajax.php?get=$1 [NC,L]
+    RewriteRule ^file.php/(.*)$ /ai/file.php?get=$1 [NC,L]
+    RewriteRule ^api.php/(.*)$ /ai/api.php?get=$1 [NC,L]
+
+    RewriteCond %{QUERY_STRING} PHP[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12} [NC]
+    RewriteRule .* - [F]
+
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule !\. - [H=application/x-httpd-php74]
+
+    RewriteCond %{REQUEST_METHOD} ^OPTIONS
+    RewriteRule .* - [F]
+
+    ErrorDocument 403 /ai/index

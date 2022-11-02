@@ -1,0 +1,8 @@
+<aiml version="1.0">
+	<category>
+		<pattern>INITIAL AIML</pattern>
+		<template>
+			<learn>files/*.aiml</learn>
+		</template>
+	</category>
+</aiml>

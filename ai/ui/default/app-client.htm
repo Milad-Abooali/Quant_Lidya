@@ -1,0 +1,961 @@
+<?php
+    $page['title'] = 'AI - Client Interface';
+?>
+<!DOCTYPE html><html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+    <title><?= $page['title'] ?></title>
+    <meta content="Admin Dashboard" name="description" />
+    <meta content="Themesbrand" name="author" />
+    <link rel="shortcut icon" href="../../assets/images/favicon.ico">
+
+    <!-- CSS -->
+    <link href="../../assets/plugins/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css" rel="stylesheet">
+    <link href="../../assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="../../assets/css/metismenu.min.css" rel="stylesheet" type="text/css">
+    <link href="../../assets/css/icons.css" rel="stylesheet" type="text/css">
+    <link href="../../assets/css/style.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.10.21/b-1.5.4/r-2.2.2/rg-1.1.2/datatables.min.css"/>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" type="text/css" />
+    <link href="https://unpkg.com/gijgo@1.9.13/css/gijgo.min.css" rel="stylesheet" type="text/css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <link rel="stylesheet" href="assets/css/jquery.json-view.css">
+    <link href="../../assets/css/lang-icon.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="assets/css/style.css">
+
+    <style>
+        html,
+        body{
+            overflow: hidden;
+            background: #04070e;
+            position: fixed!important;
+        }
+        .chat-tab {
+            height:unset;
+            padding-top: 6px;
+        }
+        .card{
+        }
+
+    </style>
+    <!-- JS -->
+    <script src="../../assets/js/jquery.min.js"></script>
+    <script src="../../assets/js/metisMenu.min.js"></script>
+    <script src="../../assets/js/jquery.slimscroll.js"></script>
+    <script src="../../assets/js/waves.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.10.21/b-1.5.4/r-2.2.2/rg-1.1.2/datatables.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment-with-locales.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/plug-ins/1.10.19/api/sum().js"></script>
+    <script src="https://unpkg.com/gijgo@1.9.13/js/gijgo.min.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" type="text/javascript"></script>
+    <script src="https://cdn.datatables.net/plug-ins/1.10.19/sorting/any-number.js" type="text/javascript"></script>
+    <script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.html5.min.js" type="text/javascript"></script>
+    <script src="https://cdn.datatables.net/plug-ins/1.10.19/sorting/numeric-comma.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/yadcf/0.9.4/jquery.dataTables.yadcf.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/yadcf/0.9.4/jquery.dataTables.yadcf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6/js/select2.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <script src="assets/js/jquery.json-view.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.0.0-rc.7/dist/html2canvas.min.js"></script>
+    <script src="../../assets/plugins/jquery-sparkline/jquery.sparkline.min.js"></script>
+    <script src="../../assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+
+    <!-- Script -->
+    <script>
+        const aiAppUrl                  = "<?= APP['url'] ?>";
+        const aiAppSocket               = 'wss://<?= Broker['crm_url'] ?>:3000/';
+        var interfaceSpeechRecognition  = '';
+        var inputSpeechRecognition      = '';
+        var speechEngineStatus           = false;
+        var inputRecognizingStatus      = false;
+        var interfaceRecognizingStatus  = false;
+        var inputRecognizingStopper     = false;
+        var socketLevel                 = 'c';
+        var visitor = {
+            level : 'anonymous',
+            name  : null,
+            email : null,
+            avatar: null,
+            role  : null,
+            session: '<?= SESSION_ID ?>',
+            server:{
+                isLogin : "<?= $_SESSION['id'] ?? 0 ?>",
+                session : <?= json_encode($_SESSION) ?>
+           }
+        };
+        /**
+         * Audio
+         */
+        const resAudio = new Audio('assets/files/res-sound.mp3');
+        const callAudio = new Audio('assets/files/call-sound.mp3');
+    </script>
+</head>
+<body>
+<!-- Begin page -->
+<div id="wrapper">
+    <audio id="alert_sound" src="../../assets/alert.mp3" preload="auto"></audio>
+    <!-- MODAL Main -->
+    <div id="modalMain" class="modal fade mt-5" tabindex="-1" role="dialog">
+        <div class="modal-dialog mt-5" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"> </h5>
+                    <button type="button" class="close close-right" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal Window content -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" style="z-index: 1400;">
+        <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="my-modal-cont"></div>
+                </div>
+                <div class="modal-footer">
+
+                </div>
+            </div>
+        </div>
+    </div>
+<!-- ============================================================== -->
+<!-- Start right Content here -->
+<!-- ============================================================== -->
+<div class="content-page mx-0 my-2">
+    <!-- Start content -->
+    <div class="content my-0">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="row">
+                        <div class="col-sm-12 d-none">
+                            <div class="page-title-box">
+                                <h4 class="page-title">AI Interface</h4>
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item active"> Welcome to AI interface </li>
+                                </ol>
+                                <div class="state-information d-none d-sm-block">
+                                    <div id="app-status" class="core-status chat-tab media-body">
+                                        <div>
+                                            <span id="ruby-online" class="ruby-status font-13 text-muted mb-0" data-toggle="tooltip" data-placement="bottom" title="Online"><i class="mdi mdi-checkbox-blank-circle text-success mr-1 font-11"></i></span>
+                                            <span id="ruby-busy" class="ruby-status font-13 text-muted mb-0" data-toggle="tooltip" data-placement="bottom" title="Busy"><i class="mdi mdi-checkbox-blank-circle text-warning mr-1 font-11"></i></span>
+                                            <span id="ruby-error" class="ruby-status font-13 text-muted mb-0" data-toggle="tooltip" data-placement="bottom" title="Error"><i class="mdi mdi-checkbox-blank-circle text-danger mr-1 font-11"></i></span>
+                                            <span id="ruby-idle" class="ruby-status font-13 text-muted mb-0" data-toggle="tooltip" data-placement="bottom" title="Idle"><i class="mdi mdi-checkbox-blank-circle text-info mr-1 font-11"></i></span>
+                                            <span id="ruby-offline" class="ruby-status font-13 text-muted mb-0" data-toggle="tooltip" data-placement="bottom" title="Offline"><i class="mdi mdi-checkbox-blank-circle text-secondary mr-1 font-11"></i></span>
+                                            <span id="ruby-listening" class="ruby-status font-13 text-muted mb-0" data-toggle="tooltip" data-placement="bottom" title="Listening"><i class="mdi mdi-checkbox-blank-circle text-secondary mr-1 font-11"></i></span>
+                                            <small class="mr-2">Ruby</small>
+                                        </div>
+                                        <div>
+                                            <span id="socket-status" class="mdi mdi-checkbox-blank-circle text-muted mr-1 font-11" data-toggle="tooltip" data-placement="bottom" title=" "></span>
+                                            <small class="mr-2">Socket</small>
+                                        </div>
+                                        <div>
+                                            <span id="crm-status" class="mdi mdi-checkbox-blank-circle text-muted mr-1 font-11" data-toggle="tooltip" data-placement="bottom" title=" "></span>
+                                            <small class="mr-2">CRM API</small>
+                                        </div>
+                                        <div>
+                                            <span id="redis-status" class="mdi mdi-checkbox-blank-circle text-muted mr-1 font-11" data-toggle="tooltip" data-placement="bottom" title=" "></span>
+                                            <small class="mr-2">Redis DB</small>
+                                        </div>
+                                        <div>
+                                            <span id="aiml-status" class="mdi mdi-checkbox-blank-circle text-muted mr-1 font-11" data-toggle="tooltip" data-placement="bottom" title=" "></span>
+                                            <small class="mr-2">AIML</small>
+                                        </div>
+                                        <div>
+                                            <span id="hi-status" class="mdi mdi-checkbox-blank-circle text-muted mr-1 font-11" data-toggle="tooltip" data-placement="bottom" title=" "></span>
+                                            <small class="mr-2">HI</small>
+                                        </div>
+                                        <div>
+                                            <span id="ml-status" class="mdi mdi-checkbox-blank-circle text-muted mr-1 font-11" data-toggle="tooltip" data-placement="bottom" title=" "></span>
+                                            <small class="mr-2">ML</small>
+                                        </div>
+                                        <div>
+                                            <small class="mr-2">Engines</small>
+                                            <small id="engines-count" class="text-success"></small>
+                                        </div>
+                                        <div>
+                                            <small class="mr-2">AddOns</small>
+                                            <small id="addons-count" class="text-success"></small>
+                                        </div>
+                                        <div>
+                                            <small class="mr-2">Online</small>
+                                            <small id="clients-count" class="text-success"></small>
+                                        </div>
+                                        <div>
+                                            <small class="mr-2">Supports</small>
+                                            <small id="agents-count" class="text-success"></small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+
+                        <div class="col-12">
+                            <div class="conversation-list-card card">
+                                <div class="card-body">
+                                    <div class="media">
+                                        <div id="setting-status" class="chat-tab media-body text-muted small">
+                                            <span class="mr-2"><i id="voice-output-status" class="fa fa-volume" data-toggle="tooltip" data-placement="top"></i> Voice Output</span>
+                                            <span class="mr-2"><i id="voice-input-status" class="fa fa-microphone" data-toggle="tooltip" data-placement="top"></i> Voice Input</span>
+                                            <span class="mr-2"><i id="auto-send-status" class="mdi mdi-send" data-toggle="tooltip" data-placement="top"></i> Auto Send</span>
+                                        </div>
+                                        <a href="#" class="card-drop">
+                                            <i class="btn btn-outline-secondary fa fa-cog" data-toggle="modal" data-target="#settingModal"></i>
+                                        </a>
+                                        <!--
+                                        <div class="dropdown">
+                                            <a href="#" class="dropdown-toggle arrow-none card-drop font-20" data-toggle="dropdown" aria-expanded="false">
+                                                <i class="mdi mdi-dots-vertical"></i>
+                                            </a>
+                                            <div class="dropdown-menu dropdown-menu-right">
+                                                <a href="javascript:void(0);" class="dropdown-item">Action</a>
+                                            </div>
+                                        </div>
+                                        -->
+                                    </div>
+                                    <hr class="my-3">
+                                    <div>
+                                        <ul id="msg-list" class="pr-3 pb-5 conversation-list slimscroll" style="max-height: 310px; overflow: hidden; width: auto; height: 1420.5px;"></ul>
+                                    </div>
+                                </div>
+                                <div class="p-5 conversation-input border-top">
+                                    <form id="sendCall" name="sendCall" action="" method="post">
+                                        <div id="speechResult" class="row mb-2">
+                                            <span id="interim" class="col text-warning">...</span>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="row">
+                                                    <div id="plateMenu" class="p-3">
+                                                        <div id="interfaceAudio-wrapper" class="d-none">
+                                                            <span id="do-a-interface-audio-stop"></span>
+                                                            <span id="do-a-interface-audio"></span>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-3 domodal">
+                                                                <h6 class="border-bottom text-black-50">My Account</h6>
+                                                                <ul>
+                                                                    <li class="visitor-level-guest visitor-level-anonymous" data-link="CommandLogin">Login <span class="float-right small"><kbd>alt</kbd> + <kbd>L</kbd></span></li>
+                                                                    <li class="visitor-level-user visitor-level-agent" data-link="CommandLogout">Logout <span class="float-right small"><kbd>alt</kbd> + <kbd>L</kbd></span></li>
+                                                                    <li class="visitor-level-guest visitor-level-anonymous" data-link="CommandRegister">Register <span class="float-right small"><kbd>alt</kbd> + <kbd>R</kbd></span></li>
+                                                                    <li class="visitor-level-guest visitor-level-anonymous visitor-level-user visitor-level-agent" data-link="CommandRecover">Reset Password <span class="float-right  small"><kbd>alt</kbd> + <kbd>P</kbd></span></li>
+                                                                    <li class="visitor-level-user visitor-level-agent" data-link="myProfile">My Profile</li>
+                                                                </ul>
+                                                            </div>
+                                                            <div class="col-md-9 pt-5 text-center text-light">
+                                                                <h5>More item coming soon...</h5>
+                                                            </div>
+                                                            <!--
+                                                            <div class="col-md-3">
+                                                                <h6 class="border-bottom">Charts</h6>
+                                                                <ul>
+                                                                    <li>sample item</li>
+                                                                    <li>sample item</li>
+                                                                    <li>sample item</li>
+                                                                </ul>
+                                                                <h6 class="border-bottom">Tools</h6>
+                                                                <ul>
+                                                                    <li>sample item</li>
+                                                                    <li>sample item</li>
+                                                                    <li>sample item</li>
+                                                                    <li>sample item</li>
+                                                                    <li>sample item</li>
+                                                                </ul>
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <h6 class="border-bottom">Charts</h6>
+                                                                <ul>
+                                                                    <li>sample item</li>
+                                                                    <li>sample item</li>
+                                                                    <li>sample item</li>
+                                                                </ul>
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <h6 class="border-bottom">News</h6>
+                                                                <ul>
+                                                                    <li>sample item</li>
+                                                                </ul>
+                                                                <h6 class="border-bottom">Trade</h6>
+                                                                <ul>
+                                                                    <li>sample item</li>
+                                                                    <li>sample item</li>
+                                                                    <li>sample item</li>
+                                                                </ul>
+                                                            </div>
+                                                            -->
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-6 px-2">
+                                                                <h6 class="border-bottom text-black-50">Messages History</h6>
+                                                                <ul id="msg-history" class="py-2 bg-light text-dark rounded slimscroll">
+                                                                    <center><br><br>
+                                                                        <i class="text-white fa fa-spinner fa-pulse fa-4x"></i>
+                                                                    </center>
+                                                                </ul>
+                                                            </div>
+                                                            <div class="col-md-6 px-2">
+                                                                <h6 class="border-bottom text-black-50">Favorites</h6>
+                                                                <ul id="msg-favourite" class="py-2 bg-light text-dark rounded slimscroll">
+                                                                    <center><br><br>
+                                                                        <i class="text-white fa fa-spinner fa-pulse fa-4x"></i>
+                                                                    </center>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div id="inputAudio-wrapper" class="btn-group position-absolute">
+                                                        <button id="do-a-input-audio-stop" type="button" class="d-none btn btn-sm btn-danger px-3"><i class="fa fa-square"></i> Stop</button>
+                                                        <button id="do-a-input-audio" type="button" class="btn btn-sm btn-outline-secondary px-3"><i class="fa fa-microphone"></i></button>
+                                                    </div>
+                                                    <input id="input-text" minlength="1" name="text" type="text" class="pr-5 form-control" placeholder="Enter Message..." autocomplete="off">
+                                                </div>
+                                                <div class="row">
+                                                    <div class="p-3 small d-none">
+                                                        <div>* Press <kbd>Ctrl</kbd> + <kbd>Space</kbd> to start.</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <button id="do-a-Send" type="submit" class="btn btn-primary chat-send width-md waves-effect waves-light"><span class="d-none d-sm-inline-block mr-2">Send</span> <i class="mdi mdi-send"></i></button>
+                                            </div>
+                                        </div>
+                                        <div class="row border-top pt-3 mt-3  d-none">
+                                            <input id="nengine" name="nengine" placeholder="Next Engine" class="bg-light col mr-2 rounded">
+                                            <input id="engine" name="engine" placeholder="Last Engine" class="bg-light col mr-2 rounded">
+                                            <input id="listener" name="listener" placeholder="Listener" class="bg-light col mr-2 rounded">
+                                            <input id="topic" name="topic" placeholder="Topic" class="bg-light col mr-2 rounded">
+                                            <input id="walker" name="walker" placeholder="Walker" class="bg-light col mr-2 rounded">
+                                            <input id="step" name="step" placeholder="Step" class="bg-light col mr-2 rounded">
+                                            <input id="section" name="section" placeholder="Section" class="bg-light col mr-2 rounded">
+
+                                            <input id="tags" name="tags" placeholder="Tags" class="bg-light col mr-2 rounded">
+                                            <input id="seltpaccount" name="seltpaccount" placeholder="Login" class="bg-light col mr-2 rounded">
+                                        </div>
+
+                                    </form>
+                                </div>
+                                <div id="result" class="d-none">
+                                    <div class="row">
+                                        <div id="session" class="up-clear p-3 bg-light col-md-4"></div>
+                                        <div id="handy" class="p-3 bg-light col-md-4"> </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-3 col-lg-4 d-none">
+                            <div class="card chat-list-card mb-xl-0">
+                                <div class="card-body">
+                                    <div class="media">
+                                        <div class="mr-2 align-self-center">
+                                            <img src=" " alt="" class="visitor-avator rounded-circle avatar-sm">
+                                        </div>
+
+                                        <div class="media-body">
+                                            <h5 class="mt-0 mb-1" id="client-name"></h5>
+                                            <p class="font-13 text-muted mb-0 text-capitalize" id="client-role"> </p>
+                                        </div>
+                                        <span id="profile-menu" class="card-drop font-20">
+                                            <i class="mdi mdi-dots-vertical"></i>
+                                        </span>
+                                        <!--
+                                            <div class="dropdown">
+                                                <a href="#" class="dropdown-toggle arrow-none card-drop font-20" data-toggle="dropdown" aria-expanded="false">
+                                                    <i class="mdi mdi-dots-vertical"></i>
+                                                </a>
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <a href="javascript:void(0);" class="dropdown-item">Action</a>
+                                                    <a href="javascript:void(0);" class="dropdown-item">Another action</a>
+                                                    <a href="javascript:void(0);" class="dropdown-item">Something else</a>
+                                                    <a href="javascript:void(0);" class="dropdown-item">Separated link</a>
+                                                </div>
+                                            </div>
+                                        -->
+                                    </div>
+                                    <hr class="my-3">
+                                    <div class="visitor-level-guest visitor-level-anonymous"> Please Login to see more detail. </div>
+                                    <div class="visitor-level-user visitor-level-agent">
+                                        <div class="p-3 small">
+                                            <div>Selected Trading Account <span class="float-right selected-tp-account"></span></div>
+                                        </div>
+                                        <ul id="tp-cards" class="list-unstyled slimscroll mb-0" style="max-height: 370px; overflow: hidden; width: auto; height: 1420.5px;"></ul>
+                                        <div class="p-3 small">
+                                            <div>* Please select an account before you make the detail requests.</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- End Right content here -->
+    <!-- ============================================================== -->
+</div>
+
+<!-- Modal Window content -->
+<div class="modal fade" id="settingModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" data-backdrop="static" data-keyboard="false" style="z-index: 1400;">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Setup Ruby</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+
+                    <div class="col-6 border-right d-none">
+                        <div class="visitor-level-anonymous visitor-level-guest d-none">
+                            <h6>Start Your Session As Guest</h6>
+                            <div class="">
+                                <form id="update-guest" name="update-guest" class="form-horizontal m-t-30" method="post">
+                                    <input type="email" class="visitor-email form-control my-2" id="email" name="email" value="" placeholder="Enter your email" autocomplete="email">
+                                    <button class="doL-updateGuest btn btn-warning btn-block">Update Information</button>
+                                </form>
+                            </div>
+                            <div class="or-spacer">
+                                <div class="mask"></div>
+                                <span><i>or</i></span>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-md-6">
+                                    <button class="doM-register btn btn-primary btn-block">Register</button>
+                                </div>
+                                <div class="col-md-6">
+                                    <button class="doM-login btn btn-success btn-block">Login</button>
+                                </div>
+                            </div>
+                            <hr>
+                            <div>
+                                <p class="level-status alert alert-warning d-none"></p>
+                                <p class="">
+                                    * Some info text.
+                                </p>
+
+                            </div>
+                        </div>
+                        <div class="visitor-level-user visitor-level-agent d-none">
+                            <h6>Welcome User</h6>
+                            <div class="border-bottom">
+                                <button id="do-a-newSession" class="visitor-level-user visitor-level-agent btn btn-sm btn-block btn-danger col-6 mx-auto my-2"data-toggle="tooltip"data-placement="top"title="Clear server session">Logout</button>
+                            </div>
+                            <div class="border-bottom">
+                                other options
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="setting-col" class="col-12">
+                        <button id="do-f-initial" class="visitor-level-guest btn btn-sm btn-outline-warning"data-toggle="tooltip"data-placement="top"title="Clear local storage">New Session</button>
+                        <button id="do-f-reInitial" class="visitor-level-user visitor-level-agent visitor-level-anonymous visitor-level-guest btn btn-sm btn-outline-success"data-toggle="tooltip"data-placement="top"title="Update Interface based on user level">Update Interface</button>
+
+                        <button id="do-a-clearSession" onclick="location.reload();" class="btn float-right btn-sm btn-outline-danger"data-toggle="tooltip"data-placement="top"title="Refresh page">Reload Page</button>
+                        <hr>
+                        <h6>Audio Control</h6>
+                        <table class="table table-striped table-sm border">
+                            <tr>
+                                <td>Message Sound </td>
+                                <td class="text-right">
+                                    <div class="custom-control custom-switch">
+                                        <input type="checkbox" data-id="5" class="custom-control-input" id="do-a-bip_sound">
+                                        <label class="custom-control-label" for="do-a-bip_sound"> </label>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Auto Read</td>
+                                <td class="text-right">
+                                    <div class="custom-control custom-switch">
+                                        <input type="checkbox" data-id="5" class="custom-control-input" id="do-a-auto_speech">
+                                        <label class="custom-control-label" for="do-a-auto_speech"> </label>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <select id="voiceSelect" class="form-control">
+                                        <option disabled selected>Select Speech Voice</option >
+                                    </select>
+                                </td>
+                            </tr>
+                        </table>
+                        <hr>
+                        <h6>Voice Input</h6>
+                        <table class="table table-striped table-sm border">
+                            <tr>
+                                <td>Keep Listening</td>
+                                <td class="text-right">
+                                    <div class="custom-control custom-switch">
+                                        <input type="checkbox" data-id="5" class="custom-control-input" id="do-a-input_keep_listening">
+                                        <label class="custom-control-label" for="do-a-input_keep_listening"> </label>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Send Automaticly</td>
+                                <td class="text-right">
+                                    <div class="custom-control custom-switch">
+                                        <input type="checkbox" data-id="5" class="custom-control-input" id="do-a-input_voice_autosend">
+                                        <label class="custom-control-label" for="do-a-input_voice_autosend"> </label>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Show Interim</td>
+                                <td class="text-right">
+                                    <div class="custom-control custom-switch">
+                                        <input type="checkbox" data-id="5" class="custom-control-input" id="do-a-input_voice_interim">
+                                        <label class="custom-control-label" for="do-a-input_voice_interim"> </label>
+                                    </div>
+                                </td>
+                            </tr>
+
+                        </table>
+                        <hr>
+                        <h6>AddOns</h6>
+                        <table class="table table-striped table-sm border">
+                                <tr>
+                                    <td>Glossary </td>
+                                    <td class="text-right">
+                                        <div class="custom-control custom-switch">
+                                            <input type="checkbox" data-id="5" class="custom-control-input" id="do-a-engine_glossary">
+                                            <label class="custom-control-label" for="do-a-engine_glossary"> </label>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Wikipedia </td>
+                                    <td class="text-right">
+                                        <div class="custom-control custom-switch">
+                                            <input type="checkbox" data-id="5" class="custom-control-input" id="do-a-engine_wikipedia">
+                                            <label class="custom-control-label" for="do-a-engine_wikipedia"> </label>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                    </div>
+
+                </div>
+
+
+            </div>
+            <div class="modal-footer">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="application/javascript" src="assets/js/socket.io.js"></script>
+<script type="application/javascript" src="assets/js/script.js"></script>
+<script type="application/javascript" src="assets/js/socket.js" defer></script>
+<script type="application/javascript" src="assets/js/tpcards.js" defer></script>
+<script>
+    $(document).ready(function(){
+        do{
+            clearInterval(tpCardsUpdater);
+            tpCardsUpdater=false;
+        } while (tpCardsUpdater);
+
+        rubyStatus('offline');
+        $("#input-text").focus();
+        addResMessage(0);
+        rubyStatus('busy');
+        if(visitor.server.isLogin>0) selectTpLogin(localStorage.selectedLogin);
+
+        /**
+         * Initial Bridge Process
+         */
+        toastr.options = {
+            timeOut: "0",
+            extendedTimeOut: "0",
+            tapToDismiss: false,
+            positionClass: "toast-top-right",
+            iconClass: 'fa-spine spinner-border'
+        }
+        var nInitialBridgeProcess = toastr.info("<small>Initial Bridge Process <m class='float-right g-loading'></m></small>");
+        $('#msg-list #res-0 .conversation-text p').html('Hello, how are you '+visitor.name+' ?');
+        $('#msg-list #res-0 #status')
+            .removeClass()
+            .addClass("fa fa-check text-info")
+            .attr('data-original-title','Ruby is online.');
+        rubyStatus('online');
+        $(nInitialBridgeProcess).hide();
+        $('#res-0 #feedback-menu').removeClass().addClass('px-2 far fa-smile text-success');
+
+    })
+
+    /**
+     * Interface Keep Listening
+     */
+    var interfaceKeepListening = window.setInterval(function(){
+        if(!speechEngineStatus && !inputRecognizingStatus) $( "#do-a-interface-audio" ).trigger( "click" );
+    }, 6700);
+    $(window).on('shown.bs.modal', function() {
+        if(!speechEngineStatus && !inputRecognizingStatus) $( "#do-a-interface-audio" ).trigger( "click" );
+    });
+
+</script>
+<script src="assets/js/speechRecognition.js"></script>
+<script src="assets/js/forms.js"></script>
+<script src="assets/js/selector.js"></script>
+
+</div>
+<!-- END wrapper -->
+    <footer class="footer mt-2 d-none" style="left:0;"> </footer>
+    <!-- Modal Window content -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" style="z-index: 1400;">
+        <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="my-modal-cont"></div>
+                </div>
+                <div class="modal-footer">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- App js -->
+    <script src="../../assets/js/app.js"></script>
+
+    <script>
+
+        // AAjax Call- Core
+        var AAjaxLock;
+        async function aAjaxCall (callClass, callFunction, data=null, callback) {
+            if (AAjaxLock == callClass+callFunction) return;
+            AAjaxLock = callClass+callFunction;
+            $.ajax({
+                type: "POST",
+                url: "lib/ajax.php?c="+callClass+'&f='+callFunction+"&t=c4ca4238a0b923820dcc509a6f75849b",
+                data: data,
+                cache: false,
+                global: true,
+                async: true,
+                success: callback,
+                error: function(request, status, error) {
+                    console.log(error);
+                }
+            });
+            $( document ).ajaxComplete(function( event, xhr, settings ) {
+                setTimeout(function() {
+                    AAjaxLock = null;
+                }, 50);
+            });
+        }
+
+        // Ajax Call- Core
+        var AjaxLock;
+        function ajaxCall (callClass, callFunction, data=null, callback) {
+            if (AjaxLock == callClass+callFunction) return;
+            AjaxLock = callClass+callFunction;
+            $.ajax({
+                type: "POST",
+                url: "lib/ajax.php?c="+callClass+'&f='+callFunction+"&t=c4ca4238a0b923820dcc509a6f75849b",
+                data: data,
+                cache: false,
+                global: true,
+                async: true,
+                success: callback,
+                error: function(request, status, error) {
+                    console.log(error);
+                }
+            });
+            $( document ).ajaxComplete(function( event, xhr, settings ) {
+                setTimeout(function() {
+                    AjaxLock = null;
+                }, 50);
+            });
+        }
+        // Ajax Form- Core
+        function ajaxForm (callClass, callFunction, data=null, callback) {
+            if (AjaxLock == callClass+callFunction) return;
+            AjaxLock = callClass+callFunction;
+            $.ajax({
+                type: "POST",
+                url: "lib/ajax.php?c="+callClass+'&f='+callFunction+"&t=c4ca4238a0b923820dcc509a6f75849b",
+                data: data,
+                cache: false,
+                global: true,
+                async: true,
+                processData: false,
+                contentType: false,
+                success: callback,
+                error: function(request, status, error) {
+                    console.log(error);
+                }
+            });
+            $( document ).ajaxComplete(function(event, xhr, settings) {
+                setTimeout(function() {
+                    AjaxLock = null;
+                }, 50);
+            });
+        }
+
+        /* Copy Text */
+        function copyText(text) {
+            $("#cb-copy").val(text).select();
+            document.execCommand("copy");
+            $('#cb-copy').remove();
+        }
+        $('body').on('click','.cb-copy-data-silent', function(){
+            $('<input id="cb-copy" value="test">').insertAfter($(this));
+            copyText($(this).data('cb-copy'));
+            console.log('Copy Done ...');
+        });
+        $('body').on('click','.cb-copy-data', function(){
+            let _this = $(this);
+            $('<input id="cb-copy" value="test">').insertAfter($(this));
+            copyText(_this.data('cb-copy'));
+            let text = _this.html();
+            _this.html('<small>Copy Done ...<small>');
+            setTimeout(function(){
+                _this.html(text);
+            }, 300);
+            setTimeout(function(){
+                _this.data('copy',0);
+            }, 300);
+            console.log('Copy Done ...');
+        });
+        $('body').on('click','.cb-copy-html', function(){
+            let _this = $(this);
+            if (!_this.data('copy')) {
+                _this.data('copy',1);
+                $('<input id="cb-copy" value="test">').insertAfter($(this));
+                let text = _this.html();
+                copyText(text);
+                _this.html('<small>Copy Done ...<small>');
+                setTimeout(function(){
+                    _this.html(text);
+                }, 300);
+                setTimeout(function(){
+                    _this.data('copy',0);
+                }, 300);
+            }
+        });
+        $('body').on('click','.cb-copy-val', function(){
+            let _this = $(this);
+            if (!_this.data('copy')) {
+                $('<input id="cb-copy" value="test">').insertAfter($(this));
+                let text = _this.val();
+                copyText(text);
+                _this.val('Copy Done ...');
+                setTimeout(function(){
+                    _this.val(text);
+                }, 300);
+                setTimeout(function(){
+                    _this.data('copy',0);
+                }, 300);
+            }
+        });
+
+        /* Filter DataTable */
+        // predefined
+        $('.filterDTX').on('click', function () {
+            let table = $(this).data('tableid');
+            let column = $(this).data('col');
+            $('.filterDTX').removeClass('fa fa-angle-right');
+            $(this).addClass('fa fa-angle-right');
+            window[table].columns(column).search( $(this).data('filter') ).draw();
+        } );
+        // Input by user
+        $('input.filterDT').on('change', function () {
+            let table = $(this).data('tableid');
+            let column = $(this).data('col');
+            window[table].columns(column).search(this.value).draw();
+        });
+
+
+        /* Reload DataTable */
+        $('#do-reload,.do-reload').on('click', function () {
+            let table = $(this).data('tableid');
+            $(this).addClass('fa-spin');
+            window[table].ajax.reload(null, false);
+            $(this).removeClass('fa-spin');
+        });
+        // Auto Reload
+        var nowtime = moment().format('Y-D-M  h:mm:ss');
+        $('.refPageSel span').html(nowtime);
+        function refreshPage (table) {
+            $('.refPageSel').removeClass('text-muted');
+            window[table].ajax.reload(null, false);
+            $('.refPageSel span').fadeToggle();
+            nowtime = moment().format('Y-D-M  h:mm:ss');
+            $('.refPageSel span').html(nowtime);
+            $('.refPageSel span').fadeToggle();
+            $('.refPageSel').addClass('text-info');
+            setTimeout(function() {
+                $('.refPageSel').removeClass('text-info');
+            }, 1300);
+        }
+        var refPageVal = [];
+        var refreshTime = [];
+        $('#refreshTime,.refreshTime').on('change', function() {
+            refreshTime[$(this).data("tableid")] = $(this).val()*1000;
+            if (refPageVal[$(this).data("tableid")]) {
+                clearInterval(refPageVal[$(this).data("tableid")]);
+            }
+            if (refreshTime[$(this).data("tableid")] > 0) {
+                let table = $(this).data('tableid');
+                refPageVal[$(this).data("tableid")] = setInterval(function() {refreshPage(table)}, refreshTime[$(this).data("tableid")]);
+                $('.refPageSel i').addClass('fa-spin');
+                $('.refPageSel i').attr('data-original-title','Table will reload every '+refreshTime[$(this).data("tableid")]+' ms.');
+            } else {
+                $('.refPageSel i').removeClass('fa-spin');
+                $('.refPageSel i').attr('data-original-title','Table will not reload.');
+            }
+            console.log(refreshTime)
+        });
+        $('#refreshTime, .refreshTime').trigger('change');
+
+        /* Bootstrap Basic - Core */
+        $(function () {
+            $('body').tooltip({selector: '[data-toggle="tooltip"]'});
+        });
+
+
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+        $('input.date').datepicker({
+            uiLibrary: 'bootstrap',
+            iconsLibrary: 'fontawesome',
+            format: 'yyyy-mm-dd'
+        });
+
+        /**
+         * Widgets Loader
+         * @param name
+         * @param elid
+         */
+        $(window).on('load', function() {
+            $('.widget-header .datetime').html(nowtime);
+            $( ".widget" ).each(function(index) {
+                const elid = $(this).attr('id');
+                const name = $(this).data('wg');
+                const vars = $(this).data('vars');
+                const autoload = $(this).data('autoload');
+                console.log('Widget "'+name+'" detected...');
+                console.log('Widget "'+name+'" detected...');
+                if (!autoload) {
+                    $('#'+elid+' .reload').removeClass('fa-spin');
+                } else if (name) {
+                    $('#'+elid+' .widget-header .hidewg').fadeIn();
+                    setTimeout(function() {
+                        ajaxCall ('global', 'widget', {1:name,2:vars}, function(response){
+                            $('#'+elid+' .widget-body').html(response);
+                        });
+                        console.log('Widget "'+name+'" Auto Loaded.');
+                        $('#'+elid+' .reload').removeClass('fa-spin');
+                    }, 300);
+                }
+            });
+        });
+        $('body').on('click','.widget-header .reload', function() {
+            $(this).addClass('fa-spin');
+            const elid = $(this).closest( ".widget" ).attr('id');
+            const name = $(this).closest( ".widget" ).data('wg');
+            const vars = $(this).closest( ".widget" ).data('vars');
+            reloadWidget (name,elid,vars);
+        });
+        function reloadWidget (name,elid,vars) {
+            var datatime = $('#'+elid+' .widget-header .datetime');
+            var reload = $('#'+elid+' .widget-header .reload');
+            $('#'+elid+' .widget-header .hidewg').fadeIn();
+            ajaxCall ('global', 'widget', {1:name,2:vars}, function(response){
+                $('#'+elid+' .widget-body').html(response);
+            });
+            nowtime = moment().format('Y-D-M  h:mm:ss');
+            datatime.html(nowtime).addClass('text-info');
+            setTimeout(function() {
+                datatime.removeClass('text-info');
+                console.log('Widget "'+name+'" reLoaded.')
+                reload.removeClass('fa-spin');
+            }, 1350);
+        }
+        $('.hidewg').hide();
+        $('body').on('click','.widget-header .hidewg', function() {
+            $(this).closest(".widget").find('.widget-body').html('');
+            $(this).hide();
+        });
+
+        var documentElement = document.documentElement;
+        function openFullscreen() {
+            if (documentElement.requestFullscreen) {
+                documentElement.requestFullscreen();
+            } else if (documentElement.webkitRequestFullscreen) { /* Safari */
+                documentElement.webkitRequestFullscreen();
+            } else if (documentElement.msRequestFullscreen) { /* IE11 */
+                documentElement.msRequestFullscreen();
+            }
+            $('#fullscreen .requestfullscreen').hide();
+            $('#fullscreen .exitfullscreen').show();
+        }
+
+        function closeFullscreen() {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) { /* Safari */
+                document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) { /* IE11 */
+                document.msExitFullscreen();
+            }
+            $('#fullscreen .requestfullscreen').show();
+            $('#fullscreen .exitfullscreen').hide();
+        }
+
+
+        // AI Wake Up
+        toastr.options = {
+            timeOut: "650",
+            "progressBar": true,
+            "positionClass": "toast-top-right",
+        }
+        let nWakeUp = toastr.info("<small>Wake up Ruby ...</small>");
+
+    </script>
+
+    <script src="assets/js/cbkits.js"></script>
+    <script src="assets/js/md5.js"></script>
+    <script src="assets/js/func.js" defer></script>
+    <script src="assets/js/main-client.js" defer></script>
+</body>
+
+</html>

@@ -1,0 +1,7 @@
+    <FilesMatch "^\.">
+        Order allow,deny
+        Deny from all
+    </FilesMatch>
+
+    RewriteRule ^(.*)$ ../index [L]
+

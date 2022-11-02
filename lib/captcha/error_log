@@ -1,0 +1,1 @@
+[17-Nov-2021 16:28:55 UTC] PHP Warning:  mt_rand(): max(-45) is smaller than min(0) in /home/lidyapartners/public_html/lidyacrm/lib/captcha/captcha.php on line 175
