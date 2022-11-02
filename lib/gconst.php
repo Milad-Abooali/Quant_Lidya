@@ -10,7 +10,7 @@
     define('REMEMBER_TIME',60*60*24*30); // 1 Month
 
     // Check is Lab
-    define('IS_LAB',($_SERVER['HTTP_HOST'] == "crmlab"));
+    define('IS_LAB',($_SERVER['SERVER_ADDR'] == "::1"));
 
     // Databse - Def: 3306 - Neor: 4040
     if (IS_LAB){
@@ -52,10 +52,10 @@
         define("DB_admin", [
             "hostname"  => "136.243.109.195",
             "port"      => 3306,
-            "name"      => "tradeclanby_admin",
+            "name"      => "lidyapar_admin",
             "prefix"    => '',
-            "username"  => "tradeclanby_all",
-            "password"  => "nu=bnS5DlPYh"
+            "username"  => "lidyapar_admin",
+            "password"  => "@Sra7689227"
         ]);
         define("DB_mt4", [
             "hostname"  => "136.243.109.195",
@@ -82,12 +82,10 @@
             "password"  => "@Sra7689227"
         ]);
     }
-    
-    
 
     // Define Download links
-    define("DOWNLOAD_LINK", [
-        "MT5"               => 'https://download.mql5.com/cdn/web/21689/mt5/tradeclanintltd5setup.exe',
-        "MT4"               => '',
-        "Forex_E-Book"      => ''
-    ]);
+    const DOWNLOAD_LINK = [
+        "MT5" => "https://download.mql5.com/cdn/web/16644/mt5/lidyatrade5setup.exe",
+        "MT4" => '',
+        "Forex_E-Book" => 'assets/e-book/LidyaFX_Forex_E-Book_v1.2.pdf'
+    ];
