@@ -20,8 +20,9 @@ global $db;
     <link href="app/assets/css/animate.min.css" rel="stylesheet" type="text/css">
     <link href="app/assets/css/breaking-news-ticker.css" rel="stylesheet" type="text/css">
     <link href="app/assets/css/progress.css" rel="stylesheet" type="text/css">
-    <link href="app/assets/css/dataTables.bootstrap5.min.css" rel="stylesheet" type="text/css">
+    <link href="app/assets/css/datatables.min.css" rel="stylesheet" type="text/css" />
     <link href="app/assets/css/main.css" rel="stylesheet" type="text/css">
+
 
     <!-- Favicons -->
     <link rel="shortcut icon" href="assets/images/favicon.ico">
@@ -137,7 +138,6 @@ global $db;
 <script src="app/assets/js/app-socket.js" defer></script>
 <script src="app/assets/js/main.js" defer></script>
 <script src="app/assets/js/ruby.js" defer></script>
-<script src="app/assets/js/jquery.dataTables.min.js" defer></script>
-<script src="app/assets/js/dataTables.bootstrap5.min.js" defer></script>
+<script src="app/assets/js/datatables.min.js" defer></script>
 
 </body></html>

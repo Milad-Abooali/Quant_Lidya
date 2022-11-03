@@ -52,16 +52,24 @@
 
                 $headers = "MIME-Version: 1.0" . "\r\n";
                 if ($this->theme) {
+                    $path = $theme_language.'/'.$this->theme;
+                    try {
+                        if (!file_exists($path.'htm') || !is_readable($path.'htm')) {
+                            throw new Exception("$path | File does not exists or is not readable.");
+                        }
+                    } catch (Exception $e) {
+                        $path = 'english/'.$this->theme;
+                    }
                     $emailThem = new Email_Theme($this->theme);
                     $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-                    $content = $emailThem->make($theme_language.'/'.$this->theme,$receiver['data'],$message);
+                    $content = $emailThem->make($path, $receiver['data'], $message);
                 } else {
                     $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
                     $content = wordwrap($message,70);
                 }
                 $headers .= "From: ".Broker['email'];
-                $subject = '=?UTF-8?B?' . base64_encode($subject) . '?=';
-                if(mail($receiver['email'], $subject, $content, $headers)) return ($this->_log($subject, $content, $receiver));
+                $subject_utf = '=?UTF-8?B?' . base64_encode($subject) . '?=';
+                if(mail($receiver['email'], $subject_utf, $content, $headers)) return ($this->_log($subject, $content, $receiver));
             }
             return false;
         }

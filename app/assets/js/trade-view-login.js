@@ -1,28 +1,17 @@
-let hiddenColumn = [
+var hiddenColumn = [
     {target: 0, visible: true},
-    {target: 1, visible: false},
+    {target: 1, visible: true},
     {target: 2, visible: true},
     {target: 3, visible: true},
-    {target: 4, visible: false},
+    {target: 4, visible: true},
     {target: 5, visible: true},
     {target: 6, visible: true},
-    {target: 7, visible: false},
-    {target: 8, visible: false},
+    {target: 7, visible: true},
+    {target: 8, visible: true},
     {target: 9, visible: true},
-    {target: 10, visible: false},
+    {target: 10, visible: true},
     {target: 11, visible: true}
 ];
-
-let dtPosition = $('table#loginPositions').DataTable({
-    serverSide: false,
-    deferRender: true,
-    retrieve: true,
-    paging: false,
-    searching: false,
-    responsive: false,
-    columnDefs: hiddenColumn,
-    data: []
-});
 
 const intervalResLoginPositions = {
     StatisticsRun:false,
@@ -35,7 +24,7 @@ function intervalLoginPositions(oneTime=false){
         if(oneTime)
             stopInterval(intervalModalTemp.loginPositions);
         //console.log('Interval Res',intervalResLoginPositions);
-    }, 1000);
+    }, 2000);
 }
 
 function updateStatistics() {
@@ -80,11 +69,16 @@ function updatePositions() {
         }
         else{
             intervalResLoginPositions.Positions = response.data.length;
-            if($.fn.dataTable.isDataTable("table#loginPositions")){
+            dtPosition.clear();
+            dtPosition.rows.add(response.data).draw();
+
+            /*
+            if($.fn.dataTable.isDataTable("table#loginPositions")) {
                 dtPosition.clear().draw();
                 dtPosition.destroy();
             }
             dtPosition = $('table#loginPositions').DataTable({
+                stateSave: true,
                 serverSide: false,
                 deferRender: true,
                 retrieve: true,
@@ -108,6 +102,7 @@ function updatePositions() {
                     { data: 'Profit' }
                 ]
             });
+            */
             $("form#trade-view-login #update-time").text(rDT().dateTime);
         }
         intervalResLoginPositions.updatePositionsRun = false;

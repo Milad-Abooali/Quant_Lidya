@@ -1122,7 +1122,7 @@ $query['columns']       = array(
                                             } else {
                                                 $sqlGROUPS = 'SELECT name FROM groups WHERE id = "'.$rowMT4['group_id'].'"';
                                                 $groups = $DB_admin->query($sqlGROUPS);
-                                                while ($rowGROUPS = mysqli_fetch_array($groups)) {
+                                                if($groups) while ($rowGROUPS = mysqli_fetch_array($groups)) {
                                                     $name = $rowGROUPS['name'] ?? '-';
                                                 }
                                                 echo "<td>".$name."</td>";

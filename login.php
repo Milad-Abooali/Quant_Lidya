@@ -154,7 +154,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
     $("#timeoffset").val(ddd*(-1));
 
     $('body').on('click','#web-trader', function(){
-        $('input#target').val('web-terminal.php');
+        $('input#target').val('<?= REDIRECT_TO['web_trader'] ?>');
         $('form#login').trigger('submit');
     });
 

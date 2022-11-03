@@ -89,3 +89,8 @@
         "MT4" => '',
         "Forex_E-Book" => 'assets/e-book/LidyaFX_Forex_E-Book_v1.2.pdf'
     ];
+
+    const REDIRECT_TO = [
+        "web_trader"    =>"/app",
+        "app"           =>"/app"
+    ];

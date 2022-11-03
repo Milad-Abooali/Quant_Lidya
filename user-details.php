@@ -1,4 +1,4 @@
-\z<?php
+<?php
 ######################################################################
 #  M | 12:48 PM Tuesday, July 6, 2021
 #          Add Comment Section
@@ -506,8 +506,12 @@ require_once "config.php";
                                     <a class="btn btn-sm bg-gradient-info text-white mx-1" target="_blank" href='sys_settings.php?section=waf_session-user&search=<?= $userID ?>'> <?= $_L->T('Sessions','user_modal') ?></a>
                                     <a class="btn btn-sm bg-gradient-info text-white mx-1" target="_blank" href='sys_settings.php?section=email_logs&dt={"table":"DT_email_log","regex":"1","cols":{"1":"<?= $userID ?>"}}'> <?= $_L->T('Emails','user_modal') ?></a>
                                     <a class="btn btn-sm bg-gradient-info text-white mx-1" target="_blank" href='sys_settings.php?section=system_actlog&dt={"table":"DT_actlog_user","regex":"1","cols":{"2":"<?= $db->selectID('users',$userID,'username')['username'] ?>"}}'><?= $_L->T('ActLogs','user_modal') ?></a>
-                                    <br><br>
+                                    <?php } else if ($_SESSION["type"] == "Manager") { ?>
+                                        <br><br>
+                                        <a class="btn btn-sm bg-gradient-info text-white mx-1" target="_blank" href='manager_panel.php?section=email_logs&dt={"table":"DT_email_log","regex":"1","cols":{"1":"<?= $userID ?>"}}'> <?= $_L->T('Emails','user_modal') ?></a>
                                     <?php } ?>
+                                    <br><br>
+
                                     <?= $_L->T('Change_Agreement_Status','user_modal') ?>:
                                     <?php
                                     $where = 'user_id='.$userID;

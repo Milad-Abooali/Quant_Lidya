@@ -171,8 +171,32 @@
         <button type="submit" class="btn btn-primary">Submit</button>
     </div>
 </form>
-
 <script>
+    var dtPosition = $('table#loginPositions').DataTable({
+        stateSave: true,
+        serverSide: false,
+        deferRender: true,
+        retrieve: true,
+        paging: false,
+        searching: false,
+        responsive: false,
+        columnDefs: [],
+        data: [],
+        columns: [
+            { data: 'Close' },
+            { data: 'Position' },
+            { data: 'Symbol' },
+            { data: 'Action' },
+            { data: 'TimeCreate' },
+            { data: 'Volume' },
+            { data: 'PriceOpen' },
+            { data: 'PriceSL' },
+            { data: 'PriceTP' },
+            { data: 'PriceCurrent' },
+            { data: 'Storage' },
+            { data: 'Profit' }
+        ]
+    });
 
     try{
         <?= str_replace('-','_', $form_name) ?>;

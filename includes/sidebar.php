@@ -223,7 +223,7 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="web-terminal.php" class="waves-effect">
+                                <a href="<?= REDIRECT_TO['web_trader'] ?>" class="waves-effect">
                                     <i class="mdi mdi-chart-line"></i><span> <?= $_L->T('Web_Trader','sidebar') ?> </span>
                                     <sup class="text-warning">NEW</sup>
                                 </a>
@@ -235,7 +235,18 @@
                     <div class="clearfix"></div>
                     <hr>
                     <div class="contact">
-                        <?php include_once "contact/contact_".$_L->T('_language_iso2', 'core').".php"; ?>
+                        <?php
+                            $contact_file = "contact/contact_".$_L->T('_language_iso2', 'core').".php";
+                            try {
+                                if (file_exists($contact_file) && is_readable($contact_file)) {
+                                    include $contact_file;
+                                } else {
+                                    throw new Exception("$contact_file | File does not exists or is not readable.");
+                                }
+                            } catch (Exception $e) {
+                                GF::cLog($e->getMessage());
+                            }
+                        ?>
                     </div>
 
                 </div>
