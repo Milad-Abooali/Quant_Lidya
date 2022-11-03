@@ -7,7 +7,7 @@
     global $APP;
     global $db;
 
-    $screen_title   = 'Market';
+    $screen_title   = 'Market Watch';
     $screen_id      = 'market';
 
     if($APP->checkPermit($screen_id, 'view', 1)):
@@ -83,10 +83,10 @@
                         <span class="float-end Ask"><?= GF::nf($symbol->Ask, $symbol->Digits) ?></span>
                     </div>
                     <div class="col-12 text-center">
-                        <div class="btn-group" role="group" aria-label="Basic example">
-                            <button title="Sell" data-symbol="<?= $symbol->Symbol ?>"  data-type="1" class="doA-trade px-5 btn-sm btn btn-danger">Sell</button>
-                            <input id="volume" type="number" class="form-control text-center" min="0.00" max="100000.00" step="0.01" name="lot" placeholder="0,00" value="1.00">
-                            <button title="Buy" data-symbol="<?= $symbol->Symbol ?>" data-type="0" class="doA-trade px-5 btn btn-sm btn-success">Buy</button>
+                        <div class="btn-group d-flex" role="group" aria-label="Basic example">
+                            <button title="Sell" data-symbol="<?= $symbol->Symbol ?>"  data-type="1" class="doA-trade btn-sm btn btn-danger">Sell</button>
+                            <input id="volume" type="number" class="volumeinput text-center" min="0.00" max="100000.00" step="0.01" name="lot" placeholder="0,00" value="0.01">
+                            <button title="Buy" data-symbol="<?= $symbol->Symbol ?>" data-type="0" class="doA-trade btn btn-sm btn-success">Buy</button>
                         </div>
                     </div>
                 </div>
