@@ -72,15 +72,15 @@
                 if($api->answer) foreach($api->answer as $symbol){
             ?>
                 <div class="row-symbol row align-items-center" data-symbol="<?= $symbol->Symbol ?>">
+                    <span data-form-params='{"symbol":"<?= $symbol->Symbol ?>","login":"<?= $login ?>"}' data-login="<?= $login ?>" data-form-name="trade_view_chart-simple" title="<?= $symbol->Symbol ?> Chart - Simple" class="doM-form"><i class="fa fa-info-circle"></i> Chart</span>
                     <div class="col-4">
-                        <span class="float-start Bid"><?= GF::nf($symbol->Bid, $symbol->Digits) ?></span>
+                        <span class="float-start Bid mb-2 mt-2"><?= GF::nf($symbol->Bid, $symbol->Digits) ?></span>
                     </div>
                     <div class="col-4">
-                        <button data-form-params='{"symbol":"<?= $symbol->Symbol ?>","login":"<?= $login ?>"}' data-login="<?= $login ?>" data-form-name="trade_view_chart-simple" title="<?= $symbol->Symbol ?> Chart - Simple" class="doM-form btn btn-primary"><i class="fa fa-info-circle"></i> Chart</button>
                         <div class="text-white text-center Symbol h6"><strong><?= $symbol->Symbol ?></strong></div>
                     </div>
                     <div class="col-4">
-                        <span class="float-end Ask"><?= GF::nf($symbol->Ask, $symbol->Digits) ?></span>
+                        <span class="float-end Ask mb-2 mt-2"><?= GF::nf($symbol->Ask, $symbol->Digits) ?></span>
                     </div>
                     <div class="col-12 text-center">
                         <div class="btn-group d-flex" role="group" aria-label="Basic example">

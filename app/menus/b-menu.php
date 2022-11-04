@@ -19,10 +19,10 @@
                     <img class="broker-logo" src="media/broker/<?= Broker['mini_logo'] ?>" alt="broker-logo">
                 </a>
             </div>
-            <div class="b-menu-item" data-screen="withdrew">
+            <div class="b-menu-item" data-screen="withdraw">
                 <a class="nav-link" href="#">
                     <i class="fas fa-level-up-alt"></i>
-                    <span>Withdrew</span></a>
+                    <span>Withdraw</span></a>
             </div>
             <div class="b-menu-item" data-screen="wallet">
                 <a class="nav-link" href="#">

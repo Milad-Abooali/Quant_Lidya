@@ -31,7 +31,7 @@
         <tbody>
             <tr class="item-row">
                 <td> Login Type </td>
-                <td data-lable="login-type"> Demo</td>
+                <td data-lable="login-type"> <?= GF::p($api->answer->Balance) ?></td>
             </tr>
             <tr class="item-row">
                 <td> Balance </td>
