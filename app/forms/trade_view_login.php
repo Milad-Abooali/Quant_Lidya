@@ -3,6 +3,16 @@
 
     $mt5api = new mt5API();
     $api_params['login'] = $params['login'];
+    $mt5api->get('/api/user/group', $api_params);
+    $e = $mt5api->Error;
+    $api = $mt5api->Response;
+    $group = $api->answer->group;
+
+    $demo_groups = array('LidyaGOLD', 'LidyaSTD', 'LidyaVIP');
+    $is_demo = ($group != str_ireplace($demo_groups,"XX",$group))? true: false;
+
+    $mt5api = new mt5API();
+    $api_params['login'] = $params['login'];
     $mt5api->get('/api/user/account/get', $api_params);
     $e = $mt5api->Error;
     $api = $mt5api->Response;
@@ -31,7 +41,7 @@
         <tbody>
             <tr class="item-row">
                 <td> Login Type </td>
-                <td data-lable="login-type"> <?= GF::p($api->answer->Balance) ?></td>
+                <td data-lable="login-type"> <?= ($is_demo) ? 'Demo' : 'Real' ?></td>
             </tr>
             <tr class="item-row">
                 <td> Balance </td>

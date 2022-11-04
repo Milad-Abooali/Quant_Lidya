@@ -46,7 +46,23 @@
                     <tr style="line-height: 65px;">
                         <td class="text-center text-white align-middle"><span class=""><?= $tp_account['login'] ?></span><sup class="ps-1 text-warning"><?= $tp_account['server'] ?></sup></td>
                         <td class="text-center text-white-50">
-                            <button data-form-params='{"login":"<?= $tp_account['login'] ?>"}' data-login="<?= $tp_account['login'] ?>" data-form-name="trade_update-login-password" title="Change <?= $tp_account['login'] ?> Passwords" class="doM-form btn btn-sm btn-outline-secondary"><i class="fa fa-key"></i></button>
+
+                            <?php
+                                $mt5api = new mt5API();
+                                $api_params['login'] = $tp_account['login'];
+                                $mt5api->get('/api/user/group', $api_params);
+                                $e = $mt5api->Error;
+                                $api = $mt5api->Response;
+                                $group = $api->answer->group;
+
+                                $demo_groups = array('LidyaGOLD', 'LidyaSTD', 'LidyaVIP');
+                                $is_demo = ($group != str_ireplace($demo_groups,"XX",$group))? true: false;
+                            ?>
+                            <span title="Login Type" class="doM-form btn btn-sm btn-outline-secondary disabled"><?= ($is_demo) ? 'Demo' : 'Real' ?></span>
+
+                            <!--
+                                <button data-form-params='{"login":"<?= $tp_account['login'] ?>"}' data-login="<?= $tp_account['login'] ?>" data-form-name="trade_update-login-password" title="Change <?= $tp_account['login'] ?> Passwords" class="doM-form btn btn-sm btn-outline-secondary"><i class="fa fa-key"></i></button>
+                            -->
                             <button data-form-params='{"login":"<?= $tp_account['login'] ?>"}' data-login="<?= $tp_account['login'] ?>" data-form-name="trade_view_login" title="<?= $tp_account['login'] ?> Detail" class="doM-form btn btn-sm btn-primary"><i class="fa fa-info-circle"></i> Details</button>
                             <button data-screen="market" data-params='{"login":"<?= $tp_account['login'] ?>"}' class="show-screen btn-sm btn btn-warning m-3 col">View Market</button>
                         </td>
