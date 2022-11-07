@@ -28,7 +28,9 @@ function stats() {
     	{	
     		$json=json_decode($result);
     		//var_dump($json);
-    		$total = count($json->answer);
+
+            $total = (is_array($json->answer)) ? count($json->answer) : 0;
+
     		for ($i = 0; $i < $total; $i++){
     		    $result2 = $request->Get('/api/user/get?login='.$json->answer[$i]->Login);
             	//$output->result = $result;
@@ -76,7 +78,7 @@ function openPositions() {
     	{	
     		$json=json_decode($result);
     		//var_dump($json);
-    		$total = count($json->answer);
+            $total = (is_array($json->answer)) ? count($json->answer) : 0;
     		for ($i = 0; $i < $total; $i++){
 
         		$output->res [$i]['Login'] = $json->answer[$i]->Login;
