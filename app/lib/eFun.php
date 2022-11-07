@@ -90,4 +90,59 @@ class eFun{
         return $item;
     }
 
+    /**
+     * Get Login Group (Day & Time)
+     * @return array
+     */
+    public static function getLoginGroup($login)
+    {
+        $mt5api = new mt5API();
+        $api_group['login'] = $login;
+        $mt5api->get('/api/user/group', $api_group);
+        $group['error'] = $mt5api->Error;
+        $api_group = $mt5api->Response;
+        $group['name'] = $api_group->answer->group;
+        $group['demo_groups'] = array('LidyaGOLD', 'LidyaSTD', 'LidyaVIP');
+        $group['is_demo'] = $group['name'] != str_ireplace($group['demo_groups'],"XX",$group['name']);
+        return $group;
+    }
+
+    /**
+     * Is Trade Open by Group(Day & Time)
+     * @return bool
+     */
+    public static function isTradeOpenGroup($symbol, $group)
+    {
+        $mt5api = new mt5API();
+        $api_symbol['symbol'] = $symbol;
+        $api_symbol['group'] = $group;
+
+        $mt5api->get('/api/symbol/get_group', $api_symbol);
+        $e = $mt5api->Error;
+        $api_symbol = $mt5api->Response->answer->SessionsTrades;
+        $is_open=false;
+        $week_day= date('w',strtotime("today"));
+        $time_in_min = ceil( (time()-strtotime("today"))/60 );
+        $symbol_times = $api_symbol[$week_day];
+        if($symbol_times) foreach ($symbol_times as $symbol_time) {
+            if( ($symbol_time->Open <= $time_in_min) && ($time_in_min <= $symbol_time->Close) ) {
+                $is_open = true;
+                break;
+            }
+        }
+        return $is_open;
+    }
+
+    /**
+     * Is Trade Open by Login (Day & Time)
+     * @return bool|array
+     */
+    public static function isTradeOpenLogin($symbol, $login)
+    {
+        $group = self::getLoginGroup($login);
+        if($group['name']) return self::isTradeOpenGroup($symbol, $group['name']);
+        return $login;
+    }
+
+
 }

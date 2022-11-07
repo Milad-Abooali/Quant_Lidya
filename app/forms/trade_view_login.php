@@ -2,22 +2,17 @@
     global $db;
 
     $mt5api = new mt5API();
-    $api_params['login'] = $params['login'];
-    $mt5api->get('/api/user/group', $api_params);
+
+    /* Get Group */
+    $group = eFun::getLoginGroup($params['login']);
+    if($group['name']) $is_demo = $group['is_demo'];
+
+    /* Get Login Detail */
+    $api_account['login'] = $params['login'];
+    $mt5api->get('/api/user/account/get', $api_account);
     $e = $mt5api->Error;
-    $api = $mt5api->Response;
-    $group = $api->answer->group;
-
-    $demo_groups = array('LidyaGOLD', 'LidyaSTD', 'LidyaVIP');
-    $is_demo = ($group != str_ireplace($demo_groups,"XX",$group))? true: false;
-
-    $mt5api = new mt5API();
-    $api_params['login'] = $params['login'];
-    $mt5api->get('/api/user/account/get', $api_params);
-    $e = $mt5api->Error;
-    $api = $mt5api->Response;
-
-    $number_digit = $api->answer->CurrencyDigits;
+    $api_account = $mt5api->Response;
+    $number_digit = $api_account->answer->CurrencyDigits;
 
 ?>
 <?php $form_name = 'trade-view-login'; ?>
@@ -45,31 +40,31 @@
             </tr>
             <tr class="item-row">
                 <td> Balance </td>
-                <td> $ <span data-lable="balance"><?= GF::nf($api->answer->Balance, $number_digit) ?></span></td>
+                <td> $ <span data-lable="balance"><?= GF::nf($api_account->answer->Balance, $number_digit) ?></span></td>
             </tr>
             <tr class="item-row">
                 <td> Equity </td>
-                <td> $ <span data-lable="equity"><?= GF::nf($api->answer->Equity, $number_digit) ?></span></td>
+                <td> $ <span data-lable="equity"><?= GF::nf($api_account->answer->Equity, $number_digit) ?></span></td>
             </tr>
             <tr class="item-row">
                 <td> Margin </td>
-                <td> $ <span data-lable="margin"><?= GF::nf($api->answer->Margin, $number_digit) ?></span></td>
+                <td> $ <span data-lable="margin"><?= GF::nf($api_account->answer->Margin, $number_digit) ?></span></td>
             </tr>
             <tr class="item-row">
                 <td> Margin Level </td>
-                <td> % <span data-lable="margin-level"><?= GF::nf($api->answer->MarginLevel, $number_digit) ?></span></td>
+                <td> % <span data-lable="margin-level"><?= GF::nf($api_account->answer->MarginLevel, $number_digit) ?></span></td>
             </tr>
             <tr class="item-row">
                 <td> Free Margin </td>
-                <td> $ <span data-lable="free-margin"><?= GF::nf($api->answer->MarginFree, $number_digit) ?></span></td>
+                <td> $ <span data-lable="free-margin"><?= GF::nf($api_account->answer->MarginFree, $number_digit) ?></span></td>
             </tr>
             <tr class="item-row">
                 <td> Leverage </td>
-                <td> <span data-lable="margin-leverage"><?= GF::nf($api->answer->MarginLeverage, $number_digit) ?></span></td>
+                <td> <span data-lable="margin-leverage"><?= GF::nf($api_account->answer->MarginLeverage, $number_digit) ?></span></td>
             </tr>
             <tr class="item-row">
                 <td> Profit </td>
-                <td> <span data-lable="profit"><?= GF::nf($api->answer->Profit, $number_digit) ?></span></td>
+                <td> <span data-lable="profit"><?= GF::nf($api_account->answer->Profit, $number_digit) ?></span></td>
             </tr>
         </tbody>
     </table>

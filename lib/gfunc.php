@@ -384,7 +384,7 @@ class GF {
     }
 
     public static function cLog($string, $json=false) {
-        if($json){
+        if($json==1){
             echo "<script>console.log(JSON.parse('".json_encode($string)."'))</script>";
         }else{
             echo "<script>console.log('$string')</script>";

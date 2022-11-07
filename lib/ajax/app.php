@@ -971,61 +971,6 @@ function getLoginStatistics(){
     echo json_encode($output);
 }
 
-// Meta - Close Position
-function closePosition(){
-    $output = new stdClass();
-    $output->e = false;
-    if( !isset($_REQUEST['login']) ) $output->e = 'login is expected';
-    if( !isset($_REQUEST['position']) ) $output->e = 'position is expected';
-    if(!$output->e){
-        eFun::sessionJump($_REQUEST['sessionId']);
-
-        $mt5api = new mt5API();
-
-        $api_params['ticket']  = $_REQUEST['position'];
-        $mt5api->get('/api/position/get_batch', $api_params);
-        $e = $mt5api->Error;
-        $output->position = $position = $mt5api->Response;
-        if(!$e && $position->answer[0]->Login === $_REQUEST['login']){
-            $type = ($position->answer[0]->Action) ? 0 : 1;
-
-            // Close Position
-            $path = '/api/dealer/send_request';
-            $request_close['Action']       = 200;
-            $request_close['Login']        = $position->answer[0]->Login;
-            $request_close['Symbol']       = $position->answer[0]->Symbol;
-            $request_close['Volume']       = $position->answer[0]->Volume;
-            $request_close['TypeFill']     = 1;
-            $request_close['Type']         = $type;
-            $request_close['PriceOrder']   = $position->answer[0]->PriceCurrent;
-            $request_close['Position']     = $position->answer[0]->Position;
-            $request_close['Digits']       = $position->answer[0]->Digits;
-
-            $output->body = $request_close;
-            $mt5api->post($path, null, json_encode($request_close));
-            $e = $mt5api->Error;
-            $output->close = $mt5api->Response;
-            if(!$e){
-                $identifiers = $output->close->answer->id;
-
-                // Check Request
-                $data['id'] = $identifiers;
-                $path = '/api/dealer/get_request_result';
-                $mt5api->post($path, $data);
-                $e = $mt5api->Error;
-                $output->request = $mt5api->Response;
-            }
-
-        }
-        else {
-            $output->e = 'The position is not on the same login';
-        }
-
-        eFun::sessionJumpBack();
-    }
-    echo json_encode($output);
-}
-
 // Meta - Get Market Prices
 function getMarketPrices(){
     $output = new stdClass();
@@ -1095,6 +1040,64 @@ function getSymbolChart(){
 }
 
 
+// Meta - Close Position
+function closePosition(){
+    $output = new stdClass();
+    $output->e = false;
+    if( !isset($_REQUEST['login']) ) $output->e = 'login is expected';
+    if( !isset($_REQUEST['position']) ) $output->e = 'position is expected';
+    if(!$output->e){
+        eFun::sessionJump($_REQUEST['sessionId']);
+
+        $mt5api = new mt5API();
+
+        $api_params['ticket']  = $_REQUEST['position'];
+        $mt5api->get('/api/position/get_batch', $api_params);
+        $e = $mt5api->Error;
+        $output->position = $position = $mt5api->Response;
+        if(!$e && $position->answer[0]->Login === $_REQUEST['login']){
+            $type = ($position->answer[0]->Action) ? 0 : 1;
+
+            // Close Position
+            $path = '/api/dealer/send_request';
+            $request_close['Action']       = 200;
+            $request_close['Login']        = $position->answer[0]->Login;
+            $request_close['Symbol']       = $position->answer[0]->Symbol;
+            $request_close['Volume']       = $position->answer[0]->Volume;
+            $request_close['TypeFill']     = 1;
+            $request_close['Type']         = $type;
+            $request_close['PriceOrder']   = $position->answer[0]->PriceCurrent;
+            $request_close['Position']     = $position->answer[0]->Position;
+            $request_close['Digits']       = $position->answer[0]->Digits;
+
+            $is_open = eFun::isTradeOpenLogin($position->answer[0]->Symbol, $_REQUEST['login']);
+            if($is_open){
+                $output->body = $request_close;
+                $mt5api->post($path, null, json_encode($request_close));
+                $e = $mt5api->Error;
+                $output->close = $mt5api->Response;
+                if(!$e){
+                    $identifiers = $output->close->answer->id;
+
+                    // Check Request
+                    $data['id'] = $identifiers;
+                    $path = '/api/dealer/get_request_result';
+                    $mt5api->post($path, $data);
+                    $e = $mt5api->Error;
+                    $output->request = $mt5api->Response;
+                }
+            } else {
+                $output->e = 'Market is Closed!';
+            }
+        }
+        else {
+            $output->e = 'The position is not on the same login';
+        }
+
+        eFun::sessionJumpBack();
+    }
+    echo json_encode($output);
+}
 
 
 // Meta - Simple Order
@@ -1105,6 +1108,9 @@ function simpleOrder(){
     if( !isset($_REQUEST['symbol']) ) $output->e = 'symbol is expected';
     if( !isset($_REQUEST['type']) ) $output->e = 'action is expected';
     if( !isset($_REQUEST['volume']) ) $output->e = 'volume is expected';
+    $is_open = eFun::isTradeOpenLogin($_REQUEST['symbol'], $_REQUEST['login']);
+    if( !$is_open ) $output->e = 'Market is Closed!';
+
     if(!$output->e){
         eFun::sessionJump($_REQUEST['sessionId']);
 
