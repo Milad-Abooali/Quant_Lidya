@@ -21,40 +21,15 @@
         <div class="col-md-6 alert alert-secondary">
             <h6 class="text-center">Test Pad</h6>
             <?php
-                /**
-                $manager = "1,2";
-                $assigned_to = "1";
-                $name = "Welcome page report";
-                $description = "Please fix the welcome page reports";
-                $deadline = "2021-12-20";
-                $status = 1;
-                $type = 1;
-                $priority = 6;
-                $result = $taskManager->Add($manager, $assigned_to, $name, $description, $deadline, $status, $type, $priority);
-                GF::P("$result");
-                
-                $id = 1;
-                $manager = "1";
-                $assigned_to = "1";
-                $name = "Welcome page report";
-                $description = "Please fix the welcome page reports";
-                $deadline = "2021-12-20";
-                $status = 2;
-                $finished_at = "";
-                $type = 1;
-                $priority = 6;
-                $result = $taskManager->Update($id, $manager, $assigned_to, $name, $description, $deadline, $status, $finished_at, $type, $priority);
-                GF::P("$result");
-                **/
-
-                global $_L;
-                GF::p($_L->get('russian')['broker']['Broker_Signature']);
-
                 global $db;
-                $where = "user_id=2894723";
-                $user_language =$db->selectRow('user_extra',$where)['language'];
-                GF::p($user_language);
+                $mt5api = new mt5API();
+                $api_symbol['symbol'] = 'EURUSD';
+                $mt5api->get('/api/tick/last', $api_symbol);
+                $e = $mt5api->Error;
+                $res = $mt5api->Response->answer;
 
+                GF::p($e, 1);
+                GF::p($res, 1);
 
             ?>
             <script>

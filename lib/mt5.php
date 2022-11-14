@@ -17,7 +17,11 @@ class CMT5Request
         //---
         curl_setopt($this->m_curl,CURLOPT_SSL_VERIFYPEER,0); // comment out this line if you use self-signed certificates
         curl_setopt($this->m_curl,CURLOPT_MAXCONNECTS,1); // one connection is used
-        curl_setopt($this->m_curl, CURLOPT_HTTPHEADER,array('Connection: Keep-Alive'));
+        curl_setopt($this->m_curl, CURLOPT_HTTPHEADER,array(
+            'Connection: Keep-Alive',
+            'Pragma: no-cache',
+            'Cache-Control: no-cache, no-store, must-revalidate'
+            ));
         //---
         $this->m_server=$server;
         //---
@@ -120,4 +124,5 @@ class CMT5Request
         //--- Everything is done
         return(true);
     }
+
 }
