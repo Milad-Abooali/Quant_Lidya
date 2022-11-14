@@ -6,21 +6,26 @@ const ajax = require("./ajax.js");
 const vConsole = require("./vconsole.js");
 const python = require("./python.js");
 const countryLib = require("country-flags-dial-code");
+const fs = require('fs');
 
 if (cluster.isMaster) {
 	cluster.fork();
 	cluster.on('exit', function(worker, code, signal) {
-		const timeOut = (config.isDevEnv) ? 5 : 10
+		const timeOut = (config.isDevEnv) ? 15 : 1
 		setTimeout(function(){
 			console.log('cluster Error...');
-			if(config.isDevEnv){
-				console.log('worker',worker);
-				console.log('code',code);
-				console.log('signal',signal);
+			const wcs = {
+				'worker':worker,
+				'code':code,
+				'signal':signal
 			}
-			else {
+			try {
+				fs.writeFileSync(`./logs/${process.pid}_E.json`, JSON.stringify(wcs));
+			} catch(err) {
+				console.error(err);
+			}
+			if(config.isDevEnv)
 				cluster.fork();
-			}
 		}, timeOut*1000);
 	});
 }
@@ -38,7 +43,6 @@ if (cluster.isWorker) { // Worker
 	const	 	express  	= require('express');
 	var			app 		= express();
 	// const 		Redis 		= require('ioredis');
-	const  		fs 			= require('fs');
 	const 		MD5      	= require("crypto-js/md5");
 	const 		getJSON  	= require('get-json'); 		 // Need Remove
 	const    	parser  	= require('groan');			 // Need Remove
@@ -204,7 +208,7 @@ if (cluster.isWorker) { // Worker
 		console.clear();
 		console.log("= = = = = Monitor Status = = = = =\n", monitorData);
 		console.log("= = = = = Online Sockets = = = = =\n", onlineSocketList);
-		console.log("= = = = = Online Sessions = = = = =\n", onlineSessionList);
+		//console.log("= = = = = Online Sessions = = = = =\n", onlineSessionList);
 		vConsole.print();
 	}
 
@@ -499,221 +503,301 @@ if (cluster.isWorker) { // Worker
 		// CRM - Get Profile
 		socket.on('crmGetProfile', (data, callback) => {
 			vConsole.add('CRM Get Profile | '+ socket.id);
-			const postData = {
-				sessionId	: onlineSocketList[socket.id].sessionId,
-				screen	: data.screen
-			};
-			ajax.call(data.token, 'app', 'crmGetProfile', cookieString, postData).then(call => {
-				if(call.status == 200) {
-					try {
-						const ajaxRes = JSON.parse(call.resData);
-						callback(ajaxRes);
-					} catch (e) {
-						vConsole.add(call.resData);
+			try {
+				onlineSocketList[socket.id].sessionId;
+			} catch (e) {
+				eLogin(socket, data.client);
+			} finally {
+				const postData = {
+					sessionId: onlineSocketList[socket.id].sessionId,
+					screen: data.screen
+				};
+				ajax.call(data.token, 'app', 'crmGetProfile', cookieString, postData).then(call => {
+					if (call.status == 200) {
+						try {
+							const ajaxRes = JSON.parse(call.resData);
+							callback(ajaxRes);
+						} catch (e) {
+							vConsole.add(call.resData);
+						}
+					} else {
+						vConsole.add(call.res);
 					}
-				} else {
-					vConsole.add(call.res);
-				}
-				setTimeout(()=>watchdogApp(socket) , 5);
-			});
+					setTimeout(() => watchdogApp(socket), 5);
+				});
+			}
 		});
 		// CRM - Update Profile General
 		socket.on('crmUpdateProfileG', (data, callback) => {
 			vConsole.add('CRM Update Profile | '+ socket.id);
-			data.sessionId = onlineSocketList[socket.id].sessionId;
-			ajax.call(data.token, 'app', 'crmUpdateProfileG', cookieString, data).then(call => {
-				if(call.status == 200) {
-					try {
-						const ajaxRes = JSON.parse(call.resData);
-						callback(ajaxRes);
-					} catch (e) {
-						vConsole.add(call.resData);
+			try {
+				onlineSocketList[socket.id].sessionId;
+			} catch (e) {
+				eLogin(socket, data.client);
+			} finally {
+				data.sessionId = onlineSocketList[socket.id].sessionId;
+				ajax.call(data.token, 'app', 'crmUpdateProfileG', cookieString, data).then(call => {
+					if(call.status == 200) {
+						try {
+							const ajaxRes = JSON.parse(call.resData);
+							callback(ajaxRes);
+						} catch (e) {
+							vConsole.add(call.resData);
+						}
+					} else {
+						vConsole.add(call.res);
 					}
-				} else {
-					vConsole.add(call.res);
-				}
-				setTimeout(()=>watchdogApp(socket) , 5);
-			});
+					setTimeout(()=>watchdogApp(socket) , 5);
+				});
+			}
 		});
 		// CRM - Update Profile Extra
 		socket.on('crmUpdateProfileE', (data, callback) => {
 			vConsole.add('CRM Update Profile | '+ socket.id);
-			data.sessionId = onlineSocketList[socket.id].sessionId;
-			ajax.call(data.token, 'app', 'crmUpdateProfileE', cookieString, data).then(call => {
-				if(call.status == 200) {
-					try {
-						const ajaxRes = JSON.parse(call.resData);
-						callback(ajaxRes);
-					} catch (e) {
-						vConsole.add(call.resData);
+			try {
+				onlineSocketList[socket.id].sessionId;
+			} catch (e) {
+				eLogin(socket, data.client);
+			} finally {
+				data.sessionId = onlineSocketList[socket.id].sessionId;
+				ajax.call(data.token, 'app', 'crmUpdateProfileE', cookieString, data).then(call => {
+					if(call.status == 200) {
+						try {
+							const ajaxRes = JSON.parse(call.resData);
+							callback(ajaxRes);
+						} catch (e) {
+							vConsole.add(call.resData);
+						}
+					} else {
+						vConsole.add(call.res);
 					}
-				} else {
-					vConsole.add(call.res);
-				}
-				setTimeout(()=>watchdogApp(socket) , 5);
-			});
+					setTimeout(()=>watchdogApp(socket) , 5);
+				});
+			}
 		});
 		// CRM - Update Profile Agreement
 		socket.on('crmUpdateProfileAgreement', (data, callback) => {
 			vConsole.add('CRM Update Profile | '+ socket.id);
-			data.sessionId = onlineSocketList[socket.id].sessionId;
-			ajax.call(data.token, 'app', 'crmUpdateProfileAgreement', cookieString, data).then(call => {
-				if(call.status == 200) {
-					try {
-						const ajaxRes = JSON.parse(call.resData);
-						callback(ajaxRes);
-					} catch (e) {
-						vConsole.add(call.resData);
+			try {
+				onlineSocketList[socket.id].sessionId;
+			} catch (e) {
+				eLogin(socket, data.client);
+			} finally {
+				data.sessionId = onlineSocketList[socket.id].sessionId;
+				ajax.call(data.token, 'app', 'crmUpdateProfileAgreement', cookieString, data).then(call => {
+					if(call.status == 200) {
+						try {
+							const ajaxRes = JSON.parse(call.resData);
+							callback(ajaxRes);
+						} catch (e) {
+							vConsole.add(call.resData);
+						}
+					} else {
+						vConsole.add(call.res);
 					}
-				} else {
-					vConsole.add(call.res);
-				}
-				setTimeout(()=>watchdogApp(socket) , 5);
-			});
+					setTimeout(()=>watchdogApp(socket) , 5);
+				});
+			}
 		});
 		// CRM - Get Platform Groups
 		socket.on('crmGetPlatformGroups', (data, callback) => {
 			vConsole.add('Get Platform Groups | '+ socket.id);
-			data.sessionId = onlineSocketList[socket.id].sessionId;
-			ajax.call(data.token, 'app', 'crmGetPlatformGroups', cookieString, data).then(call => {
-				if(call.status == 200) {
-					try {
-						const ajaxRes = JSON.parse(call.resData);
-						callback(ajaxRes);
-					} catch (e) {
-						vConsole.add(call.resData);
+			try {
+				onlineSocketList[socket.id].sessionId;
+			} catch (e) {
+				eLogin(socket, data.client);
+			} finally {
+				data.sessionId = onlineSocketList[socket.id].sessionId;
+				ajax.call(data.token, 'app', 'crmGetPlatformGroups', cookieString, data).then(call => {
+					if(call.status == 200) {
+						try {
+							const ajaxRes = JSON.parse(call.resData);
+							callback(ajaxRes);
+						} catch (e) {
+							vConsole.add(call.resData);
+						}
+					} else {
+						vConsole.add(call.res);
 					}
-				} else {
-					vConsole.add(call.res);
-				}
-				setTimeout(()=>watchdogApp(socket) , 5);
-			});
+					setTimeout(()=>watchdogApp(socket) , 5);
+				});
+			}
+
 		});
 		// CRM - Meta Open TP
 		socket.on('crmMetaOpenTP', (data, callback) => {
 			vConsole.add('Meta Open TP | '+ socket.id);
-			data.sessionId = onlineSocketList[socket.id].sessionId;
-			ajax.call(data.token, 'app', 'crmMetaOpenTP', cookieString, data).then(call => {
-				if(call.status == 200) {
-					try {
-						const ajaxRes = JSON.parse(call.resData);
-						callback(ajaxRes);
-					} catch (e) {
-						vConsole.add(call.resData);
+			try {
+				onlineSocketList[socket.id].sessionId;
+			} catch (e) {
+				eLogin(socket, data.client);
+			} finally {
+				data.sessionId = onlineSocketList[socket.id].sessionId;
+				ajax.call(data.token, 'app', 'crmMetaOpenTP', cookieString, data).then(call => {
+					if(call.status == 200) {
+						try {
+							const ajaxRes = JSON.parse(call.resData);
+							callback(ajaxRes);
+						} catch (e) {
+							vConsole.add(call.resData);
+						}
+					} else {
+						vConsole.add(call.res);
 					}
-				} else {
-					vConsole.add(call.res);
-				}
-				setTimeout(()=>watchdogApp(socket) , 5);
-			});
+					setTimeout(()=>watchdogApp(socket) , 5);
+				});
+			}
+
 		});
 		// CRM - Meta Update Login Password
 		socket.on('crmUpdateLoginPassword', (data, callback) => {
 			vConsole.add('Update TP Password | '+ socket.id);
-			data.sessionId = onlineSocketList[socket.id].sessionId;
-			ajax.call(data.token, 'app', 'crmUpdateLoginPassword', cookieString, data).then(call => {
-				if(call.status == 200) {
-					try {
-						const ajaxRes = JSON.parse(call.resData);
-						callback(ajaxRes);
-					} catch (e) {
-						vConsole.add(call.resData);
+			try {
+				onlineSocketList[socket.id].sessionId;
+			} catch (e) {
+				eLogin(socket, data.client);
+			} finally {
+				data.sessionId = onlineSocketList[socket.id].sessionId;
+				ajax.call(data.token, 'app', 'crmUpdateLoginPassword', cookieString, data).then(call => {
+					if(call.status == 200) {
+						try {
+							const ajaxRes = JSON.parse(call.resData);
+							callback(ajaxRes);
+						} catch (e) {
+							vConsole.add(call.resData);
+						}
+					} else {
+						vConsole.add(call.res);
 					}
-				} else {
-					vConsole.add(call.res);
-				}
-				setTimeout(()=>watchdogApp(socket) , 5);
-			});
+					setTimeout(()=>watchdogApp(socket) , 5);
+				});
+			}
+
 		});
 		// Meta - Get Login Positions
 		socket.on('getLoginPositions', (data, callback) => {
 			vConsole.add('Get TP Position | '+ socket.id);
-			data.sessionId = onlineSocketList[socket.id].sessionId;
-			ajax.call(data.token, 'app', 'getLoginPositions', cookieString, data).then(call => {
-				if(call.status == 200) {
-					try {
-						const ajaxRes = JSON.parse(call.resData);
-						callback(ajaxRes);
-					} catch (e) {
-						vConsole.add(call.resData);
+			try {
+				onlineSocketList[socket.id].sessionId;
+			} catch (e) {
+				eLogin(socket, data.client);
+			} finally {
+				data.sessionId = onlineSocketList[socket.id].sessionId;
+				ajax.call(data.token, 'app', 'getLoginPositions', cookieString, data).then(call => {
+					if(call.status == 200) {
+						try {
+							const ajaxRes = JSON.parse(call.resData);
+							callback(ajaxRes);
+						} catch (e) {
+							vConsole.add(call.resData);
+						}
+					} else {
+						vConsole.add(call.res);
 					}
-				} else {
-					vConsole.add(call.res);
-				}
-				setTimeout(()=>watchdogApp(socket) , 5);
-			});
+					setTimeout(()=>watchdogApp(socket) , 5);
+				});
+			}
+
 		});
 		// Meta - Get Login Statistics
 		socket.on('getLoginStatistics', (data, callback) => {
 			vConsole.add('Get TP Statistics | '+ socket.id);
-			data.sessionId = onlineSocketList[socket.id].sessionId;
-			ajax.call(data.token, 'app', 'getLoginStatistics', cookieString, data).then(call => {
-				if(call.status == 200) {
-					try {
-						const ajaxRes = JSON.parse(call.resData);
-						callback(ajaxRes);
-					} catch (e) {
-						vConsole.add(call.resData);
+			try {
+				onlineSocketList[socket.id].sessionId;
+			} catch (e) {
+				eLogin(socket, data.client);
+			} finally {
+				data.sessionId = onlineSocketList[socket.id].sessionId;
+				ajax.call(data.token, 'app', 'getLoginStatistics', cookieString, data).then(call => {
+					if(call.status == 200) {
+						try {
+							const ajaxRes = JSON.parse(call.resData);
+							callback(ajaxRes);
+						} catch (e) {
+							vConsole.add(call.resData);
+						}
+					} else {
+						vConsole.add(call.res);
 					}
-				} else {
-					vConsole.add(call.res);
-				}
-				setTimeout(()=>watchdogApp(socket) , 5);
-			});
+					setTimeout(()=>watchdogApp(socket) , 5);
+				});
+			}
+
 		});
 		// Meta - Close Position
 		socket.on('closePosition', (data, callback) => {
 			vConsole.add('Close Position | '+ socket.id);
-			data.sessionId = onlineSocketList[socket.id].sessionId;
-			ajax.call(data.token, 'app', 'closePosition', cookieString, data).then(call => {
-				if(call.status == 200) {
-					try {
-						const ajaxRes = JSON.parse(call.resData);
-						callback(ajaxRes);
-					} catch (e) {
-						vConsole.add(call.resData);
+			try {
+				onlineSocketList[socket.id].sessionId;
+			} catch (e) {
+				eLogin(socket, data.client);
+			} finally {
+				data.sessionId = onlineSocketList[socket.id].sessionId;
+				ajax.call(data.token, 'app', 'closePosition', cookieString, data).then(call => {
+					if(call.status == 200) {
+						try {
+							const ajaxRes = JSON.parse(call.resData);
+							callback(ajaxRes);
+						} catch (e) {
+							vConsole.add(call.resData);
+						}
+					} else {
+						vConsole.add(call.res);
 					}
-				} else {
-					vConsole.add(call.res);
-				}
-				setTimeout(()=>watchdogApp(socket) , 5);
-			});
+					setTimeout(()=>watchdogApp(socket) , 5);
+				});
+			}
+
 		});
 		// Meta - Get Market Prices
 		socket.on('getMarketPrices', (data, callback) => {
 			vConsole.add('Get Market Prices | '+ socket.id);
-			data.sessionId = onlineSocketList[socket.id].sessionId;
-			ajax.call(data.token, 'app', 'getMarketPrices', cookieString, data).then(call => {
-				if(call.status == 200) {
-					try {
-						const ajaxRes = JSON.parse(call.resData);
-						callback(ajaxRes);
-					} catch (e) {
-						vConsole.add(call.resData);
+			try {
+				onlineSocketList[socket.id].sessionId;
+			} catch (e) {
+				eLogin(socket, data.client);
+			} finally {
+				data.sessionId = onlineSocketList[socket.id].sessionId;
+				ajax.call(data.token, 'app', 'getMarketPrices', cookieString, data).then(call => {
+					if(call.status == 200) {
+						try {
+							const ajaxRes = JSON.parse(call.resData);
+							callback(ajaxRes);
+						} catch (e) {
+							vConsole.add(call.resData);
+						}
+					} else {
+						vConsole.add(call.res);
 					}
-				} else {
-					vConsole.add(call.res);
-				}
-				setTimeout(()=>watchdogApp(socket) , 5);
-			});
+					setTimeout(()=>watchdogApp(socket) , 5);
+				});
+			}
+
 		});
 		// Meta - Get Symbol Chart
 		socket.on('getSymbolChart', (data, callback) => {
 			vConsole.add('Get Symbol Prices | '+ socket.id);
-			data.sessionId = onlineSocketList[socket.id].sessionId;
-			ajax.call(data.token, 'app', 'getSymbolChart', cookieString, data).then(call => {
-				if(call.status == 200) {
-					try {
-						const ajaxRes = JSON.parse(call.resData);
-						callback(ajaxRes);
-					} catch (e) {
-						vConsole.add(call.resData);
+			try {
+				onlineSocketList[socket.id].sessionId;
+			} catch (e) {
+				eLogin(socket, data.client);
+			} finally {
+				data.sessionId = onlineSocketList[socket.id].sessionId;
+				ajax.call(data.token, 'app', 'getSymbolChart', cookieString, data).then(call => {
+					if(call.status == 200) {
+						try {
+							const ajaxRes = JSON.parse(call.resData);
+							callback(ajaxRes);
+						} catch (e) {
+							vConsole.add(call.resData);
+						}
+					} else {
+						vConsole.add(call.res);
 					}
-				} else {
-					vConsole.add(call.res);
-				}
-				setTimeout(()=>watchdogApp(socket) , 5);
-			});
+					setTimeout(()=>watchdogApp(socket) , 5);
+				});
+			}
+
 		});
 
 
@@ -721,20 +805,27 @@ if (cluster.isWorker) { // Worker
 		// Meta - Simple Order
 		socket.on('simpleOrder', (data, callback) => {
 			vConsole.add('Simple Order | '+ socket.id);
-			data.sessionId = onlineSocketList[socket.id].sessionId;
-			ajax.call(data.token, 'app', 'simpleOrder', cookieString, data).then(call => {
-				if(call.status == 200) {
-					try {
-						const ajaxRes = JSON.parse(call.resData);
-						callback(ajaxRes);
-					} catch (e) {
-						vConsole.add(call.resData);
+			try {
+				onlineSocketList[socket.id].sessionId;
+			} catch (e) {
+				eLogin(socket, data.client);
+			} finally {
+				data.sessionId = onlineSocketList[socket.id].sessionId;
+				ajax.call(data.token, 'app', 'simpleOrder', cookieString, data).then(call => {
+					if(call.status == 200) {
+						try {
+							const ajaxRes = JSON.parse(call.resData);
+							callback(ajaxRes);
+						} catch (e) {
+							vConsole.add(call.resData);
+						}
+					} else {
+						vConsole.add(call.res);
 					}
-				} else {
-					vConsole.add(call.res);
-				}
-				setTimeout(()=>watchdogApp(socket) , 5);
-			});
+					setTimeout(()=>watchdogApp(socket) , 5);
+				});
+			}
+
 		});
 
 
@@ -848,14 +939,21 @@ if (cluster.isWorker) { // Worker
 		});
 		// e - Archive Messages
 		socket.on('archiveMessages', function(data){
-			data.sessionId = onlineSocketList[socket.id].sessionId;
-			ajax.call('archiveMsg', cookieString, data).then(call => {
-				if (call.status == 200) {
-					vConsole.add(`Archive History | ${onlineSocketList[socket.id].data.email} < ${data.msg_id}`);
-				} else {
-					vConsole.add(call.res);
-				}
-			});
+			try {
+				onlineSocketList[socket.id].sessionId;
+			} catch (e) {
+				eLogin(socket, data.client);
+			} finally {
+				data.sessionId = onlineSocketList[socket.id].sessionId;
+				ajax.call('archiveMsg', cookieString, data).then(call => {
+					if (call.status == 200) {
+						vConsole.add(`Archive History | ${onlineSocketList[socket.id].data.email} < ${data.msg_id}`);
+					} else {
+						vConsole.add(call.res);
+					}
+				});
+			}
+
 		});
 		// e - Feedback
 		socket.on('feedBack', (postData) => {

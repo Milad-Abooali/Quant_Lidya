@@ -8,7 +8,7 @@ function intervalMarketPrices(oneTime=false){
         if(oneTime)
             stopInterval(intervalScreenTemp.marketPrices);
         //console.log('Interval Res', intervalResMarketPrices);
-    }, 500);
+    }, 2500);
 }
 
 const prices = {};
@@ -55,28 +55,5 @@ $("body").on("change","#market #intervalResMarketPrices", function() {
         :   stopInterval(intervalScreenTemp.marketPrices);
 });
 
-$("body").on("click","#market .doA-trade", function(e) {
-    e.preventDefault();
-    intervalResMarketPrices.updateMarketRun = true;
-    const symbol = $(this).data('symbol');
-    const data = {
-        login: selectedLogin,
-        symbol: symbol,
-        type:$(this).data('type'),
-        volume: $(`.row-symbol[data-symbol="${symbol}"] #volume`).val()
-    }
-    appAlert('info','<i class="fas fa-spinner fa-spin"></i> In Progress', 'Opening the positions.');
-
-    socket.emit("simpleOrder", data, (response) => {
-        //console.log(response);
-        if (response.e){
-            appAlert('danger', '<i class="fas fa-exclamation-triangle"></i> Error', response.e);
-        }
-        else{
-            appAlert('success','<i class="fas fa-exclamation-triangle"></i> Done', 'Position is opened - <strong>'+symbol+'</strong>');
-        }
-        intervalResMarketPrices.updateMarketRun = false;
-    });
-});
 
 console.log('market js loaded');

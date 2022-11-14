@@ -13,7 +13,6 @@
     $e = $mt5api->Error;
     $api_account = $mt5api->Response;
     $number_digit = $api_account->answer->CurrencyDigits;
-
 ?>
 <?php $form_name = 'trade-view-login'; ?>
 <form class="screen-wrapper" name="<?= $form_name ?>" id="<?= $form_name ?>" data-login="<?= $params['login'] ?>">

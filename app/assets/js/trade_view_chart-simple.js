@@ -26,10 +26,7 @@ function updateChart() {
         else{
             intervalResSymbolChart.updateChart = true;
             console.log('Chart Updated');
-            console.log(response.chartData);
-
-
-
+            //console.log(response.chartData);
         }
         intervalResSymbolChart.updateChart = false;
     });

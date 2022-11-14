@@ -41,7 +41,7 @@
     </div>
     <div class="screen-body">
 
-        <div class="row p-3">
+        <div class="d-flex justify-content-center pt-3">
             <div class="col">
                 Account: <strong class="h5 text-primary"><?= $login ?></strong>
             </div>
@@ -51,9 +51,8 @@
             <div class="col text-end">
                 <button data-screen="trade" class="show-screen btn btn-outline-warning">Back</button>
             </div>
-            <hr>
         </div>
-
+        <hr>
         <div class="row text-secondary">
             <div class="col text-start">
                 <div class="form-check form-switch">
@@ -72,7 +71,9 @@
                 if($api->answer) foreach($api->answer as $symbol){
             ?>
                 <div class="row-symbol row align-items-center" data-symbol="<?= $symbol->Symbol ?>">
-                    <span data-form-params='{"symbol":"<?= $symbol->Symbol ?>","login":"<?= $login ?>"}' data-login="<?= $login ?>" data-form-name="trade_view_chart-simple" title="<?= $symbol->Symbol ?> Chart - Simple" class="doM-form"><i class="fa fa-info-circle"></i> Chart</span>
+                    <div class="col-12">
+                        <span data-form-params='{"symbol":"<?= $symbol->Symbol ?>","login":"<?= $login ?>"}' data-login="<?= $login ?>" data-form-name="trade_view_chart-simple" title="<?= $symbol->Symbol ?> Chart - Simple" class="doM-form btn btn-dark"><i class="fa fa-info-circle"></i> Chart</span>
+                    </div>
                     <div class="col-4">
                         <span class="float-start Bid mb-2 mt-2"><?= GF::nf($symbol->Bid, $symbol->Digits) ?></span>
                     </div>
@@ -84,9 +85,9 @@
                     </div>
                     <div class="col-12 text-center">
                         <div class="btn-group d-flex" role="group" aria-label="Basic example">
-                            <button title="Sell" data-symbol="<?= $symbol->Symbol ?>"  data-type="1" class="doA-trade btn-sm btn btn-danger">Sell</button>
+                            <button title="Sell" data-form-params='{"symbol":"<?= $symbol->Symbol ?>","login":"<?= $login ?>","type":1}' data-form-name="trade_order_form" class="doM-form btn-sm btn btn-danger">Sell</button>
                             <input id="volume" type="number" class="volumeinput text-center" min="0.00" max="100000.00" step="0.01" name="lot" placeholder="0,00" value="0.01">
-                            <button title="Buy" data-symbol="<?= $symbol->Symbol ?>" data-type="0" class="doA-trade btn btn-sm btn-success">Buy</button>
+                            <button title="Buy" data-form-params='{"symbol":"<?= $symbol->Symbol ?>","login":"<?= $login ?>","type":0}' data-form-name="trade_order_form" class="doM-form btn-sm btn btn-success">Buy</button>
                         </div>
                     </div>
                 </div>

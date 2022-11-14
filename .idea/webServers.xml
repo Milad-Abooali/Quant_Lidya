@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="83cac77d-2d96-480e-8f5a-c6b9631fbff3" name="Lidya" url="https://clientzone2.lidyaportal.com/">
+        <fileTransfer rootFolder="/home/lidyapartners/public_html/lidyacrm" accessType="SFTP" host="136.243.109.195" port="9845" sshConfigId="d64dc3e0-c927-4be4-86d9-59b423711818" sshConfig="lidyapartners@136.243.109.195:9845">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+      <webServer id="67fdc483-e8bd-4ce7-bd96-ee9d62915da8" name="Lidya SSH" url="https://clientzone2.lidyaportal.com/">
+        <fileTransfer rootFolder="/home/lidyapartners/public_html/lidyacrm" accessType="SFTP" host="136.243.109.195" port="9845" sshConfigId="d64dc3e0-c927-4be4-86d9-59b423711818" sshConfig="lidyapartners@136.243.109.195:9845">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+      <webServer id="370b900b-295c-4812-a926-69e5ff7c0302" name="4InSoft">
+        <fileTransfer accessType="SFTP" host="136.243.109.195" port="9845" sshConfigId="c0df83da-b2ed-462f-88b5-d2a5af37619e" sshConfig="root@136.243.109.195:9845 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

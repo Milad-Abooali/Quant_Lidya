@@ -79,9 +79,11 @@ $permits->trade = array(
     'user'   => array(
         'view'      => true,
         'update-login-password'      => true,
+        'order'      => true
     ),
     'agent'   => array(
         'view'      => true,
+        'order'      => true
     )
 );
 

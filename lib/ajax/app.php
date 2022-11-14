@@ -1039,7 +1039,6 @@ function getSymbolChart(){
     echo json_encode($output);
 }
 
-
 // Meta - Close Position
 function closePosition(){
     $output = new stdClass();
@@ -1070,7 +1069,7 @@ function closePosition(){
             $request_close['Position']     = $position->answer[0]->Position;
             $request_close['Digits']       = $position->answer[0]->Digits;
 
-            $is_open = eFun::isTradeOpenLogin($position->answer[0]->Symbol, $_REQUEST['login']);
+            $is_open = eFun::isTradeOpenByLogin($position->answer[0]->Symbol, $_REQUEST['login']);
             if($is_open){
                 $output->body = $request_close;
                 $mt5api->post($path, null, json_encode($request_close));
@@ -1099,7 +1098,6 @@ function closePosition(){
     echo json_encode($output);
 }
 
-
 // Meta - Simple Order
 function simpleOrder(){
     $output = new stdClass();
@@ -1108,8 +1106,10 @@ function simpleOrder(){
     if( !isset($_REQUEST['symbol']) ) $output->e = 'symbol is expected';
     if( !isset($_REQUEST['type']) ) $output->e = 'action is expected';
     if( !isset($_REQUEST['volume']) ) $output->e = 'volume is expected';
-    $is_open = eFun::isTradeOpenLogin($_REQUEST['symbol'], $_REQUEST['login']);
-    if( !$is_open ) $output->e = 'Market is Closed!';
+    if( !isset($_REQUEST['takeProfit']) ) $output->e = 'take profit is expected';
+    if( !isset($_REQUEST['stopLoss']) ) $output->e = 'stop loss is expected';
+    $is_open = eFun::isTradeOpenByLogin($_REQUEST['symbol'], $_REQUEST['login']);
+    //if( !$is_open ) $output->e = 'Market is Closed!';
 
     if(!$output->e){
         eFun::sessionJump($_REQUEST['sessionId']);
@@ -1121,6 +1121,10 @@ function simpleOrder(){
         $request_open['Login']         = $_REQUEST['login'];
         $request_open['Symbol']        = $_REQUEST['symbol'];
         $request_open['Volume']        = $_REQUEST['volume']*10000;
+        if($_REQUEST['takeProfit'] != 0)
+            $request_open['PriceTP']       = "2.56735";
+        if($_REQUEST['stopLoss'] != 0)
+            $request_open['PriceSL']   = $_REQUEST['stopLoss'];
         $request_open['Type']          = $_REQUEST['type'];
         $request_open['TypeFill  ']    = 1;
 
@@ -1134,17 +1138,17 @@ function simpleOrder(){
             $identifiers = $output->request->answer->id;
 
             // Check Request
-            $data['id'] = $identifiers;
+            $data_result['id'] = $identifiers;
             $path = '/api/dealer/get_request_result';
-            $mt5api->post($path, $data);
+            $mt5api->post($path, $data_result);
             $e = $mt5api->Error;
             $output->result = $mt5api->Response;
 
 
             // Check Request
-            $data['login'] = $_REQUEST['login'];
+            $data_total['login'] = $_REQUEST['login'];
             $path = '/api/order/get_total';
-            $mt5api->get($path, $data);
+            $mt5api->get($path, $data_total);
             $e = $mt5api->Error;
             $output->orders = $mt5api->Response;
 

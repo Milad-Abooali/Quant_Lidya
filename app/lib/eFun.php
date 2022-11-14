@@ -91,6 +91,40 @@ class eFun{
     }
 
     /**
+     * Get Symbol By Group
+     */
+    public static function getSymbolByGroup($symbol, $group)
+    {
+        $mt5api = new mt5API();
+        $api_symbol['symbol'] = $symbol;
+        $api_symbol['group'] = $group;
+        $mt5api->get('/api/symbol/get_group', $api_symbol);
+        $e = $mt5api->Error;
+        return $mt5api->Response->answer;
+    }
+
+    /**
+     * Get Symbol By Login
+     */
+    public static function getSymbolByLogin($symbol, $login)
+    {
+        $group = self::getLoginGroup($login);
+        return self::getSymbolByGroup($symbol, $group['name']);
+    }
+
+    /**
+     * Get Price
+     */
+    public static function getPrice($symbol)
+    {
+        $mt5api = new mt5API();
+        $api_symbol['symbol'] = $symbol;
+        $mt5api->get('/api/tick/last', $api_symbol);
+        $e = $mt5api->Error;
+        return $mt5api->Response->answer;
+    }
+
+    /**
      * Get Login Group (Day & Time)
      * @return array
      */
@@ -111,7 +145,7 @@ class eFun{
      * Is Trade Open by Group(Day & Time)
      * @return bool
      */
-    public static function isTradeOpenGroup($symbol, $group)
+    public static function isTradeOpenByGroup($symbol, $group)
     {
         $mt5api = new mt5API();
         $api_symbol['symbol'] = $symbol;
@@ -137,12 +171,11 @@ class eFun{
      * Is Trade Open by Login (Day & Time)
      * @return bool|array
      */
-    public static function isTradeOpenLogin($symbol, $login)
+    public static function isTradeOpenByLogin($symbol, $login)
     {
         $group = self::getLoginGroup($login);
-        if($group['name']) return self::isTradeOpenGroup($symbol, $group['name']);
+        if($group['name']) return self::isTradeOpenByGroup($symbol, $group['name']);
         return $login;
     }
-
 
 }

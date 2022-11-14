@@ -1,5 +1,6 @@
 <?php
     global $db;
+GF::p($params);
 
     $mt5api = new mt5API();
     $api_params['symbol'] = $params['symbol'];
