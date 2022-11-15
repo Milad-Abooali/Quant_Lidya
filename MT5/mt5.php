@@ -16,12 +16,15 @@ class CMT5Request
             return(false);
         //---
         curl_setopt($this->m_curl,CURLOPT_SSL_VERIFYPEER,0); // comment out this line if you use self-signed certificates
-        curl_setopt($this->m_curl,CURLOPT_MAXCONNECTS,1); // one connection is used
+        curl_setopt($this->m_curl,CURLOPT_MAXCONNECTS,64); // one connection is used
         curl_setopt($this->m_curl, CURLOPT_HTTPHEADER,array(
             'Connection: Keep-Alive',
+            'Keep-Alive: timeout=5, max=60',
             'Pragma: no-cache',
             'Cache-Control: no-cache, no-store, must-revalidate'
             ));
+        //curl_setopt($this->m_curl,CURLOPT_FORBID_REUSE,1); // force the connection to explicitly close
+
         //---
         $this->m_server=$server;
         //---

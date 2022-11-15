@@ -1,5 +1,7 @@
 <?php
 
+    set_time_limit(30);
+
      require_once 'mt5.php';
      require_once 'mt5API.php';
 

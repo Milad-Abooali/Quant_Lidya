@@ -19,10 +19,16 @@ class CMT5Request
       return(false);
     //---
     curl_setopt($this->m_curl, CURLOPT_SSL_VERIFYPEER,FALSE);                        // comment out this line if you use self-signed certificates
-    curl_setopt($this->m_curl, CURLOPT_MAXCONNECTS,1);                               // one connection is used
-    curl_setopt($this->m_curl, CURLOPT_HTTPHEADER,array('Connection: Keep-Alive'));
+    curl_setopt($this->m_curl, CURLOPT_MAXCONNECTS,64);                               // one connection is used
+    curl_setopt($this->m_curl, CURLOPT_HTTPHEADER,array(
+        'Connection: Keep-Alive',
+        'Keep-Alive: timeout=5, max=60',
+        'Pragma: no-cache',
+        'Cache-Control: no-cache, no-store, must-revalidate'
+    ));
     curl_setopt($this->m_curl, CURLOPT_SSL_VERIFYHOST, FALSE);
     curl_setopt($this->m_curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+
     //---
     $this->m_server=$server;
     //---
@@ -146,50 +152,22 @@ class CMT5Request
 //+----------------------------------------------------------------+
 //| run                                                            |
 //+----------------------------------------------------------------+
-$request = new CMT5Request();
-//---
-if($request->Init('78.159.97.194:443') && $request->Auth(1000,"@Sra7689227",2222,"WebManager"))
-{echo 1;}
 
-if($request->Init('192.95.32.12:443') && $request->Auth(1000,"@Sra7689227",2222,"WebManager"))
-{echo 2;}
-/*
-if($request->Init('192.95.32.12:443') && $request->Auth(1000,"@Sra7689227",2222,"WebManager"))
-{echo 3;}
-if($request->Init('192.95.32.12:443') && $request->Auth(1000,"@Sra7689227",2222,"WebManager"))
-{echo 4;}
-if($request->Init('192.95.32.12:443') && $request->Auth(1000,"@Sra7689227",2222,"WebManager"))
-{echo 5;}
-if($request->Init('192.95.32.12:443') && $request->Auth(1000,"@Sra7689227",2222,"WebManager"))
-{echo 6;}
-if($request->Init('192.95.32.12:443') && $request->Auth(1000,"@Sra7689227",2222,"WebManager"))
-{echo 7;}
-if($request->Init('192.95.32.12:443') && $request->Auth(1000,"@Sra7689227",2222,"WebManager"))
-{echo 8;}
-if($request->Init('192.95.32.12:443') && $request->Auth(1000,"@Sra7689227",2222,"WebManager"))
-{echo 9;}
-if($request->Init('192.95.32.12:443') && $request->Auth(1000,"@Sra7689227",2222,"WebManager"))
-{echo 10;}
-if($request->Init('192.95.32.12:443') && $request->Auth(1000,"@Sra7689227",2222,"WebManager"))
-{echo 11;}
-if($request->Init('192.95.32.12:443') && $request->Auth(1000,"@Sra7689227",2222,"WebManager"))
-{echo 12;}
-if($request->Init('192.95.32.12:443') && $request->Auth(1000,"@Sra7689227",2222,"WebManager"))
-{echo 13;}
-if($request->Init('192.95.32.12:443') && $request->Auth(1000,"@Sra7689227",2222,"WebManager"))
-{echo 14;}
-if($request->Init('192.95.32.12:443') && $request->Auth(1000,"@Sra7689227",2222,"WebManager"))
-{echo 15;}
-if($request->Init('192.95.32.12:443') && $request->Auth(1000,"@Sra7689227",2222,"WebManager"))
-{echo 16;}
-if($request->Init('192.95.32.12:443') && $request->Auth(1000,"@Sra7689227",2222,"WebManager"))
-{echo 17;}
-if($request->Init('192.95.32.12:443') && $request->Auth(1000,"@Sra7689227",2222,"WebManager"))
-{echo 18;}
-if($request->Init('192.95.32.12:443') && $request->Auth(1000,"@Sra7689227",2222,"WebManager"))
-{echo 19;}
-if($request->Init('192.95.32.12:443') && $request->Auth(1000,"@Sra7689227",2222,"WebManager"))
-{echo 20;}
-*/
- $request->Shutdown();
+set_time_limit(60);
+
+$request = new CMT5Request();
+$ok=$error=0;
+for($i=0;$i<20;$i++) {
+  if($request->Init("mt5.tradeclan.co.uk:443") && $request->Auth(1000,"@Sra7689227",3500,"WebManager")) {
+    $ok++;
+  } else {
+    echo $i.'<br>';
+    $error++;
+  }
+}
+
+echo "<hr> Success: $ok <hr> Error: $error";
+
+$request->Shutdown();
+
 ?>
