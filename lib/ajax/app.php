@@ -14,6 +14,26 @@ function noF() {
     echo json_encode($output);
 }
 
+// Check Session
+function checkSession() {
+    $output = new stdClass();
+    $output->e = false;
+    if( !isset($_REQUEST['sess']) ) $output->e = 'sess expected';
+    if( strlen($_REQUEST['id'])<16 ) $output->e = 'id is short';
+    if(!$output->e) {
+        if($_REQUEST['sess'] === session_id()) {
+            if($_REQUEST['id']=== $_SESSION['id'] || $_REQUEST['id']===0){
+                $output->res=true;
+            } else {
+                $output->e = 'Your session needs to sync with the server!!';
+            }
+        } else {
+            $output->e = 'Your session needs to update!';
+        }
+    }
+    echo json_encode($output);
+}
+
 // Get Session
 function getSession() {
     $output = new stdClass();

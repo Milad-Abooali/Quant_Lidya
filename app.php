@@ -37,12 +37,12 @@ global $db;
         APP.socket = 'wss://<?= Broker['crm_url'] ?>:3500/';
         APP.screen = 'home';
         APP.client = {
-            id       : "<?= $_SESSION['id'] ?? 0 ?>",
+            id       : <?= $_SESSION['id'] ?? 0 ?>,
             sess     : '<?= session_id() ?>',
             token    : '<?= TOKEN ?>'
         };
         <?php if($_SESSION['app']['avatar']) { ?>
-        APP.client.avatar = "<?= $_SESSION['app']['avatar'] ?>";
+        APP.client.avatar = '<?= $_SESSION['app']['avatar'] ?>';
         <?php } ?>
     </script>
     <script src="assets/js/jquery.min.js"></script>
