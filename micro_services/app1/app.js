@@ -21,10 +21,11 @@ if (cluster.isMaster) {
 			}
 			try {
 				fs.writeFileSync(`./logs/${process.pid}_E.json`, JSON.stringify(wcs));
+				fs.writeFileSync(`./logs/last_E.json`, JSON.stringify(wcs));
 			} catch(err) {
 				console.error(err);
 			}
-			if(config.isDevEnv)
+			if(!config.isDevEnv)
 				cluster.fork();
 		}, timeOut*1000);
 	});
@@ -207,8 +208,14 @@ if (cluster.isWorker) { // Worker
 		socket.broadcast.emit('eMonitor', monitorData);
 		console.clear();
 		console.log("= = = = = Monitor Status = = = = =\n", monitorData);
+		fs.writeFileSync(`./logs/monitorData.json`, JSON.stringify(monitorData));
+
 		console.log("= = = = = Online Sockets = = = = =\n", onlineSocketList);
+		fs.writeFileSync(`./logs/onlineSocketList.json`, JSON.stringify(onlineSocketList));
+
 		//console.log("= = = = = Online Sessions = = = = =\n", onlineSessionList);
+		fs.writeFileSync(`./logs/onlineSocketList.json`, JSON.stringify(onlineSessionList));
+
 		vConsole.print();
 	}
 

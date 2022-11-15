@@ -129,19 +129,21 @@ $("body").on("change","form#trade-view-login .table-hide-column", function() {
 // Close Position
 $("body").on("click",".doA-close-position", function(e) {
     e.preventDefault();
-
     const data = {
         login: $(this).data('tp'),
         position:  $(this).data('position')
     }
-    appAlert('info','<i class="fas fa-spinner fa-spin"></i> In Progress', 'Closing the positions: '+data.position);
-
-    socket.emit("closePosition", data, (response) => {
-        //console.log(response);
-        if(response.e)
-            appAlert('danger','<i class="fas fa-exclamation-triangle"></i> Error', response.e);
-        else{
-            appAlert('success','<i class="fas fa-exclamation-triangle"></i> Done', 'Position "'+data.position+'" is closed, your profit is: <strong>'+response.position.answer[0].Profit+'</strong>');
-        }
-    });
+    if (confirm(`Are you sure you want to close position ${data.position}?`)) {
+        appAlert('info','<i class="fas fa-spinner fa-spin"></i> In Progress', 'Closing the positions: '+data.position);
+        socket.emit("closePosition", data, (response) => {
+            //console.log(response);
+            if(response.e)
+                appAlert('danger','<i class="fas fa-exclamation-triangle"></i> Error', response.e);
+            else{
+                appAlert('success','<i class="fas fa-exclamation-triangle"></i> Done', 'Position "'+data.position+'" is closed, your profit is: <strong>'+response.position.answer[0].Profit+'</strong>');
+            }
+        });
+    } else {
+        return;
+    }
 });

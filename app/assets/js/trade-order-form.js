@@ -1,6 +1,5 @@
 console.log('Order js loaded');
 
-
 /* Buy - Keeper */
 $("body").on("DOMSubtreeModified","#trade-order-form .Ask", function() {
     let takeProfit = $(`.tradeOrderForm .take-profit[data-otype='buy']`);
@@ -63,24 +62,32 @@ $("body").on("click",".row-symbol .doA-trade", function(e) {
     const symbol = $(this).data('symbol');
     const takeProfit = $(`.tradeOrderForm #take-profit`).val();
     const stopLoss = $(`.tradeOrderForm #stop-loss`).val();
-    const data = {
-        login: selectedLogin,
-        symbol: symbol,
-        type:$(this).data('type'),
-        volume: $(`.tradeOrderForm #volume`).val(),
-        takeProfit: (enableTP) ? parseFloat(takeProfit).toFixed(5) : 0,
-        stopLoss:(enableSL) ? parseFloat(stopLoss).toFixed(5) : 0
-    }
-    console.log(data);
-    appAlert('info','<i class="fas fa-spinner fa-spin"></i> In Progress', 'Opening the positions.');
+    const volume = $(`.tradeOrderForm #volume`).val();
+    const type = $(this).data('type');
 
-    socket.emit("simpleOrder", data, (response) => {
-        console.log(response);
-        if (response.e){
-            appAlert('danger', '<i class="fas fa-exclamation-triangle"></i> Error', response.e);
+    const sType = (type)?'Buy':'Sell';
+    if (confirm(`Are you sure you want to ${sType} ${symbol} (size: ${volume})?`)) {
+        const data = {
+            login: selectedLogin,
+            symbol: symbol,
+            type: type,
+            volume: volume,
+            takeProfit: (enableTP) ? parseFloat(takeProfit).toFixed(5) : 0,
+            stopLoss:(enableSL) ? parseFloat(stopLoss).toFixed(5) : 0
         }
-        else{
-            appAlert('success','<i class="fas fa-exclamation-triangle"></i> Done', 'Position is opened - <strong>'+symbol+'</strong>');
-        }
-    });
+        console.log(data);
+        appAlert('info','<i class="fas fa-spinner fa-spin"></i> In Progress', 'Opening the positions.');
+
+        socket.emit("simpleOrder", data, (response) => {
+            console.log(response);
+            if (response.e){
+                appAlert('danger', '<i class="fas fa-exclamation-triangle"></i> Error', response.e);
+            }
+            else{
+                appAlert('success','<i class="fas fa-exclamation-triangle"></i> Done', 'Position is opened - <strong>'+symbol+'</strong>');
+            }
+        });
+    } else {
+        return;
+    }
 });

@@ -19,21 +19,21 @@
                 <td data-lable="symbol" colspan="2"> <?= $params['symbol'] ?></td>
             </tr>
             <tr class="item-row">
-                <td> Stop Loss <sup>(Beta)</sup></td>
+                <td> Stop Loss <sup class="text-warning">( Coming Soon )</sup></td>
                 <td data-lable="lots">
                     <input id="stop-loss" data-otype="<?= ($params['type']==1) ? 'sell' : 'buy' ?>" type="number" class="stop-loss w-100 text-center " name="sl" placeholder="<?= ($params['type']) ? $symbol->Bid : $symbol->Ask  ?>" step="<?= substr_replace($symbol->Last ,"1",-1) ?>" disabled>
                 </td>
                 <td>
-                    <div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="enable-stop-loss"><label class="form-check-label" for="enable-stop-loss"> </label></div>
+                    <div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="enable-stop-loss"disabled><label class="form-check-label" for="enable-stop-loss"> </label></div>
                 </td>
             </tr>
             <tr class="item-row">
-                <td> Take Profit <sup>(Beta)</sup></td>
+                <td> Take Profit <sup class="text-warning">( Coming Soon )</sup></td>
                 <td data-lable="lots">
                     <input id="take-profit" data-otype="<?= ($params['type']==1) ? 'sell' : 'buy' ?>"  type="number" class="take-profit w-100 text-center" name="tp" placeholder="<?= ($params['type']) ? $symbol->Ask : $symbol->Bid  ?>" step="<?= substr_replace($symbol->Last ,"1",-1) ?>" disabled>
                 </td>
                 <td>
-                    <div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="enable-take-profit"><label class="form-check-label" for="enable-take-profit"> </label></div>
+                    <div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="enable-take-profit"disabled><label class="form-check-label" for="enable-take-profit"> </label></div>
                 </td>
             </tr>
             <?php if($params['type'] ==1) { ?>
@@ -52,7 +52,7 @@
                         <div class="col-12 text-center">
                             <div class="btn-group d-flex" role="group" aria-label="Basic example">
                                 <button title="Sell" data-symbol="<?= $symbol->Symbol ?>"  data-type="1" class="doA-trade px-5 btn-sm btn btn-danger">Sell</button>
-                                <input id="volume" type="number" class="volumeinput text-center" step="0.01" name="lot" value="0.01">
+                                <input id="volume" type="number" class="volumeinput text-center" step="0.01" name="lot">
                             </div>
                         </div>
                     </div>
@@ -74,7 +74,7 @@
                             </div>
                             <div class="col-12 text-center">
                                 <div class="btn-group d-flex" role="group" aria-label="Basic example">
-                                    <input id="volume" type="number" class="volumeinput text-center" step="0.01" name="lot" value="0.01">
+                                    <input id="volume" type="number" class="volumeinput text-center" step="0.01" name="lot">
                                     <button title="Buy" data-symbol="<?= $symbol->Symbol ?>" data-type="0" class="doA-trade px-5 btn btn-sm btn-success">Buy</button>
                                 </div>
                             </div>
@@ -93,7 +93,7 @@
 <script>
 
     var orderLot = $('.row-symbol[data-symbol="<?= $params['symbol'] ?>"] #volume').val();
-    $('#trade_order_form #volume').val(orderLot);
+    $('#orderForm #volume').val(orderLot);
 
     try{
         <?= str_replace('-','_', $form_name) ?>;

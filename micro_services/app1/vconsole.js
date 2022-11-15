@@ -12,6 +12,7 @@ module.exports.print = function(text) {
 
 		try {
 			fs.writeFileSync(`./logs/${process.pid}_P.json`, JSON.stringify(virtualConsole));
+			fs.writeFileSync(`./logs/live_P.json`, JSON.stringify(virtualConsole));
 		} catch (err) {
 			console.error(err);
 		}
