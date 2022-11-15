@@ -308,3 +308,51 @@ function numChangeColor(new_number, old_number){
     if (new_number < old_number)
         return `<span class="text-danger flush-red">${new_number} <i class="text-white bg-danger fa fa-arrow-down"></i></span>`;
 }
+
+/* Ajax Call- Core*/
+let AjaxLock;
+function ajaxCall (callClass, callFunction, data=null, callback) {
+    if (AjaxLock == callClass+callFunction) return;
+    AjaxLock = callClass+callFunction;
+    $.ajax({
+        type: "POST",
+        url: `lib/ajax.php?c=${callClass}&f=${callFunction}&t=${APP.client.token}`,
+        data: data,
+        cache: false,
+        global: true,
+        async: true,
+        success: callback,
+        error: function(request, status, error) {
+            console.log(error);
+        }
+    });
+    $( document ).ajaxComplete(function( event, xhr, settings ) {
+        setTimeout(function() {
+            AjaxLock = null;
+        }, 50);
+    });
+}
+
+/* Async Ajax Call- Core*/
+let AAjaxLock;
+async function asyncAjaxCall (callClass, callFunction, data=null, callback) {
+    if (AAjaxLock == callClass+callFunction) return;
+    AAjaxLock = callClass+callFunction;
+    $.ajax({
+        type: "POST",
+        url: `lib/ajax.php?c=${callClass}&f=${callFunction}&t=${APP.client.token}`,
+        data: data,
+        cache: false,
+        global: true,
+        async: true,
+        success: callback,
+        error: function(request, status, error) {
+            console.log(error);
+        }
+    });
+    $( document ).ajaxComplete(function( event, xhr, settings ) {
+        setTimeout(function() {
+            AAjaxLock = null;
+        }, 50);
+    });
+}

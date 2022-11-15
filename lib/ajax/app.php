@@ -19,10 +19,10 @@ function checkSession() {
     $output = new stdClass();
     $output->e = false;
     if( !isset($_REQUEST['sess']) ) $output->e = 'sess expected';
-    if( strlen($_REQUEST['id'])<16 ) $output->e = 'id is short';
+    if( !isset($_REQUEST['id']) ) $output->e = 'id expected';
     if(!$output->e) {
         if($_REQUEST['sess'] === session_id()) {
-            if($_REQUEST['id']=== $_SESSION['id'] || $_REQUEST['id']===0){
+            if($_REQUEST['id'] === $_SESSION['id'] || $_REQUEST['id']==0){
                 $output->res=true;
             } else {
                 $output->e = 'Your session needs to sync with the server!!';

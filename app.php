@@ -139,5 +139,17 @@ global $db;
 <script src="app/assets/js/main.js" defer></script>
 <script src="app/assets/js/ruby.js" defer></script>
 <script src="app/assets/js/datatables.min.js" defer></script>
-
+<script>
+    const heartbeat = setInterval(function(){
+        ajaxCall('app', 'checkSession', APP.client, function(response) {
+            let resObj = JSON.parse(response);
+            if (resObj.e) {
+                appAlert('danger','<i class="fas fa-exclamation-triangle"></i> Error', resObj.e);
+                setTimeout(function() {
+                    location.reload();
+                }, 1950);
+            }
+        });
+    }, 5500);
+</script>
 </body></html>
