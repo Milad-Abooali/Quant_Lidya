@@ -11,7 +11,7 @@ const fs = require('fs');
 if (cluster.isMaster) {
 	cluster.fork();
 	cluster.on('exit', function(worker, code, signal) {
-		const timeOut = (config.isDevEnv) ? 15 : 1
+		const timeOut = (config.isDevEnv) ? 5 : 1
 		setTimeout(function(){
 			console.log('cluster Error...');
 			const wcs = {
@@ -25,8 +25,7 @@ if (cluster.isMaster) {
 			} catch(err) {
 				console.error(err);
 			}
-			if(!config.isDevEnv)
-				cluster.fork();
+			cluster.fork();
 		}, timeOut*1000);
 	});
 }
@@ -691,6 +690,31 @@ if (cluster.isWorker) { // Worker
 			} finally {
 				data.sessionId = onlineSocketList[socket.id].sessionId;
 				ajax.call(data.token, 'app', 'getLoginPositions', cookieString, data).then(call => {
+					if(call.status == 200) {
+						try {
+							const ajaxRes = JSON.parse(call.resData);
+							callback(ajaxRes);
+						} catch (e) {
+							vConsole.add(call.resData);
+						}
+					} else {
+						vConsole.add(call.res);
+					}
+					setTimeout(()=>watchdogApp(socket) , 5);
+				});
+			}
+
+		});
+		// Meta - Get Login History
+		socket.on('getLoginHistory', (data, callback) => {
+			vConsole.add('Get TP History | '+ socket.id);
+			try {
+				onlineSocketList[socket.id].sessionId;
+			} catch (e) {
+				eLogin(socket, data.client);
+			} finally {
+				data.sessionId = onlineSocketList[socket.id].sessionId;
+				ajax.call(data.token, 'app', 'getLoginHistory', cookieString, data).then(call => {
 					if(call.status == 200) {
 						try {
 							const ajaxRes = JSON.parse(call.resData);

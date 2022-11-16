@@ -953,6 +953,69 @@ function getLoginPositions(){
     echo json_encode($output);
 }
 
+// Meta - Get Login History
+function getLoginHistory(){
+    $output = new stdClass();
+    $output->e = false;
+    if( !isset($_REQUEST['login']) ) $output->e = 'login is expected';
+    if( !isset($_REQUEST['from']) ) $output->e = 'Start date is expected';
+    if( !isset($_REQUEST['to']) ) $output->e = 'end date is expected';
+    if(!$output->e){
+        eFun::sessionJump($_REQUEST['sessionId']);
+
+        $mt5api = new mt5API();
+
+        $api_params['login']  = $_REQUEST['login'];
+        $mt5api->get('/api/deal/get_total', $api_params);
+        $total  = array(
+            'e'      => $mt5api->Error,
+            'api'    => $mt5api->Response,
+        );
+        $api = $mt5api->Response;
+        if($api->retcode==="0 Done"){
+            $output->total = $total['api']->answer->total;
+        }
+        else {
+            $output->e = $total['e'];
+        }
+        if(is_numeric($output->total) ?? false){
+            $output->data = array();
+            $api_params['login']  = $_REQUEST['login'];
+            $api_params['from']  = $_REQUEST['from'];
+            $api_params['to']  = $_REQUEST['to'];
+            $mt5api->get('/api/deal/get_batch', $api_params);
+            $e = $mt5api->Error;
+            $api = $mt5api->Response;
+            $output->api = $api;
+            if($api->retcode==="0 Done"){
+                for ($i = 0; $i < $output->total; $i++){
+                    $output->data[] = array(
+                        'Position'      =>    $api->answer[$i]->Position,
+                        'Symbol'        =>    $api->answer[$i]->Symbol,
+                        'Action'        =>    ($api->answer[$i]->Action ==0) ? 'Buy' : 'Sell',
+                        'TimeCreate'    =>    date('Y-m-d H:i:s', strtotime("@".$api->answer[$i]->TimeCreate." -2 hours")),
+                        'Volume'        =>    $api->answer[$i]->Volume,
+                        'PriceOpen'     =>    $api->answer[$i]->PriceOpen,
+                        'PriceSL'       =>    $api->answer[$i]->PriceSL,
+                        'PriceTP'       =>    $api->answer[$i]->PriceTP,
+                        'PriceCurrent'  =>    $api->answer[$i]->PriceCurrent,
+                        'Storage'       =>    $api->answer[$i]->Storage,
+                        'Profit'        =>    $api->answer[$i]->Profit
+                    );
+                }
+            }
+            else {
+                $output->e = $e;
+            }
+
+
+        }
+
+        eFun::sessionJumpBack();
+    }
+    echo json_encode($output);
+}
+
 // Meta - Get Login Statistics
 function getLoginStatistics(){
     $output = new stdClass();

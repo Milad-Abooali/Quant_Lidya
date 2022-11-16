@@ -47,6 +47,7 @@
             </div>
             <div class="col text-center">
                 <button data-form-params='{"login":"<?= $login ?>"}' data-login="<?= $login ?>" data-form-name="trade_view_login" title="<?= $login ?> Detail" class="doM-form btn btn-primary"><i class="fa fa-info-circle"></i> Detail</button>
+                <button data-form-params='{"login":"<?= $login ?>"}' data-login="<?= $login ?>" data-form-name="trade_view_history" title="<?= $login ?> History" class="doM-form ms-2 btn btn-secondary"><i class="fa fa-history"></i> History</button>
             </div>
             <div class="col text-end">
                 <button data-screen="trade" class="show-screen btn btn-outline-warning">Back</button>

@@ -23,7 +23,6 @@ function intervalLoginPositions(oneTime=false){
         updatePositions();
         if(oneTime)
             stopInterval(intervalModalTemp.loginPositions);
-        //console.log('Interval Res',intervalResLoginPositions);
     }, 2000);
 }
 
@@ -71,38 +70,6 @@ function updatePositions() {
             intervalResLoginPositions.Positions = response.data.length;
             dtPosition.clear();
             dtPosition.rows.add(response.data).draw();
-
-            /*
-            if($.fn.dataTable.isDataTable("table#loginPositions")) {
-                dtPosition.clear().draw();
-                dtPosition.destroy();
-            }
-            dtPosition = $('table#loginPositions').DataTable({
-                stateSave: true,
-                serverSide: false,
-                deferRender: true,
-                retrieve: true,
-                paging: false,
-                searching: false,
-                responsive: false,
-                columnDefs: hiddenColumn,
-                data: response.data,
-                columns: [
-                    { data: 'Close' },
-                    { data: 'Position' },
-                    { data: 'Symbol' },
-                    { data: 'Action' },
-                    { data: 'TimeCreate' },
-                    { data: 'Volume' },
-                    { data: 'PriceOpen' },
-                    { data: 'PriceSL' },
-                    { data: 'PriceTP' },
-                    { data: 'PriceCurrent' },
-                    { data: 'Storage' },
-                    { data: 'Profit' }
-                ]
-            });
-            */
             $("form#trade-view-login #update-time").text(rDT().dateTime);
         }
         intervalResLoginPositions.updatePositionsRun = false;
