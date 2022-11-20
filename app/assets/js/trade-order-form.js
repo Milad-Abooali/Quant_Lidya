@@ -4,6 +4,7 @@ console.log('Order js loaded');
 $("body").on("DOMSubtreeModified","#trade-order-form .Ask", function() {
     let takeProfit = $(`.tradeOrderForm .take-profit[data-otype='buy']`);
     let stopLoss = $(`.tradeOrderForm .stop-loss[data-otype='buy']`);
+
     let askprice = parseFloat( $(this).text() ) || 0;
     if(askprice>0) {
         if( askprice>takeProfit.val() || takeProfit.val()=='') {
@@ -11,10 +12,12 @@ $("body").on("DOMSubtreeModified","#trade-order-form .Ask", function() {
             takeProfit[0].stepUp(1);
         }
         takeProfit.attr('min', askprice);
-
         stopLoss.attr('min', 0);
         stopLoss.attr('max', askprice);
-
+        if( askprice>stopLoss.val() || stopLoss.val()=='') {
+            stopLoss.val(askprice);
+            stopLoss[0].stepDown(1);
+        }
     }
 });
 
@@ -31,6 +34,10 @@ $("body").on("DOMSubtreeModified","#trade-order-form .Bid", function() {
         takeProfit.attr('min', 0);
         takeProfit.attr('max', bidPrice);
         stopLoss.attr('min', bidPrice);
+        if( bidPrice>stopLoss.val() || stopLoss.val()=='') {
+            stopLoss.val(bidPrice);
+            stopLoss[0].stepDown(1);
+        }
     }
 });
 
