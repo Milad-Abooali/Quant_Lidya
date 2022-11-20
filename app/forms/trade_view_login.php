@@ -30,6 +30,14 @@
         </div>
     </div>
     <br>
+
+    <div class="row text-secondary">
+        <div class="col text-start">
+            <button data-form-params='{"login":"<?= $params['login'] ?>"}' data-login="<?= $params['login'] ?>" data-form-name="trade_view_history" title="<?= $params['login'] ?> History" class="doM-form ms-2 btn btn-secondary"><i class="fa fa-history"></i> History </button>
+        </div>
+    </div>
+
+
     <h3 class="text-secondary">Statistics</h3>
     <table id="loginStatistics" class="table table-sm table-dark">
         <tbody>

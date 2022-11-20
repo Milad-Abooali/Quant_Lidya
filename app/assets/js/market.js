@@ -8,7 +8,7 @@ function intervalMarketPrices(oneTime=false){
         if(oneTime)
             stopInterval(intervalScreenTemp.marketPrices);
         //console.log('Interval Res', intervalResMarketPrices);
-    }, 2500);
+    }, 900);
 }
 
 const prices = {};

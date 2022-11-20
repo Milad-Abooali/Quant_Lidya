@@ -15,11 +15,11 @@
     <div class="row text-secondary">
         <div class="col text-start">
             <label for="start-date">Start</label>
-            <input id="start-date" class="form-control" type="date" />
+            <input id="start-date" class="form-control" type="date" value='<?php echo date('Y-m-d',strtotime("-1 days"));?>' />
         </div>
         <div class="col text-end">
             <label for="end-date">End</label>
-            <input id="end-date" class="form-control" type="date" />
+            <input id="end-date" class="form-control" type="date" value='<?php echo date('Y-m-d',strtotime("+1 days"));?>' />
         </div>
     </div>
     <br>
@@ -27,16 +27,16 @@
 
 
     <h3 class="text-secondary">History</h3>
-    <div class="wrapper-dt">
+    <div class=" ">
         <table id="loginHistory" class="display table-sm" style="width:100%">
             <thead>
             <tr>
-                <th>Position</th>
+                <th>Deal</th>
                 <th>Symbol</th>
                 <th>Action</th>
-                <th>TimeCreate</th>
+                <th>Time</th>
                 <th>Volume</th>
-                <th>PriceOpen</th>
+                <th>Price</th>
                 <th>PriceSL</th>
                 <th>PriceTP</th>
                 <th>PriceCurrent</th>
@@ -58,18 +58,19 @@
         serverSide: false,
         deferRender: true,
         retrieve: true,
-        paging: false,
+        paging: true,
+        pageLength: 10,
         searching: false,
         responsive: false,
         columnDefs: [],
         data: [],
         columns: [
-            { data: 'Position' },
+            { data: 'Deal' },
             { data: 'Symbol' },
             { data: 'Action' },
-            { data: 'TimeCreate' },
+            { data: 'Time' },
             { data: 'Volume' },
-            { data: 'PriceOpen' },
+            { data: 'Price' },
             { data: 'PriceSL' },
             { data: 'PriceTP' },
             { data: 'PriceCurrent' },
@@ -91,7 +92,8 @@
             });
         }
     }
-    selectedLogin = $('form#trade-view-history').data('login');
-    intervalLoginHistory();
+    let startDate=$('form#trade-view-history #start-date').val();
+    let endDate=$('form#trade-view-history #end-date').val();
     updateHistory();
+    selectedLogin = $('form#trade-view-history').data('login');
 </script>

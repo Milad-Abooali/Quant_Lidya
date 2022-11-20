@@ -23,7 +23,7 @@ function intervalLoginPositions(oneTime=false){
         updatePositions();
         if(oneTime)
             stopInterval(intervalModalTemp.loginPositions);
-    }, 2000);
+    }, 500);
 }
 
 function updateStatistics() {

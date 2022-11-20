@@ -965,7 +965,12 @@ function getLoginHistory(){
 
         $mt5api = new mt5API();
 
+        $startDate = strtotime($_REQUEST['from']);
+        $endDate = strtotime($_REQUEST['to']);
+
         $api_params['login']  = $_REQUEST['login'];
+        $api_params['from']  = $startDate;
+        $api_params['to']  = $endDate;
         $mt5api->get('/api/deal/get_total', $api_params);
         $total  = array(
             'e'      => $mt5api->Error,
@@ -980,22 +985,21 @@ function getLoginHistory(){
         }
         if(is_numeric($output->total) ?? false){
             $output->data = array();
-            $api_params['login']  = $_REQUEST['login'];
-            $api_params['from']  = $_REQUEST['from'];
-            $api_params['to']  = $_REQUEST['to'];
             $mt5api->get('/api/deal/get_batch', $api_params);
             $e = $mt5api->Error;
             $api = $mt5api->Response;
-            $output->api = $api;
+            $output->api = $api_params;
             if($api->retcode==="0 Done"){
+                $output->test[] = $api;
+
                 for ($i = 0; $i < $output->total; $i++){
                     $output->data[] = array(
-                        'Position'      =>    $api->answer[$i]->Position,
+                        'Deal'      =>    $api->answer[$i]->Deal,
                         'Symbol'        =>    $api->answer[$i]->Symbol,
                         'Action'        =>    ($api->answer[$i]->Action ==0) ? 'Buy' : 'Sell',
-                        'TimeCreate'    =>    date('Y-m-d H:i:s', strtotime("@".$api->answer[$i]->TimeCreate." -2 hours")),
+                        'Time'    =>    date('Y-m-d H:i:s', strtotime("@".$api->answer[$i]->Time." -2 hours")),
                         'Volume'        =>    $api->answer[$i]->Volume,
-                        'PriceOpen'     =>    $api->answer[$i]->PriceOpen,
+                        'Price'         =>    $api->answer[$i]->Price,
                         'PriceSL'       =>    $api->answer[$i]->PriceSL,
                         'PriceTP'       =>    $api->answer[$i]->PriceTP,
                         'PriceCurrent'  =>    $api->answer[$i]->PriceCurrent,
@@ -1205,11 +1209,12 @@ function simpleOrder(){
         $request_open['Symbol']        = $_REQUEST['symbol'];
         $request_open['Volume']        = $_REQUEST['volume']*10000;
         if($_REQUEST['takeProfit'] != 0)
-            $request_open['PriceTP']       = "2.56735";
+            $request_open['PriceTP']       = $_REQUEST['takeProfit'];
         if($_REQUEST['stopLoss'] != 0)
             $request_open['PriceSL']   = $_REQUEST['stopLoss'];
         $request_open['Type']          = $_REQUEST['type'];
-        $request_open['TypeFill  ']    = 1;
+        $request_open['TypeFill'] = 1;
+        $request_open['Digits'] = 5;
 
         $output->request_body = $request_open;
 

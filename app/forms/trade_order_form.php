@@ -19,21 +19,21 @@
                 <td data-lable="symbol" colspan="2"> <?= $params['symbol'] ?></td>
             </tr>
             <tr class="item-row">
-                <td> Stop Loss <sup class="text-warning">( Coming Soon )</sup></td>
+                <td> Stop Loss <sup class="text-warning">( Beta )</sup></td>
                 <td data-lable="lots">
                     <input id="stop-loss" data-otype="<?= ($params['type']==1) ? 'sell' : 'buy' ?>" type="number" class="stop-loss w-100 text-center " name="sl" placeholder="<?= ($params['type']) ? $symbol->Bid : $symbol->Ask  ?>" step="<?= substr_replace($symbol->Last ,"1",-1) ?>" disabled>
                 </td>
                 <td>
-                    <div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="enable-stop-loss"disabled><label class="form-check-label" for="enable-stop-loss"> </label></div>
+                    <div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="enable-stop-loss"><label class="form-check-label" for="enable-stop-loss"> </label></div>
                 </td>
             </tr>
             <tr class="item-row">
-                <td> Take Profit <sup class="text-warning">( Coming Soon )</sup></td>
+                <td> Take Profit <sup class="text-warning">( Beta )</sup></td>
                 <td data-lable="lots">
                     <input id="take-profit" data-otype="<?= ($params['type']==1) ? 'sell' : 'buy' ?>"  type="number" class="take-profit w-100 text-center" name="tp" placeholder="<?= ($params['type']) ? $symbol->Ask : $symbol->Bid  ?>" step="<?= substr_replace($symbol->Last ,"1",-1) ?>" disabled>
                 </td>
                 <td>
-                    <div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="enable-take-profit"disabled><label class="form-check-label" for="enable-take-profit"> </label></div>
+                    <div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="enable-take-profit"><label class="form-check-label" for="enable-take-profit"> </label></div>
                 </td>
             </tr>
             <?php if($params['type'] ==1) { ?>

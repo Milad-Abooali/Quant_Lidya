@@ -102,6 +102,8 @@ function showScreen(screen, params= {}){
             appAlert('danger', '<i class="fas fa-exclamation-triangle"></i> Error', response.e)
         }
         else{
+            stopIntervalModalTempAll();
+            stopIntervalScreenTempAll();
             $("#alertToast").toast("hide");
             $('#screen-wrapper>.row').html(response.res);
             $('#screen-wrapper .screen#'+screen).removeClass('d-hide').addClass('active');
@@ -113,6 +115,8 @@ function showScreen(screen, params= {}){
     //     $(`.b-menu-item[data-screen="${screen}"]`).addClass('active');
     //     socket.emit('eWatchdogApp', APP.client);
     // }, 1);
+
+
 
 }
 
@@ -280,10 +284,10 @@ function stopIntervalModalTempAll(){
 }
 
 function stopIntervalScreenTempAll(){
-    for(let key in intervalModalTemp) {
-        if(intervalModalTemp.hasOwnProperty(key)){
+    for(let key in intervalScreenTemp) {
+        if(intervalScreenTemp.hasOwnProperty(key)){
             console.log("stopInterval: "+key);
-            stopInterval(intervalModalTemp.key);
+            stopInterval(intervalScreenTemp.key);
         }
     }
 }
