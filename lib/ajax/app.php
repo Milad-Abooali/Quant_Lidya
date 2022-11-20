@@ -1196,7 +1196,7 @@ function simpleOrder(){
     if( !isset($_REQUEST['takeProfit']) ) $output->e = 'take profit is expected';
     if( !isset($_REQUEST['stopLoss']) ) $output->e = 'stop loss is expected';
     $is_open = eFun::isTradeOpenByLogin($_REQUEST['symbol'], $_REQUEST['login']);
-    //if( !$is_open ) $output->e = 'Market is Closed!';
+    if( !$is_open ) $output->e = 'Market is Closed!';
 
     if(!$output->e){
         eFun::sessionJump($_REQUEST['sessionId']);
@@ -1243,7 +1243,6 @@ function simpleOrder(){
         } else {
             $output->req_error = $e;
         }
-
 
         eFun::sessionJumpBack();
     }

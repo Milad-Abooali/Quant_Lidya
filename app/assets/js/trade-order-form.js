@@ -65,7 +65,7 @@ $("body").on("click",".row-symbol .doA-trade", function(e) {
     const volume = $(`.tradeOrderForm #volume`).val();
     const type = $(this).data('type');
 
-    const sType = (type)?'Buy':'Sell';
+    const sType = (type)?'Sell':'Buy';
     if (confirm(`Are you sure you want to ${sType} ${symbol} (size: ${volume})?`)) {
         const data = {
             login: selectedLogin,
