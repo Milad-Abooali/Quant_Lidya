@@ -1155,6 +1155,7 @@ function closePosition(){
             $request_close['PriceOrder']   = $position->answer[0]->PriceCurrent;
             $request_close['Position']     = $position->answer[0]->Position;
             $request_close['Digits']       = $position->answer[0]->Digits;
+            $request_close['Comment']      = 'Q.APP|Close_Pos|S:'.$_SESSION['sess_id'].'|U:'.$_SESSION['id'];
 
             $is_open = eFun::isTradeOpenByLogin($position->answer[0]->Symbol, $_REQUEST['login']);
             if($is_open){
@@ -1215,6 +1216,7 @@ function simpleOrder(){
         $request_open['Type']          = $_REQUEST['type'];
         $request_open['TypeFill'] = 1;
         $request_open['Digits'] = 5;
+        $request_open['Comment'] = 'Q.APP|Add_Order|S:'.$_SESSION['sess_id'].'|U:'.$_SESSION['id'];
 
         $output->request_body = $request_open;
 

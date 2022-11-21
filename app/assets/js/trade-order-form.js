@@ -5,17 +5,17 @@ $("body").on("DOMSubtreeModified","#trade-order-form .Ask", function() {
     let takeProfit = $(`.tradeOrderForm .take-profit[data-otype='buy']`);
     let stopLoss = $(`.tradeOrderForm .stop-loss[data-otype='buy']`);
 
-    let askprice = parseFloat( $(this).text() ) || 0;
-    if(askprice>0) {
-        if( askprice>takeProfit.val() || takeProfit.val()=='') {
-            takeProfit.val(askprice);
+    let askPrice = parseFloat( $(this).text() ) || 0;
+    if(askPrice>0) {
+        if( askPrice>takeProfit.val() || takeProfit.val()=='') {
+            takeProfit.val(askPrice);
             takeProfit[0].stepUp(1);
         }
-        takeProfit.attr('min', askprice);
+        takeProfit.attr('min', askPrice);
         stopLoss.attr('min', 0);
-        stopLoss.attr('max', askprice);
-        if( askprice>stopLoss.val() || stopLoss.val()=='') {
-            stopLoss.val(askprice);
+        stopLoss.attr('max', askPrice);
+        if( askPrice>stopLoss.val() || stopLoss.val()=='') {
+            stopLoss.val(askPrice);
             stopLoss[0].stepDown(1);
         }
     }
@@ -36,7 +36,7 @@ $("body").on("DOMSubtreeModified","#trade-order-form .Bid", function() {
         stopLoss.attr('min', bidPrice);
         if( bidPrice>stopLoss.val() || stopLoss.val()=='') {
             stopLoss.val(bidPrice);
-            stopLoss[0].stepDown(1);
+            stopLoss[0].stepUp(1);
         }
     }
 });
@@ -44,8 +44,10 @@ $("body").on("DOMSubtreeModified","#trade-order-form .Bid", function() {
 let enableSL = false;
 $("body").on("change","#trade-order-form #enable-stop-loss", function(e) {
     if( $(this).is(':checked') ) {
-        $(`.tradeOrderForm #stop-loss`).attr('disabled',false)
+        $(`.tradeOrderForm #stop-loss`).attr('disabled',false);
         enableSL = true;
+        $('#trade-order-form .Bid').trigger('DOMSubtreeModified');
+        $('#trade-order-form .Ask').trigger('DOMSubtreeModified');
     } else {
         $(`.tradeOrderForm #stop-loss`).attr('disabled',true);
         enableSL = false;
