@@ -14,7 +14,7 @@ $("body").on("DOMSubtreeModified","#trade-order-form .Ask", function() {
         takeProfit.attr('min', askPrice);
         stopLoss.attr('min', 0);
         stopLoss.attr('max', askPrice);
-        if( askPrice>stopLoss.val() || stopLoss.val()=='') {
+        if( stopLoss.val()>askPrice || stopLoss.val()=='') {
             stopLoss.val(askPrice);
             stopLoss[0].stepDown(1);
         }
@@ -34,7 +34,7 @@ $("body").on("DOMSubtreeModified","#trade-order-form .Bid", function() {
         takeProfit.attr('min', 0);
         takeProfit.attr('max', bidPrice);
         stopLoss.attr('min', bidPrice);
-        if( bidPrice>stopLoss.val() || stopLoss.val()=='') {
+        if( stopLoss.val()>bidPrice || stopLoss.val()=='') {
             stopLoss.val(bidPrice);
             stopLoss[0].stepUp(1);
         }
