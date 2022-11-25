@@ -18,18 +18,19 @@
                 <td> Symbol </td>
                 <td data-lable="symbol" colspan="2"> <?= $params['symbol'] ?></td>
             </tr>
-            <tr class="item-row">
-                <td> Stop Loss <sup class="text-warning">( Beta )</sup></td>
-                <td>
+            <tr class="item-row pt-3">
+                <td> Stop Loss <sup class="text-warning"></sup></td>
+                <td class="sl-setter">
                     <input id="stop-loss" data-otype="<?= ($params['type']==1) ? 'sell' : 'buy' ?>" type="number" class="stop-loss w-100 text-center " name="sl" placeholder="0" step="<?= substr_replace($symbol->Last ,"1",-1) ?>" disabled>
                 </td>
                 <td>
                     <div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="enable-stop-loss"><label class="form-check-label" for="enable-stop-loss"> </label></div>
                 </td>
             </tr>
+
             <tr class="item-row">
-                <td> Take Profit <sup class="text-warning">( Beta )</sup></td>
-                <td>
+                <td> Take Profit <sup class="text-warning"></sup></td>
+                <td class="tp-setter">
                     <input id="take-profit" data-otype="<?= ($params['type']==1) ? 'sell' : 'buy' ?>"  type="number" class="take-profit w-100 text-center" name="tp" placeholder="0" step="<?= substr_replace($symbol->Last ,"1",-1) ?>" disabled>
                 </td>
                 <td>

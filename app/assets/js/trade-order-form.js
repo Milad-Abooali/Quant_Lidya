@@ -7,14 +7,11 @@ $("body").on("DOMSubtreeModified","#trade-order-form .Ask", function() {
 
     let askPrice = parseFloat( $(this).text() ) || 0;
     if(askPrice>0) {
-        if( askPrice>takeProfit.val() || takeProfit.val()=='') {
+        if( takeProfit.val()=='') {
             takeProfit.val(askPrice);
             takeProfit[0].stepUp(1);
         }
-        takeProfit.attr('min', askPrice);
-        stopLoss.attr('min', 0);
-        stopLoss.attr('max', askPrice);
-        if( stopLoss.val()>askPrice || stopLoss.val()=='') {
+        if( stopLoss.val()=='') {
             stopLoss.val(askPrice);
             stopLoss[0].stepDown(1);
         }
@@ -27,14 +24,11 @@ $("body").on("DOMSubtreeModified","#trade-order-form .Bid", function() {
     let stopLoss = $(`.tradeOrderForm .stop-loss[data-otype='sell']`);
     let bidPrice = parseFloat( $(this).text() ) || 0;
     if(bidPrice>0){
-        if( bidPrice<takeProfit.val() || takeProfit.val()=='') {
+        if( takeProfit.val()=='') {
             takeProfit.val(bidPrice);
             takeProfit[0].stepDown(1);
         }
-        takeProfit.attr('min', 0);
-        takeProfit.attr('max', bidPrice);
-        stopLoss.attr('min', bidPrice);
-        if( stopLoss.val()>bidPrice || stopLoss.val()=='') {
+        if( stopLoss.val()=='') {
             stopLoss.val(bidPrice);
             stopLoss[0].stepUp(1);
         }
@@ -44,12 +38,14 @@ $("body").on("DOMSubtreeModified","#trade-order-form .Bid", function() {
 let enableSL = false;
 $("body").on("change","#trade-order-form #enable-stop-loss", function(e) {
     if( $(this).is(':checked') ) {
-        $(`.tradeOrderForm #stop-loss`).attr('disabled',false);
+        $(`.tradeOrderForm .sl-setter input`).attr('disabled',false);
+        $(`.tradeOrderForm .sl-setter button`).attr('disabled',false);
         enableSL = true;
         $('#trade-order-form .Bid').trigger('DOMSubtreeModified');
         $('#trade-order-form .Ask').trigger('DOMSubtreeModified');
     } else {
-        $(`.tradeOrderForm #stop-loss`).attr('disabled',true);
+        $(`.tradeOrderForm .sl-setter input`).attr('disabled',true);
+        $(`.tradeOrderForm .sl-setter button`).attr('disabled',true);
         enableSL = false;
     }
 });
@@ -57,14 +53,15 @@ $("body").on("change","#trade-order-form #enable-stop-loss", function(e) {
 let enableTP = false;
 $("body").on("change","#trade-order-form #enable-take-profit", function(e) {
     if( $(this).is(':checked') ) {
-        $(`.tradeOrderForm #take-profit`).attr('disabled',false)
+        $(`.tradeOrderForm .tp-setter input`).attr('disabled',false)
+        $(`.tradeOrderForm .tp-setter button`).attr('disabled',false)
         enableTP = true;
     } else {
-        $(`.tradeOrderForm #take-profit`).attr('disabled',true);
+        $(`.tradeOrderForm .tp-setter input`).attr('disabled',true);
+        $(`.tradeOrderForm .tp-setter button`).attr('disabled',true);
         enableTP = false;
     }
 });
-
 
 $("body").on("click",".row-symbol .doA-trade", function(e) {
     e.preventDefault();
