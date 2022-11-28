@@ -8,6 +8,15 @@
 <?php $form_name = 'trade-order-form'; ?>
 <form class="screen-wrapper" name="<?= $form_name ?>" id="<?= $form_name ?>" data-login="<?= $params['login'] ?>">
 
+    <div class="text-end">
+        <span class="text-secondary">Order Type:</span>
+        <select class="ms-2 custom-select order-type">
+            <option value="market" selected>Market</option>
+            <option value="pending">Pending</option>
+        </select>
+        <hr>
+    </div>
+
     <table id="orderForm" class="tradeOrderForm table table-sm table-dark">
         <tbody>
             <tr class="item-row">
@@ -95,7 +104,7 @@
 
     var orderLot = $('.row-symbol[data-symbol="<?= $params['symbol'] ?>"] #volume').val();
     $('#orderForm #volume').val(orderLot);
-
+    $("#trade-order-form .pending-otype").fadeOut();
     try{
         <?= str_replace('-','_', $form_name) ?>;
     }

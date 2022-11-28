@@ -97,3 +97,13 @@ $("body").on("click",".row-symbol .doA-trade", function(e) {
         return;
     }
 });
+
+
+$("body").on("change","#trade-order-form .order-type", function(e) {
+    let oType = $(this).val();
+    if(oType=='market'){
+        $("#trade-order-form .pending-otype").fadeIn();
+    } else if(oType=='pending'){
+        $("#trade-order-form .pending-otype").fadeOut();
+    }
+});
