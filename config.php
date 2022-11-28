@@ -159,6 +159,7 @@
     // Language Manager   
     require_once "lib/lanman.php";
     $_language = ($_GET['language']) ?? ( ($_SESSION['language']) ? $_SESSION['language'] : Broker['def_language'] );
+    define('LANGUAGE_NAME',$_language);
     if ($_SESSION['id']) {
         $where = 'user_id='.$_SESSION['id'];
         $data['language'] = $db->escape($_language);
@@ -166,9 +167,6 @@
         $_SESSION['language'] = $_language;
     }
     $_L = new LangMan($_language, (Broker['maintenance'] ?? false));
-    
-  //  $_L = new LangMan($_language, (Broker['maintenance'] ?? false));
-
 
     // Permission System
     require_once "lib/autoload/groups.php";

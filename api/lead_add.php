@@ -161,32 +161,32 @@ if($_REQUEST['api_key'] !== "7689227" || !$_POST['email']){
             while ($rowLeadNew = mysqli_fetch_array($userLeadNew)) {
                 $user_id = $rowLeadNew['id'];
                 //echo $user_id;
-                $sql5 = "INSERT INTO user_extra (user_id,ip,fname,lname,phone,country,city,address,interests,hobbies,unit,retention,conversion,status,type,followup,created_at,created_by,updated_at,updated_by) VALUES ('$user_id','$ips','$fname','$lname','$phone','$country','$city','$address','$interests','$hobbies','$userunit','$retention','$conversion','$status','$type','$date','$date','".$_SESSION["id"]."','$date','".$_SESSION["id"]."')";
+                $sql5 = "INSERT INTO user_extra (user_id,ip,fname,lname,phone,country,city,address,interests,hobbies,unit,retention,conversion,status,type,followup,created_at,created_by,updated_at,updated_by,language) VALUES ('$user_id','$ips','$fname','$lname','$phone','$country','$city','$address','$interests','$hobbies','$userunit','$retention','$conversion','$status','$type','$date','$date','".$_SESSION["id"]."','$date','".$_SESSION["id"]."','".LANGUAGE_NAME."')";
                 $sql6 = "INSERT INTO user_fx (user_id,job_cat,job_title,exp_fx,exp_fx_year,exp_cfd,exp_cfd_year,income,investment,strategy,created_at,created_by,updated_at,updated_by) VALUES ('$user_id','$job_cat','$job_title','$exp_fx','$exp_fx_year','$exp_cfd','$exp_cfd_year','$income','$investment','$strategy','$date','".$_SESSION["id"]."','$date','".$_SESSION["id"]."')";
                 $sql7 = "INSERT INTO user_gi (user_id,bd,whatsapp,telegram,facebook,instagram,twitter,created_at,created_by,updated_at,updated_by) VALUES ('$user_id','$bd','$whatsapp','$telegram','$facebook','$instagram','$twitter','$date','".$_SESSION["id"]."','$date','".$_SESSION["id"]."')";
                 $sql8 = "INSERT INTO user_marketing (user_id,lead_src,lead_camp,affiliate,created_at,created_by,updated_at,updated_by) VALUES ('$user_id','$source','$campaign','$affiliate','$date','".$_SESSION["id"]."','$date','".$_SESSION["id"]."')";
                 if(mysqli_query($DB_admin, $sql5) && mysqli_query($DB_admin, $sql6) && mysqli_query($DB_admin, $sql7) && mysqli_query($DB_admin, $sql8)){
                     GF::profileRateCal(GF::getUserProfile($user_id));
                     echo json_encode(array("statusCode"=>200));
-                    // Add actLog
-                    global $actLog; $actLog->add('New Lead', $user_id, 1, '{"email":"'.$email.'"}');
+
                     // Send Email
                     global $_Email_M;
-                    $subject = 'Welcome to '. Broker['title'];
-                    $receivers[] = array (
+                    $receivers[] = $act_detail = array (
                         'id'    =>  $user_id,
                         'email' =>  $email,
                         'data'  =>  array(
-                            'broker_title' =>  Broker['title'],
-                            'broker_crm' =>  Broker['crm_url'],
-                            'fname' =>  $fname,
-                            'lname' =>  $lname,
-                            'email' =>  $email,
-                            'pass'  =>  $pass
+                            'fname'     =>  $fname,
+                            'lname'     =>  $lname,
+                            'email'     =>  $email,
+                            'pass'      =>  $pass
                         )
                     );
-                    $theme = 'register_welcome';
+                    $subject = $theme = 'CRM_New_Account';
                     $_Email_M->send($receivers, $theme, $subject);
+
+                    // Add actLog
+                    global $actLog; $actLog->add('New Lead', $user_id, 1, json_encode($act_detail));
+
                 } else {
                     echo json_encode(array("statusCode"=>201));
                 }

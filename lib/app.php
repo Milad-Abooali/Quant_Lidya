@@ -218,6 +218,7 @@ function crmRegister() {
             $insert_extra['created_by'] = $user_id;
             $insert_extra['updated_at'] = $date;
             $insert_extra['updated_by'] = $user_id;
+            $insert_extra['language'] = LANGUAGE_NAME;
             $db->insert('user_extra', $insert_extra);
 
             // Insert to user_fx

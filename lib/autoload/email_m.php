@@ -39,10 +39,10 @@
 
                 $where = "user_id=".$receiver['id'];
                 $user_language = $this->db->selectRow('user_extra',$where)['language'];
-                $theme_language = ($user_language) ?? 'english';
+                $theme_language = (strlen($user_language)>3) ? $user_language : 'english';
 
-                $subject = $_L->get($theme_language)['emails'][$subject_tag] ?? Broker['title'].' - '.$subject_tag;
-
+                $subject = Broker['title'].' - ';
+                $subject .= $_L->get($theme_language)['emails'][$subject_tag] ?? $subject_tag;
 
                 $receiver['data']['subject']              = $subject;
                 $receiver['data']['broker_title']         = Broker['title'];
