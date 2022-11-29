@@ -23,7 +23,8 @@
                                 array(
                                     'db' => 'subject',
                                     'th' => 'Subject',
-                                    'dt' => 3
+                                    'dt' => 3,
+                                    'formatter' => true
                                 ),
                                 array(
                                     'db' => 'send_date',

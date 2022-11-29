@@ -55,6 +55,12 @@ function resend() {
         'data' =>  null
     );
 
+    if(substr( $old_mail['subject'], 0, 7 ) === "=?UTF-8"){
+        $old_mail['subject'] = str_replace('=?UTF-8?B?','',$old_mail['subject']);
+        $old_mail['subject'] = str_replace('?=','',$old_mail['subject']);
+        $old_mail['subject'] = base64_decode($old_mail['subject']);
+    }
+
     $res = $mail->send($receivers, 0, $old_mail['subject'], base64_decode($old_mail['content']));
 
     $output->res = $res;
