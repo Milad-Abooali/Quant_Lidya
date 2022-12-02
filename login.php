@@ -30,7 +30,11 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
      */
     GF::escapeReq();
 
+    if(is_numeric($_POST['username'])) {
+        $_POST['username'] = $sess->getUsernamebyPhone($_POST['username']);
+    }
     $sess->login($_POST['timeoffset'], $_POST['username'], $_POST['password'], $_POST['remember'], true, $_POST['target']);
+
 }
 ?>
 <!DOCTYPE html>
@@ -86,7 +90,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
                                 <h6 class="text-danger"><?= $_L->T('IP_Blocked','login') ?></h6>
                             <?php } else { ?>
                             <div class="form-group <?php echo (!empty($username_err)) ? 'has-error' : ''; ?>">
-                                <label for="username"><?= $_L->T('Username','general') ?></label>
+                                <label for="username"><?= $_L->T('Username','general') ?> Or <?= $_L->T('phone_10','login') ?></label>
                                 <input type="text" class="form-control" id="username" name="username" placeholder="<?= $_L->T('Enter_username','login') ?>">
                             </div>
 

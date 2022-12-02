@@ -282,6 +282,22 @@
       return true;
     }
 
+  /**
+   * Get Username by Phone
+   * @param $username
+   */
+    public function getUsernamebyPhone($phone){
+        global $db;
+        global $userManager;
+        $phone_10 = $db->escape(substr($phone,-10));
+        $where = " RIGHT(phone,10)='$phone_10'";
+        $user = $db->selectRow('user_extra', $where);
+        if($user){
+            return $userManager->getCustom($user['user_id'], 'username')['username'];
+        }
+        return false;
+    }
+
     /**
        * @param int $timeOffset session expire duration
        * @param string $username user username
