@@ -817,6 +817,25 @@ global $_L;
             }
         });
 
+        /* Admin Tools */
+        $("body").on("click touchstart", '#adminTools .doA-resetPassword', function() {
+            let data = {
+                user_id: $(this).data('id'),
+                email: $(this).data('email')
+            }
+            const r = confirm("Send reset password request?");
+            if (r === true) {
+                ajaxCall('users', 'resetPasswordRequest', data, function (response) {
+                    let resObj = JSON.parse(response);
+                    if (resObj.e) {
+                        toastr.error("Error on request !");
+                    } else if (resObj.res) {
+                        toastr.success("Rest Password request has been added.");
+                    }
+                });
+            }
+        });
+
     </script>
 
 <?php

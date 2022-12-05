@@ -31,7 +31,6 @@ function delete() {
     echo json_encode($output);
 }
 
-
 // Register user
 function register() {
     global $db;
@@ -289,7 +288,6 @@ function moveEmails() {
     echo json_encode($output);
 }
 
-
 // Move Logs
 function moveLogs() {
     global $db;
@@ -320,7 +318,6 @@ function moveLogs() {
     }
     echo json_encode($output);
 }
-
 
 // Move Sessions archive
 function sessionsArchive() {
@@ -371,4 +368,27 @@ function addMerge() {
     $user_id = intval($_POST['id']);
     $_SESSION['M']['mergeUsers'][$user_id]=$user_id;
     echo 1;
+}
+
+// Reset Password Request
+function resetPasswordRequest() {
+    global $db;
+    $output = new stdClass();
+    $output->e = (($_POST['user_id']) ?? false) ? false : "user id expected!";
+    if(!$output->e){
+        $up_token['token'] = bin2hex(random_bytes(50));
+        $db->updateId('users', $_POST['user_id'], $up_token);
+        // Send Email
+        global $_Email_M;
+        $receivers[] = array (
+            'id'    =>  $_POST['user_id'],
+            'email' =>  $_POST['email'],
+            'data'  =>  array(
+                'token' =>  $up_token['token']
+            )
+        );
+        $subject = $theme = 'CRM_Reset_Password';
+        $output->res = $_Email_M->send($receivers, $theme, $subject);
+    }
+    echo json_encode($output);
 }

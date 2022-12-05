@@ -259,6 +259,63 @@ require_once "config.php";
                             </ul>
                         </div>
                         <div class="col-md-6">
+
+                            <!-- Tools -->
+                            <?php if($userID!=$_SESSION['id']) { ?>
+                                <div class="dropdown float-right ml-1">
+                                    <button type="button" class="btn btn-outline-default btn-sm dropdown-toggle" data-toggle="dropdown">
+                                        <i class="fa-fw fas fa-cog"></i>
+                                    </button>
+                                    <div  id="adminTools" class="dropdown-menu admin-tools">
+                                        <a data-id="<?= $userID ?>" data-email="<?= $userManager->getCustom($userID, 'email')['email'] ?>" href="javascript:;" class="dropdown-item doA-resetPassword"><i class="fa-fw fas fa-lock"></i> Rest Password</a>
+
+                                        <?php if($_SESSION["type"] == "Manager") { ?>
+                                            <hr>
+                                            <!-- Ebook -->
+                                            <?php
+                                            $where = 'id='.$userID;
+                                            $allow = $db->select('users',$where,'cid',1)[0]['cid'];
+                                            if ($allow == null || $allow == '0000-00-00 00:00:00') { ?>
+                                                <a data-id="<?= $userID ?>" data-status='1' class="dropdown-item text-success doA-allow"><?= $_L->T('Allow','user_modal') ?> <?= $_L->T('EBook_Download','user_modal') ?></a>
+                                            <?php } else { ?>
+                                                <a data-id="<?= $userID ?>" data-status='0' class="dropdown-item text-warning doA-allow"><?= $_L->T('Not_Allow','user_modal') ?>(<?= $allow ?>) <?= $_L->T('EBook_Download','user_modal') ?></a>
+                                            <?php } ?>
+
+                                        <?php } if ($_SESSION["type"] == "Admin") { ?>
+                                            <hr>
+                                            <!-- Agreement -->
+                                            <?php
+                                            $where = 'user_id='.$userID;
+                                            $agree = $db->select('user_extra',$where,'date_approve',1)[0]['date_approve'];
+                                            if ($agree == null || $agree == '0000-00-00 00:00:00') { ?>
+                                                <a data-id="<?= $userID ?>" data-status='1' class="dropdown-item text-success doA-agree"><?= $_L->T('Agree','general') ?></a>
+                                            <?php } else { ?>
+                                                <a data-id="<?= $userID ?>" data-status='0' class="dropdown-item text-warning doA-agree">(<?= $agree ?>) <?= $_L->T('Need_Agree','general') ?></a>
+                                            <?php } ?>
+                                            <hr>
+
+                                            <a href="javascript:;" class="dropdown-item doA-addMerge" data-userid="<?= $userID ?>"><i class="fa-fw fas fa-user-ninja"></i> <?= $_L->T('Merge','user_modal') ?></a>
+                                            <a href="javascript:;" class="dropdown-item text-danger doA-deleteUser" data-id="<?= $userID ?>"><i class="fa-fw fas fa-trash-alt"></i> <?= $_L->T('Delete_User','user_modal') ?></a>
+                                        <?php } ?>
+                                    </div>
+                                </div>
+                                <div class="dropdown float-right ml-1">
+                                    <button type="button" class="btn btn-outline-default btn-sm dropdown-toggle" data-toggle="dropdown">
+                                        <i class="fa-fw fas fa-user-clock"></i>
+                                    </button>
+                                    <div class="dropdown-menu">
+
+                                        <?php if ($_SESSION["type"] == "Manager") { ?>
+                                            <a class="btn btn-sm bg-gradient-info text-white mx-1" target="_blank" href='manager_panel.php?section=email_logs&dt={"table":"DT_email_log","regex":"1","cols":{"1":"<?= $userID ?>"}}'><i class="fa-fw fas fa-envelope"></i> <?= $_L->T('Emails','user_modal') ?></a>
+                                        <?php } if ($_SESSION["type"] == "Admin") { ?>
+                                            <a class="dropdown-item" target="_blank" href='sys_settings.php?section=waf_session-user&search=<?= $userID ?>'><i class="fa-fw fas fa-desktop"></i> <?= $_L->T('Sessions','user_modal') ?></a>
+                                            <a class="dropdown-item" target="_blank" href='sys_settings.php?section=email_logs&dt={"table":"DT_email_log","regex":"1","cols":{"1":"<?= $userID ?>"}}'><i class="fa-fw fas fa-envelope"></i> <?= $_L->T('Emails','user_modal') ?></a>
+                                            <a class="dropdown-item" target="_blank" href='sys_settings.php?section=system_actlog&dt={"table":"DT_actlog_user","regex":"1","cols":{"2":"<?= $db->selectID('users',$userID,'username')['username'] ?>"}}'><i class="fa-fw fas fa-history"></i> <?= $_L->T('ActLogs','user_modal') ?></a>
+                                        <?php } ?>
+                                    </div>
+                                </div>
+                            <?php } ?>
+
                             <?php
                                 if(
                                         $_SESSION["type"] == "Admin"
@@ -496,45 +553,8 @@ require_once "config.php";
                             <?php
                                 }
                             ?>
-                            <?php if($_SESSION["type"] == "Admin" || $_SESSION["type"] == "Manager"){ ?>
-                                <hr>
-                                <div id="adminTools" class="admin-tools">
-                                    <?php if ($_SESSION["type"] == "Admin") { ?>
-                                    <button data-id="<?= $userID ?>" class="btn btn-sm bg-gradient-danger text-white doA-deleteUser mx-1"><?= $_L->T('Delete_User','user_modal') ?></button>
-                                    <a href="javascript:;" class="doA-addMerge btn btn-outline-light btn-sm" data-userid="<?= $userID ?>"><i class="fas fa-user-ninja"></i> <?= $_L->T('Merge','user_modal') ?></a>
-                                    <br><br>
-                                    <a class="btn btn-sm bg-gradient-info text-white mx-1" target="_blank" href='sys_settings.php?section=waf_session-user&search=<?= $userID ?>'> <?= $_L->T('Sessions','user_modal') ?></a>
-                                    <a class="btn btn-sm bg-gradient-info text-white mx-1" target="_blank" href='sys_settings.php?section=email_logs&dt={"table":"DT_email_log","regex":"1","cols":{"1":"<?= $userID ?>"}}'> <?= $_L->T('Emails','user_modal') ?></a>
-                                    <a class="btn btn-sm bg-gradient-info text-white mx-1" target="_blank" href='sys_settings.php?section=system_actlog&dt={"table":"DT_actlog_user","regex":"1","cols":{"2":"<?= $db->selectID('users',$userID,'username')['username'] ?>"}}'><?= $_L->T('ActLogs','user_modal') ?></a>
-                                    <?php } else if ($_SESSION["type"] == "Manager") { ?>
-                                        <br><br>
-                                        <a class="btn btn-sm bg-gradient-info text-white mx-1" target="_blank" href='manager_panel.php?section=email_logs&dt={"table":"DT_email_log","regex":"1","cols":{"1":"<?= $userID ?>"}}'> <?= $_L->T('Emails','user_modal') ?></a>
-                                    <?php } ?>
-                                    <br><br>
 
-                                    <?= $_L->T('Change_Agreement_Status','user_modal') ?>:
-                                    <?php
-                                    $where = 'user_id='.$userID;
-                                    $agree = $db->select('user_extra',$where,'date_approve',1)[0]['date_approve'];
-                                    if ($agree == null || $agree == '0000-00-00 00:00:00') { ?>
-                                        <button data-id="<?= $userID ?>" data-status='1' class="btn btn-sm btn-outline-success doA-agree mx-1"><?= $_L->T('Agree','general') ?></button>
-                                    <?php } else { ?>
-                                        (<?= $agree ?>)
-                                        <button data-id="<?= $userID ?>" data-status='0' class="btn btn-sm btn-outline-warning doA-agree mx-1"><?= $_L->T('Need_Agree','general') ?></button>
-                                    <?php } ?>
-                                    <br><br>
-                                    <?= $_L->T('EBook_Download','user_modal') ?>:
-                                    <?php
-                                    $where = 'id='.$userID;
-                                    $allow = $db->select('users',$where,'cid',1)[0]['cid'];
-                                    if ($allow == null || $allow == '0000-00-00 00:00:00') { ?>
-                                        <button data-id="<?= $userID ?>" data-status='1' class="btn btn-sm btn-outline-success doA-allow mx-1"><?= $_L->T('Allow','user_modal') ?></button>
-                                    <?php } else { ?>
-                                        (<?= $allow ?>)
-                                        <button data-id="<?= $userID ?>" data-status='0' class="btn btn-sm btn-outline-warning doA-allow mx-1"><?= $_L->T('Not_Allow','user_modal') ?></button>
-                                    <?php } ?>
-                                </div>
-                            <?php } ?>
+
                         </div>
                         <div class="tab-pane fade" id="pills-2" role="tabpanel" aria-labelledby="pills-2-tab">
                             <?php

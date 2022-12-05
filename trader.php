@@ -580,7 +580,6 @@ include('includes/head.php'); ?>
         			}
         		});
         	});
-        	
 
             $("body").on("click touchstart", '#adminTools .doA-agree', function() {
                 let data = {
