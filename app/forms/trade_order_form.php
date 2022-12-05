@@ -84,6 +84,7 @@
                             </div>
                             <div class="col-12 text-center">
                                 <div class="btn-group d-flex" role="group" aria-label="Basic example">
+                                    <input id="price" type="number" class="pending-otype volumeinput text-center"step="<?= substr_replace($symbol->Last ,"1",-1) ?>"  name="price" disabled>
                                     <input id="volume" type="number" class="volumeinput text-center" step="0.01" name="lot">
                                     <button title="Buy" data-symbol="<?= $symbol->Symbol ?>" data-type="0" class="doA-trade px-5 btn btn-sm btn-success">Buy</button>
                                 </div>
