@@ -161,6 +161,11 @@ global $_L;
                         <li class="dropdown notification-list float-left" id="fullscreen">
                             <a href="javascript:;" class="nav-link arrow-none waves-effect noti-icon requestfullscreen" onclick="openFullscreen()"><i class="mdi mdi-fullscreen"></i></a>
                             <a href="javascript:;" class="nav-link arrow-none waves-effect noti-icon exitfullscreen" onclick="closeFullscreen()" style="display: none"><i class="mdi mdi-fullscreen-exit"></i></a>
+
+                            <?php if($_SESSION["type"] == "Admin") { ?>
+                                <a href="sys_settings.php" class="nav-link arrow-none waves-effect noti-icon"><i class="text-muted fa fa fa-cogs"></i>   </a>
+                            <?php } ?>
+
                         </li>
                     <!--<li class="d-none d-sm-block">
                             <div class="dropdown pt-3 d-inline-block">

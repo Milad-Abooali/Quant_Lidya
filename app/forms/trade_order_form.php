@@ -4,13 +4,17 @@
     GF::cLog($params,1);
     GF::cLog($symbol,1);
 
+    // Check for IMTConSymbol::ExpirFlags  |  EnExpirationFlags
+    $symbol_detail = eFun::getSymbol($params['symbol']);
+    $ExpirFlags = $symbol_detail->ExpirFlags;
+
 ?>
 <?php $form_name = 'trade-order-form'; ?>
 <form class="screen-wrapper" name="<?= $form_name ?>" id="<?= $form_name ?>" data-login="<?= $params['login'] ?>">
 
     <div class="text-end">
         <span class="text-secondary">Order Type:</span>
-        <select class="ms-2 custom-select order-type">
+        <select id="order-type" class="ms-2 custom-select order-type">
             <option value="market" selected>Market</option>
             <option value="pending">Pending</option>
         </select>
@@ -61,8 +65,9 @@
                         </div>
                         <div class="col-12 text-center">
                             <div class="btn-group d-flex" role="group" aria-label="Basic example">
-                                <button title="Sell" data-symbol="<?= $symbol->Symbol ?>"  data-type="1" class="doA-trade px-5 btn-sm btn btn-danger">Sell</button>
                                 <input id="volume" type="number" class="volumeinput text-center" step="0.01" name="lot">
+                                <button title="Sell" data-digits="<?= $symbol->Digits ?>" data-symbol="<?= $symbol->Symbol ?>"  data-type="1" class="doA-trade px-5 btn-sm btn btn-danger">Sell</button>
+                                <input id="PriceOrder" type="number" data-otype="sell" class="pending-otype volumeinput text-center"step="<?= substr_replace($symbol->Last ,"1",-1) ?>"  name="price" disabled>
                             </div>
                         </div>
                     </div>
@@ -84,15 +89,56 @@
                             </div>
                             <div class="col-12 text-center">
                                 <div class="btn-group d-flex" role="group" aria-label="Basic example">
-                                    <input id="price" type="number" class="pending-otype volumeinput text-center"step="<?= substr_replace($symbol->Last ,"1",-1) ?>"  name="price" disabled>
                                     <input id="volume" type="number" class="volumeinput text-center" step="0.01" name="lot">
-                                    <button title="Buy" data-symbol="<?= $symbol->Symbol ?>" data-type="0" class="doA-trade px-5 btn btn-sm btn-success">Buy</button>
+                                    <button title="Buy" data-digits="<?= $symbol->Digits ?>" data-symbol="<?= $symbol->Symbol ?>" data-type="0" class="doA-trade px-5 btn btn-sm btn-success">Buy</button>
+                                    <input id="PriceOrder" type="number" data-otype="buy" class="pending-otype volumeinput text-center"step="<?= substr_replace($symbol->Last ,"1",-1) ?>"  name="price" disabled>
                                 </div>
                             </div>
                         </div>
                     </td>
                 </tr>
             <?php } ?>
+            <tr class="pending-otype item-row">
+                <td>Order Type</td>
+                <td>
+                    <select id="p-order-type" class="form-control" >
+                        <option value="2" selected>BUY LIMIT</option>
+                        <option value="3">SELL LIMIT</option>
+                        <option value="4">BUY STOP</option>
+                        <option value="5">SELL STOP</option>
+                        <option value="6">BUY STOP LIMIT</option>
+                        <option value="7">SELL STOP LIMIT</option>
+                    </select>
+                </td>
+                <td></td>
+            </tr>
+            <tr class="pending-otype item-row">
+                <td>Time Type</td>
+                <td>
+                    <select id="time-type" class="form-control" <?= ($ExpirFlags==15)? '' : 'disabled' ?> >
+                        <option value="0" selected>Good till Canceled</option>
+                        <option value="1">Intraday</option>
+                        <option value="2">Specified time</option>
+                        <option value="3">Specified day</option>
+                    </select>
+                    <br>
+                    <div class="btn-group d-flex" role="group">
+                        <input id="TimeExpiration" type="datetime-local" class="spe-datetime form-control">
+                    </div>
+                </td>
+                <td></td>
+            </tr>
+            <tr class="pending-otype item-row">
+                <td>Price Trigger</td>
+                <td>
+                    <input id="PriceTrigger" type="number" data-otype="buy" class="w-100 text-center"step="<?= substr_replace($symbol->Last ,"1",-1) ?>"  name="PriceTrigger" disabled>
+                </td>
+                <td>
+                    <div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="enable-price-trigger"><label class="form-check-label" for="enable-price-trigger"> </label></div>
+                </td>
+
+            </tr>
+
         </tbody>
     </table>
 
@@ -102,6 +148,9 @@
     </div>
 </form>
 <script>
+
+    $(".pending-otype .spe-date").hide();
+    $(".pending-otype .spe-datetime").hide();
 
     var orderLot = $('.row-symbol[data-symbol="<?= $params['symbol'] ?>"] #volume').val();
     $('#orderForm #volume').val(orderLot);

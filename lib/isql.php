@@ -39,7 +39,7 @@
             $this->database = $database['name'];
             $this->prefix   = $database['prefix'];
             $this->DATE     = date("y-m-d H:i:s");
-            $this->LINK = mysqli_connect($this->hostname, $this->username, $this->password, $this->database, $this->port);
+            $this->LINK = mysqli_connect('p:'.$this->hostname, $this->username, $this->password, $this->database, $this->port);
             if (mysqli_connect_errno()) {throw new RuntimeException("Connect failed: %s\n", mysqli_connect_error());}
             mysqli_set_charset($this->LINK,'utf8');
         }

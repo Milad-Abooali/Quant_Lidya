@@ -6,6 +6,7 @@
  */
 class eFun{
 
+
     /**
      * Include All Files
      * @param string $path
@@ -88,6 +89,18 @@ class eFun{
     public static function epoch2date($item) {
         $item[0] = date("Y-m-d H:i:s",$item[0]);
         return $item;
+    }
+
+    /**
+     * Get Symbol
+     */
+    public static function getSymbol($symbol)
+    {
+        $mt5api = new mt5API();
+        $api_symbol['symbol'] = $symbol;
+        $mt5api->get('/api/symbol/get', $api_symbol);
+        $e = $mt5api->Error;
+        return $mt5api->Response->answer;
     }
 
     /**
@@ -178,4 +191,45 @@ class eFun{
         return $login;
     }
 
+    /**
+     * Epoc Time
+     * @param $epoc
+     * @param null $addition
+     * @param string $format
+     * @return false|string
+     */
+    public static  function eTime($epoc, $addition=null, $format='Y-m-d H:i:s'){
+        return date($format, strtotime("@".$epoc." ".$addition));
+    }
+
+    /**
+     * Check for Empty Val
+     * @param $value
+     * @param null $no_val
+     * @param string $char
+     * @param false $process
+     * @return mixed|string
+     */
+    public static function vacancy($value, $no_val=null, $char='-', $process=false){
+        $output = $value;
+        if($no_val){
+            if(is_array($no_val)) {
+                foreach($no_val as $item)
+                    if($value===$item)
+                        $output=$char;
+            }
+            else {
+                if($value===$no_val)
+                    $output=$char;
+            }
+        }
+        else {
+            if(!($value>0))
+                $output=$char;
+        }
+        if(!$process || $output==$char)
+            return $output;
+        else
+            $process($output);
+    }
 }

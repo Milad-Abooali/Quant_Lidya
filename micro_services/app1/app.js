@@ -730,6 +730,31 @@ if (cluster.isWorker) { // Worker
 			}
 
 		});
+		// Meta - Get Login Pending
+		socket.on('getLoginPending', (data, callback) => {
+			vConsole.add('Get TP Pending | '+ socket.id);
+			try {
+				onlineSocketList[socket.id].sessionId;
+			} catch (e) {
+				eLogin(socket, data.client);
+			} finally {
+				data.sessionId = onlineSocketList[socket.id].sessionId;
+				ajax.call(data.token, 'app', 'getLoginPending', cookieString, data).then(call => {
+					if(call.status == 200) {
+						try {
+							const ajaxRes = JSON.parse(call.resData);
+							callback(ajaxRes);
+						} catch (e) {
+							vConsole.add(call.resData);
+						}
+					} else {
+						vConsole.add(call.res);
+					}
+					setTimeout(()=>watchdogApp(socket) , 5);
+				});
+			}
+
+		});
 		// Meta - Get Login Statistics
 		socket.on('getLoginStatistics', (data, callback) => {
 			vConsole.add('Get TP Statistics | '+ socket.id);
@@ -765,6 +790,31 @@ if (cluster.isWorker) { // Worker
 			} finally {
 				data.sessionId = onlineSocketList[socket.id].sessionId;
 				ajax.call(data.token, 'app', 'closePosition', cookieString, data).then(call => {
+					if(call.status == 200) {
+						try {
+							const ajaxRes = JSON.parse(call.resData);
+							callback(ajaxRes);
+						} catch (e) {
+							vConsole.add(call.resData);
+						}
+					} else {
+						vConsole.add(call.res);
+					}
+					setTimeout(()=>watchdogApp(socket) , 5);
+				});
+			}
+
+		});
+		// Meta - Delete Order
+		socket.on('deleteOrder', (data, callback) => {
+			vConsole.add('Delete Order | '+ socket.id);
+			try {
+				onlineSocketList[socket.id].sessionId;
+			} catch (e) {
+				eLogin(socket, data.client);
+			} finally {
+				data.sessionId = onlineSocketList[socket.id].sessionId;
+				ajax.call(data.token, 'app', 'deleteOrder', cookieString, data).then(call => {
 					if(call.status == 200) {
 						try {
 							const ajaxRes = JSON.parse(call.resData);
@@ -831,8 +881,6 @@ if (cluster.isWorker) { // Worker
 
 		});
 
-
-
 		// Meta - Simple Order
 		socket.on('simpleOrder', (data, callback) => {
 			vConsole.add('Simple Order | '+ socket.id);
@@ -858,6 +906,82 @@ if (cluster.isWorker) { // Worker
 			}
 
 		});
+		// Meta - Pending Order
+		socket.on('pendingOrder', (data, callback) => {
+			vConsole.add('Pending Order | '+ socket.id);
+			try {
+				onlineSocketList[socket.id].sessionId;
+			} catch (e) {
+				eLogin(socket, data.client);
+			} finally {
+				data.sessionId = onlineSocketList[socket.id].sessionId;
+				ajax.call(data.token, 'app', 'pendingOrder', cookieString, data).then(call => {
+					if(call.status == 200) {
+						try {
+							const ajaxRes = JSON.parse(call.resData);
+							callback(ajaxRes);
+						} catch (e) {
+							vConsole.add(call.resData);
+						}
+					} else {
+						vConsole.add(call.res);
+					}
+					setTimeout(()=>watchdogApp(socket) , 5);
+				});
+			}
+
+		});
+		// Meta - Pending Order Edit
+		socket.on('pendingOrderEdit', (data, callback) => {
+			vConsole.add('Pending Order Edit | '+ socket.id);
+			try {
+				onlineSocketList[socket.id].sessionId;
+			} catch (e) {
+				eLogin(socket, data.client);
+			} finally {
+				data.sessionId = onlineSocketList[socket.id].sessionId;
+				ajax.call(data.token, 'app', 'pendingOrderEdit', cookieString, data).then(call => {
+					if(call.status == 200) {
+						try {
+							const ajaxRes = JSON.parse(call.resData);
+							callback(ajaxRes);
+						} catch (e) {
+							vConsole.add(call.resData);
+						}
+					} else {
+						vConsole.add(call.res);
+					}
+					setTimeout(()=>watchdogApp(socket) , 5);
+				});
+			}
+
+		});
+		// Meta - Position Edit
+		socket.on('positionEdit', (data, callback) => {
+			vConsole.add('Position Order | '+ socket.id);
+			try {
+				onlineSocketList[socket.id].sessionId;
+			} catch (e) {
+				eLogin(socket, data.client);
+			} finally {
+				data.sessionId = onlineSocketList[socket.id].sessionId;
+				ajax.call(data.token, 'app', 'positionEdit', cookieString, data).then(call => {
+					if(call.status == 200) {
+						try {
+							const ajaxRes = JSON.parse(call.resData);
+							callback(ajaxRes);
+						} catch (e) {
+							vConsole.add(call.resData);
+						}
+					} else {
+						vConsole.add(call.res);
+					}
+					setTimeout(()=>watchdogApp(socket) , 5);
+				});
+			}
+
+		});
+
 
 
 		// e - Watchdog

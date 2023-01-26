@@ -32,9 +32,11 @@
     <br>
 
     <div class="row text-secondary">
-        <div class="col text-start">
+        <div class="col text-end">
             <button data-form-params='{"login":"<?= $params['login'] ?>"}' data-login="<?= $params['login'] ?>" data-form-name="trade_view_history" title="<?= $params['login'] ?> History" class="doM-form ms-2 btn btn-secondary"><i class="fa fa-history"></i> History </button>
+            <button data-form-params='{"login":"<?= $params['login'] ?>"}' data-login="<?= $params['login'] ?>" data-form-name="trade_view_pending" title="<?= $params['login'] ?> Pending Orders" class="doM-form ms-2 btn btn-secondary"><i class="fa fa-clock"></i> Pending </button>
         </div>
+
     </div>
 
 

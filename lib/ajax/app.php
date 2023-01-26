@@ -927,7 +927,8 @@ function getLoginPositions(){
             if($api->retcode==="0 Done"){
                 for ($i = 0; $i < $output->total; $i++){
                     $output->data[] = array(
-                        'Close'         =>    '<button type="button" data-tp="'.$_REQUEST['login'].'" data-position="'.$api->answer[$i]->Position.'" class="doA-close-position btn btn-sm btn-danger">Close</button>',
+                        'Close'         =>    '<button type="button" data-tp="'.$_REQUEST['login'].'" data-position="'.$api->answer[$i]->Position.'" class="doA-close-position btn btn-sm btn-danger">Close</button>'
+                            . '<button data-form-params=\'{"login":"'.$_REQUEST['login'].'","position":"'.$api->answer[$i]->Position.'"}\' data-form-name="trade_edit_position" title="Edit Position" class="doM-form btn btn-warning w-100"><i class="fa fa-edit"></i> Edit </button>',
                         'Position'      =>    $api->answer[$i]->Position,
                         'Symbol'        =>    $api->answer[$i]->Symbol,
                         'Action'        =>    ($api->answer[$i]->Action ==0) ? 'Buy' : 'Sell',
@@ -1007,6 +1008,88 @@ function getLoginHistory(){
                         'Storage'       =>    $api->answer[$i]->Storage,
                         'Profit'        =>    $api->answer[$i]->Profit
                     );
+                }
+            }
+            else {
+                $output->e = $e;
+            }
+
+
+        }
+
+        eFun::sessionJumpBack();
+    }
+    echo json_encode($output);
+}
+
+// Meta - Get Login Pending Orders
+function getLoginPending(){
+    $output = new stdClass();
+    $output->e = false;
+    if( !isset($_REQUEST['login']) ) $output->e = 'login is expected';
+    if(!$output->e){
+        eFun::sessionJump($_REQUEST['sessionId']);
+        $mt5api = new mt5API();
+
+        $api_params['login']  = $_REQUEST['login'];
+        // $api_params['group']  = '*';
+        $mt5api->get('/api/order/get_total', $api_params);
+        $total  = array(
+            'e'      => $mt5api->Error,
+            'api'    => $mt5api->Response,
+        );
+        $api = $mt5api->Response;
+        if($api->retcode==="0 Done"){
+            $output->total = $total['api']->answer->total;
+        }
+        else {
+            $output->e = $total['e'];
+        }
+        if(is_numeric($output->total) ?? false){
+            $output->data = array();
+            $mt5api->get('/api/order/get_batch', $api_params);
+            $output->api = $api_params;
+            $e = $mt5api->Error;
+            $api = $mt5api->Response;
+            if($api->retcode==="0 Done"){
+                $output->test[] = $api;
+
+                $EnOrderType = [
+                    'Buy',
+                    'Sell',
+                    'Buy Limit',
+                    'Sell Limit',
+                    'Sell Stop',
+                    'Buy Stop Limit',
+                    'Sell Stop Limit',
+                    'Close By'
+                ];
+                $TypeTime = [
+                    'Good till Canceled',
+                    'Intraday',
+                    'Specified time',
+                    'Specified day'
+                ];
+
+
+                for ($i = 0; $i < $output->total; $i++){
+
+                    $output->data[] = array(
+                        'Order'          =>    $api->answer[$i]->Order
+                            . '<button data-form-params=\'{"login":"'.$_REQUEST['login'].'","order":"'.$api->answer[$i]->Order.'"}\' data-form-name="trade_edit_order" title="Edit Order" class="doM-form btn btn-warning w-100"><i class="fa fa-edit"></i> Edit </button>'
+                            . '<button data-order="'.$api->answer[$i]->Order.'" data-symbol="'.$api->answer[$i]->Symbol.'" data-type="'.$api->answer[$i]->Type.'" class="doA-delete-order btn-sm btn btn-danger w-100"><i class="fa fa-times-circle"></i> Delete</button>',
+                        'Symbol'         =>    $api->answer[$i]->Symbol,
+                        'Type'           =>    $EnOrderType[$api->answer[$i]->Type],
+                        'Volume'         =>    $api->answer[$i]->VolumeCurrent,
+                        'PriceOrder'     =>    $api->answer[$i]->PriceOrder,
+                        'PriceSL'        =>    eFun::vacancy($api->answer[$i]->PriceSL),
+                        'PriceTP'        =>    eFun::vacancy($api->answer[$i]->PriceTP),
+                        'PriceCurrent'   =>    $api->answer[$i]->PriceCurrent,
+                        'PriceTrigger'   =>    eFun::vacancy($api->answer[$i]->PriceTrigger),
+                        'TypeTime'       =>    $TypeTime[$api->answer[$i]->TypeTime],
+                        'TimeExpiration' =>    ($api->answer[$i]->TimeExpiration>0) ? eFun::eTime($api->answer[$i]->TimeExpiration,'-2 hours') : '-'
+                    );
+
                 }
             }
             else {
@@ -1187,10 +1270,69 @@ function closePosition(){
     echo json_encode($output);
 }
 
+// Meta - Delete Order
+function deleteOrder(){
+    $output = new stdClass();
+    $output->e = false;
+    if( !isset($_REQUEST['login']) ) $output->e = 'app::deleteOrder | login is expected';
+    if( !isset($_REQUEST['order']) ) $output->e = 'app::deleteOrder | order is expected';
+    if( !isset($_REQUEST['type']) ) $output->e = 'app::deleteOrder | type is expected';
+    if( !isset($_REQUEST['symbol']) ) $output->e = 'app::deleteOrder | symbol is expected';
+    if(!$output->e){
+        eFun::sessionJump($_REQUEST['sessionId']);
+
+        $mt5api = new mt5API();
+
+        $api_params['ticket']  = $_REQUEST['order'];
+        $mt5api->get('/api/order/get', $api_params);
+        $e = $mt5api->Error;
+        $output->order = $order = $mt5api->Response;
+
+
+        if(!$e && $order->answer->Login === $_REQUEST['login']){
+            // Delete Order
+            $path = '/api/dealer/send_request';
+            $request_delete['Action']       = 204;
+            $request_delete['Login']        = $order->answer->Login;
+            $request_delete['Symbol']       = $order->answer->Symbol;
+            $request_delete['Order']        = $order->answer->Order;
+            $request_delete['Type']         = $order->answer->Type;
+            $request_delete['Comment']      = 'Q.APP|Del_Order|S:'.$_SESSION['sess_id'].'|U:'.$_SESSION['id'];
+
+            $is_open = eFun::isTradeOpenByLogin($order->answer->Symbol, $_REQUEST['login']);
+            if($is_open){
+                $output->body = $request_delete;
+                $mt5api->post($path, null, json_encode($request_delete));
+                $e = $mt5api->Error;
+                $output->delete = $mt5api->Response;
+                if(!$e){
+                    $identifiers = $output->delete->answer->id;
+
+                    // Check Request
+                    $data['id'] = $identifiers;
+                    $path = '/api/dealer/get_request_result';
+                    $mt5api->post($path, $data);
+                    $e = $mt5api->Error;
+                    $output->request = $mt5api->Response;
+                }
+            } else {
+                $output->e = 'app::deleteOrder | Market is Closed!';
+            }
+        }
+        else {
+            $output->e = 'app::deleteOrder | The order is not on the same login';
+        }
+
+        eFun::sessionJumpBack();
+    }
+    echo json_encode($output);
+}
+
 // Meta - Simple Order
 function simpleOrder(){
     $output = new stdClass();
     $output->e = false;
+    if( !isset($_REQUEST['Digits']) ) $output->e  = 'Digits is expected';
     if( !isset($_REQUEST['login']) ) $output->e  = 'login is expected';
     if( !isset($_REQUEST['symbol']) ) $output->e = 'symbol is expected';
     if( !isset($_REQUEST['type']) ) $output->e = 'action is expected';
@@ -1216,7 +1358,7 @@ function simpleOrder(){
             $request_open['PriceSL']   = $_REQUEST['stopLoss'];
         $request_open['Type']          = $_REQUEST['type'];
         $request_open['TypeFill'] = 1;
-        $request_open['Digits'] = 5;
+        $request_open['Digits'] = $_REQUEST['Digits'];
         $request_open['Comment'] = 'Q.APP|Add_Order|S:'.$_SESSION['sess_id'].'|U:'.$_SESSION['id'];
 
         $output->request_body = $request_open;
@@ -1256,9 +1398,10 @@ function simpleOrder(){
 function pendingOrder(){
     $output = new stdClass();
     $output->e = false;
+    if( !isset($_REQUEST['Digits']) ) $output->e  = 'Digits is expected';
     if( !isset($_REQUEST['login']) ) $output->e  = 'login is expected';
     if( !isset($_REQUEST['PriceOrder']) ) $output->e  = 'PriceOrder is expected';
-    if( !isset($_REQUEST['EnOrderTime']) ) $output->e  = 'EnOrderTime is expected';
+    if( !isset($_REQUEST['TypeTime']) ) $output->e  = 'TypeTime is expected';
     if( !isset($_REQUEST['symbol']) ) $output->e = 'symbol is expected';
     if( !isset($_REQUEST['type']) ) $output->e = 'action is expected';
     if( !isset($_REQUEST['volume']) ) $output->e = 'volume is expected';
@@ -1274,19 +1417,30 @@ function pendingOrder(){
 
         // Request Position-
         $request_open['Action']        = 201; // TA_DEALER_ORD_PENDING
+        $request_open['SourceLogin']   = $_REQUEST['login'];
         $request_open['Login']         = $_REQUEST['login'];
         $request_open['Symbol']        = $_REQUEST['symbol'];
+
         $request_open['PriceOrder']    = $_REQUEST['PriceOrder'];
-        $request_open['IMTOrder::EnOrderTime'] = $_REQUEST['EnOrderTime'];
+        if(isset($_REQUEST['PriceTrigger']))
+            $request_open['PriceTrigger']   = $_REQUEST['PriceTrigger'];
+
+        $request_open['TypeTime']            = $_REQUEST['TypeTime'];
+        if(isset($_REQUEST['TimeExpiration']))
+            $request_open['TimeExpiration'] = strtotime($_REQUEST['TimeExpiration']);
+        else
+            $request_open['TimeExpiration'] = 0;
+
         $request_open['Volume']        = $_REQUEST['volume']*10000;
+
         if($_REQUEST['takeProfit'] != 0)
             $request_open['PriceTP']       = $_REQUEST['takeProfit'];
         if($_REQUEST['stopLoss'] != 0)
             $request_open['PriceSL']   = $_REQUEST['stopLoss'];
         $request_open['Type']          = $_REQUEST['type'];
-        $request_open['TypeFill'] = 1;
-        $request_open['Digits'] = 5;
-        $request_open['Comment'] = 'Q.APP|Add_Order|S:'.$_SESSION['sess_id'].'|U:'.$_SESSION['id'];
+        $request_open['TypeFill'] = 2; // ORDER_FILL_RETURN
+        $request_open['Digits'] = $_REQUEST['Digits'];
+        $request_open['Comment'] = 'Q.APP|Add_Pending_Order|S:'.$_SESSION['sess_id'].'|U:'.$_SESSION['id'];
 
         $output->request_body = $request_open;
 
@@ -1320,3 +1474,114 @@ function pendingOrder(){
     }
     echo json_encode($output);
 }
+
+// Meta - Pending Order Edit
+function pendingOrderEdit(){
+    $output = new stdClass();
+    $output->e = false;
+    if( !isset($_REQUEST['Order']) ) $output->e  = 'Order is expected';
+    if( !isset($_REQUEST['Digits']) ) $output->e  = 'Digits is expected';
+    if( !isset($_REQUEST['login']) ) $output->e  = 'login is expected';
+    if( !isset($_REQUEST['PriceOrder']) ) $output->e  = 'PriceOrder is expected';
+    if( !isset($_REQUEST['TypeTime']) ) $output->e  = 'TypeTime is expected';
+    if( !isset($_REQUEST['symbol']) ) $output->e = 'symbol is expected';
+    if( !isset($_REQUEST['type']) ) $output->e = 'type is expected';
+    if( !isset($_REQUEST['volume']) ) $output->e = 'volume is expected';
+    if( !isset($_REQUEST['takeProfit']) ) $output->e = 'take profit is expected';
+    if( !isset($_REQUEST['stopLoss']) ) $output->e = 'stop loss is expected';
+    $is_open = eFun::isTradeOpenByLogin($_REQUEST['symbol'], $_REQUEST['login']);
+    if( !$is_open ) $output->e = 'Market is Closed!';
+
+    if(!$output->e){
+        eFun::sessionJump($_REQUEST['sessionId']);
+
+        $mt5api = new mt5API();
+
+        // Request Position-
+        $request_edit['Action']        = 203; // TA_DEALER_ORD_MODIFY
+        $request_edit['SourceLogin']   = $_REQUEST['login'];
+        $request_edit['Login']         = $_REQUEST['login'];
+        $request_edit['Symbol']        = $_REQUEST['symbol'];
+        $request_edit['Order']         = $_REQUEST['Order'];
+
+        $request_edit['PriceOrder']    = $_REQUEST['PriceOrder'];
+        if(isset($_REQUEST['PriceTrigger']))
+            $request_edit['PriceTrigger']   = $_REQUEST['PriceTrigger'];
+
+        $request_edit['TypeTime']            = $_REQUEST['TypeTime'];
+        if(isset($_REQUEST['TimeExpiration']))
+            $request_edit['TimeExpiration'] = strtotime($_REQUEST['TimeExpiration']);
+        else
+            $request_edit['TimeExpiration'] = 0;
+
+        $request_edit['Volume']        = $_REQUEST['volume']*10000;
+
+        if($_REQUEST['takeProfit'] != 0)
+            $request_edit['PriceTP']       = $_REQUEST['takeProfit'];
+        if($_REQUEST['stopLoss'] != 0)
+            $request_edit['PriceSL']   = $_REQUEST['stopLoss'];
+        $request_edit['Type']          = $_REQUEST['type'];
+        $request_edit['TypeFill'] = 2; // ORDER_FILL_RETURN
+        $request_edit['Digits'] = $_REQUEST['Digits'];
+        $request_edit['Comment'] = 'Q.APP|Add_Pending_Order|S:'.$_SESSION['sess_id'].'|U:'.$_SESSION['id'];
+
+        $output->request_body = $request_edit;
+
+        $path = '/api/dealer/send_request';
+        $mt5api->post($path, null, json_encode($request_edit));
+        $e = $mt5api->Error;
+        $output->request = $mt5api->Response;
+        if(!$e){
+            $identifiers = $output->request->answer->id;
+
+            // Check Request
+            $data_result['id'] = $identifiers;
+            $path = '/api/dealer/get_request_result';
+            $mt5api->post($path, $data_result);
+            $e = $mt5api->Error;
+            $output->result = $mt5api->Response;
+
+        } else {
+            $output->req_error = $e;
+        }
+
+        eFun::sessionJumpBack();
+    }
+    echo json_encode($output);
+}
+
+// Meta - Pending Position Edit
+function positionEdit(){
+    $output = new stdClass();
+    $output->e = false;
+    if( !isset($_REQUEST['login']) ) $output->e  = 'login is expected';
+    if( !isset($_REQUEST['symbol']) ) $output->e = 'symbol is expected';
+    if( !isset($_REQUEST['Position']) ) $output->e  = 'Position is expected';
+    if( !isset($_REQUEST['takeProfit']) ) $output->e = 'take profit is expected';
+    if( !isset($_REQUEST['stopLoss']) ) $output->e = 'stop loss is expected';
+    $is_open = eFun::isTradeOpenByLogin($_REQUEST['symbol'], $_REQUEST['login']);
+    if( !$is_open ) $output->e = 'Market is Closed!';
+
+    if(!$output->e){
+        eFun::sessionJump($_REQUEST['sessionId']);
+
+        $mt5api = new mt5API();
+
+        // Request Position-
+        $request_edit['Position']  = $_REQUEST['Position'];
+
+        $request_edit['PriceTP']   = $_REQUEST['takeProfit'];
+        $request_edit['PriceSL']   = $_REQUEST['stopLoss'];
+
+        $output->request_body = $request_edit;
+
+        $path = '/api/position/update';
+        $mt5api->post($path, null, json_encode($request_edit));
+        $output->req_error = $mt5api->Error;
+        $output->Response = $mt5api->Response;
+
+        eFun::sessionJumpBack();
+    }
+    echo json_encode($output);
+}
+
