@@ -154,17 +154,20 @@ global $_L;
 
                     <ul class="list-inline menu-left mb-0">
                         <li class="float-left">
-                            <button class="button-menu-mobile open-left waves-effect">
+                            <button class="button-menu-mobile open-left waves-effect" data-toggle="tooltip" title="Sidebar Hide/Show" >
                                 <i class="mdi mdi-menu"></i>
                             </button>
                         </li>
                         <li class="dropdown notification-list float-left" id="fullscreen">
-                            <a href="javascript:;" class="nav-link arrow-none waves-effect noti-icon requestfullscreen" onclick="openFullscreen()"><i class="mdi mdi-fullscreen"></i></a>
-                            <a href="javascript:;" class="nav-link arrow-none waves-effect noti-icon exitfullscreen" onclick="closeFullscreen()" style="display: none"><i class="mdi mdi-fullscreen-exit"></i></a>
+                            <a href="javascript:;" class="nav-link arrow-none waves-effect noti-icon requestfullscreen" data-toggle="tooltip" title="Full Screen" onclick="openFullscreen()"><i class="mdi mdi-fullscreen"></i></a>
+                            <a href="javascript:;" class="nav-link arrow-none waves-effect noti-icon exitfullscreen" data-toggle="tooltip" title="Exit Full Screen" onclick="closeFullscreen()" style="display: none"><i class="mdi mdi-fullscreen-exit"></i></a>
 
                             <?php if($_SESSION["type"] == "Admin") { ?>
-                                <a href="sys_settings.php" class="nav-link arrow-none waves-effect noti-icon"><i class="text-muted fa fa fa-cogs"></i>   </a>
+                                <a href="sys_settings.php" class="nav-link arrow-none waves-effect noti-icon" data-toggle="tooltip" title="Admin Panel"><i class="text-muted fa fa-cogs"></i></a>
+                            <?php } if (in_array($_SESSION["type"],['Admin','Manager','Backoffice'])) { ?>
+                                <a href="manager_panel.php" class="nav-link arrow-none waves-effect noti-icon" data-toggle="tooltip" title="Manager Panel"><i class="text-muted fa fa-toolbox"></i></a>
                             <?php } ?>
+
 
                         </li>
                     <!--<li class="d-none d-sm-block">

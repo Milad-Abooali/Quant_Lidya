@@ -51,14 +51,7 @@
                                     </li>
                                 </ol>
                                 <div class="state-information d-none d-sm-block">
-                                    <div class="state-graph">
-                                        <div id="header-chart-1"></div>
-                                        <div class="info">Leads 1500</div>
-                                    </div>
-                                    <div class="state-graph">
-                                        <div id="header-chart-2"></div>
-                                        <div class="info">Converted 40</div>
-                                    </div>
+
                                 </div>
                             </div>
                         </div>
@@ -71,6 +64,9 @@
                                     <li class="nav-item">
                                     <li class="nav-item">
                                         <a class="nav-link" data-toggle="tab" href="#tab-email">Emails</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-toggle="tab" href="#tab-client">Clients</a>
                                     </li>
                                 </ul>
 
@@ -95,6 +91,22 @@
                                     </div>
 
 
+                                    <div class="tab-pane pt-3" id="tab-client">
+                                        <div class="row">
+                                            <div class="col-2">
+                                                <div class="nav flex-column nav-pills vtab">
+                                                    <a class="nav-link" data-toggle="pill" href="client_duplicates">Duplicates</a>
+                                                </div>
+                                            </div>
+                                            <div class="col-10">
+                                                <?php if($parent=='client'): ?>
+                                                    <div class="tab-content">
+                                                        <?php if (file_exists($section_file)) include($section_file); ?>
+                                                    </div>
+                                                <?php endif; ?>
+                                            </div>
+                                        </div>
+                                    </div>
 
                                 </div>
 
