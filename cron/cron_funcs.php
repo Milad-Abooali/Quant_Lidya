@@ -536,177 +536,194 @@
           $userManager = new userManager();
           $today = date("Y-m-d");
 
-          /* Profit Swap */
-          $_db_mt5_ps = new iSQL(DB_mt5);
-          $query = "SELECT Login, SUM(Profit), SUM(Storage), count(Login) FROM mt5_deals WHERE Action IN (0,1) AND Entry IN (1,3) AND DATE(`Time`) = '$today' GROUP BY Login";
-          $_db_mt5_ps->LINK->query($query, MYSQLI_ASYNC);
+          $where = 'type=2';
+          $crm_groups = $db->select('mt_groups',$where,'name');
+          $crm_groups = array_column($crm_groups,'name');
+          array_walk($crm_groups, function (&$value, $key) {
+              $value='real\\'.$value;
+          });
+          if(empty($crm_groups)) {
+              $output['error'] = 'Empty MT_Groups in CRM !';
+              $this->_end(__FUNCTION__,$log_id, json_encode($output));
+          } else {
 
-          /* Bonus In */
-          $_db_mt5_bins = new iSQL(DB_mt5);
-          $query = "SELECT Login, SUM(Profit), count(Login) FROM mt5_deals WHERE Action=6 AND Profit>0 AND DATE(`Time`) = '$today' GROUP BY Login";
-          $_db_mt5_bins->LINK->query($query, MYSQLI_ASYNC);
-
-          /* Bonus Out */
-          $_db_mt5_bout = new iSQL(DB_mt5);
-          $query = "SELECT Login, SUM(Profit), count(Login) FROM mt5_deals WHERE Action=6 AND Profit<0 AND DATE(`Time`) = '$today' GROUP BY Login";
-          $_db_mt5_bout->LINK->query($query, MYSQLI_ASYNC);
-
-          /* Withdrawal */
-          $_db_mt5_w = new iSQL(DB_mt5);
-          $query = "SELECT Login, SUM(Profit), count(Login) FROM mt5_deals WHERE Action=2 AND Profit<0 AND Comment!='Zeroing' AND DATE(`Time`) = '$today' GROUP BY Login";
-          $_db_mt5_w->LINK->query($query, MYSQLI_ASYNC);
-
-          /* Deposit */
-          $_db_mt5_d = new iSQL(DB_mt5);
-          $query = "SELECT Login, SUM(Profit), count(Login) FROM mt5_deals WHERE Action=2 AND Profit>0 AND Comment!='Zeroing' AND DATE(`Time`) = '$today' GROUP BY Login";
-          $_db_mt5_d->LINK->query($query, MYSQLI_ASYNC);
-
-          /* Correction */
-          $_db_mt5_c = new iSQL(DB_mt5);
-          $query = "SELECT Login, SUM(Profit), count(Login) FROM mt5_deals WHERE Action=5 AND Comment!='Zeroing' AND DATE(`Time`) = '$today' GROUP BY Login";
-          $_db_mt5_c->LINK->query($query, MYSQLI_ASYNC);
-
-          /* Zeroing */
-          $_db_mt5_z = new iSQL(DB_mt5);
-          $query = "SELECT Login, SUM(Profit), count(Login) FROM mt5_deals WHERE Action=2 AND Comment='Zeroing' AND DATE(`Time`) = '$today' GROUP BY Login";
-          $_db_mt5_z->LINK->query($query, MYSQLI_ASYNC);
-
-          /* Login Groups */
-          $_db_mt5_groups = new iSQL(DB_mt5);
-          $query = "SELECT `Login`,`Group` FROM `mt5_users` WHERE `Group` LIKE 'real%'";
-          $_db_mt5_groups->LINK->query($query, MYSQLI_ASYNC);
-
-          /* Res - Profit Swap */
-          $_db_mt5_ps_res = $_db_mt5_ps->LINK->reap_async_query();
-
-          /* Res - Bonus In */
-          $_db_mt5_bins_res = $_db_mt5_bins->LINK->reap_async_query();
-
-          /* Res - Bonus Out */
-          $_db_mt5_bout_res = $_db_mt5_bout->LINK->reap_async_query();
-
-          /* Res - Withdrawal */
-          $_db_mt5_w_res = $_db_mt5_w->LINK->reap_async_query();
-
-          /* Res - Deposit */
-          $_db_mt5_d_res = $_db_mt5_d->LINK->reap_async_query();
-
-          /* Res - Correction */
-          $_db_mt5_c_res = $_db_mt5_c->LINK->reap_async_query();
-
-          /* Res - Zeroing */
-          $_db_mt5_z_res = $_db_mt5_z->LINK->reap_async_query();
-
-          /* Res - Login Groups  */
-          $_db_mt5_groups_res = $_db_mt5_groups->LINK->reap_async_query();
-
-          $max_row_mt5 = max(array(
-              $_db_mt5_ps_res->num_rows,
-              $_db_mt5_bins_res->num_rows,
-              $_db_mt5_bout_res->num_rows,
-              $_db_mt5_w_res->num_rows,
-              $_db_mt5_d_res->num_rows,
-              $_db_mt5_c_res->num_rows,
-              $_db_mt5_z_res->num_rows
-          ));
-
-          $tps_mt5=array();
-          for ($i=1; $i<=$max_row_mt5; $i++) {
-
-              /* Profit & Swap */
-              $ps = $_db_mt5_ps_res->fetch_row();
-              if($ps[0]){
-                  $tps_mt5[$ps[0]]['profit'] = $ps[1];
-                  $tps_mt5[$ps[0]]['swap'] = $ps[2];
-                  $tps_mt5[$ps[0]]['trades_count'] = $ps[3];
-              }
+              /* Profit Swap */
+              $_db_mt5_ps = new iSQL(DB_mt5);
+              $query = "SELECT Login, SUM(Profit), SUM(Storage), count(Login) FROM mt5_deals WHERE Action IN (0,1) AND Entry IN (1,3) AND DATE(`Time`) = '$today' GROUP BY Login";
+              $_db_mt5_ps->LINK->query($query, MYSQLI_ASYNC);
 
               /* Bonus In */
-              $bin = $_db_mt5_bins_res->fetch_row();
-              if($bin[0]) {
-                  $tps_mt5[$bin[0]]['bonus_in'] = $bin[1];
-                  $tps_mt5[$bin[0]]['bonus_in_count'] = $bin[2];
-              }
+              $_db_mt5_bins = new iSQL(DB_mt5);
+              $query = "SELECT Login, SUM(Profit), count(Login) FROM mt5_deals WHERE Action=6 AND Profit>0 AND DATE(`Time`) = '$today' GROUP BY Login";
+              $_db_mt5_bins->LINK->query($query, MYSQLI_ASYNC);
 
               /* Bonus Out */
-              $bout = $_db_mt5_bout_res->fetch_row();
-              if($bout[0]) {
-                  $tps_mt5[$bout[0]]['bonus_out'] = $bout[1];
-                  $tps_mt5[$bout[0]]['bonus_out_count'] = $bout[2];
-              }
+              $_db_mt5_bout = new iSQL(DB_mt5);
+              $query = "SELECT Login, SUM(Profit), count(Login) FROM mt5_deals WHERE Action=6 AND Profit<0 AND DATE(`Time`) = '$today' GROUP BY Login";
+              $_db_mt5_bout->LINK->query($query, MYSQLI_ASYNC);
 
               /* Withdrawal */
-              $w = $_db_mt5_w_res->fetch_row();
-              if($w[0]) {
-                  $tps_mt5[$w[0]]['withdrawal'] = $w[1];
-                  $tps_mt5[$w[0]]['withdrawal_count'] = $w[2];
-              }
+              $_db_mt5_w = new iSQL(DB_mt5);
+              $query = "SELECT Login, SUM(Profit), count(Login) FROM mt5_deals WHERE Action=2 AND Profit<0 AND Comment!='Zeroing' AND DATE(`Time`) = '$today' GROUP BY Login";
+              $_db_mt5_w->LINK->query($query, MYSQLI_ASYNC);
 
               /* Deposit */
-              $d = $_db_mt5_d_res->fetch_row();
-              if($d[0]) {
-                  $tps_mt5[$d[0]]['deposit'] = $d[1];
-                  $tps_mt5[$d[0]]['deposit_count'] = $d[2];
-              }
+              $_db_mt5_d = new iSQL(DB_mt5);
+              $query = "SELECT Login, SUM(Profit), count(Login) FROM mt5_deals WHERE Action=2 AND Profit>0 AND Comment!='Zeroing' AND DATE(`Time`) = '$today' GROUP BY Login";
+              $_db_mt5_d->LINK->query($query, MYSQLI_ASYNC);
 
               /* Correction */
-              $c = $_db_mt5_c_res->fetch_row();
-              if($c[0]) {
-                  $tps_mt5[$c[0]]['correction'] = $c[1];
-                  $tps_mt5[$c[0]]['correction_count'] = $c[2];
-              }
+              $_db_mt5_c = new iSQL(DB_mt5);
+              $query = "SELECT Login, SUM(Profit), count(Login) FROM mt5_deals WHERE Action=5 AND Comment!='Zeroing' AND DATE(`Time`) = '$today' GROUP BY Login";
+              $_db_mt5_c->LINK->query($query, MYSQLI_ASYNC);
 
               /* Zeroing */
-              $z = $_db_mt5_z_res->fetch_row();
-              if($z[0]) {
-                  $tps_mt5[$z[0]]['zeroing'] = $z[1];
-                  $tps_mt5[$z[0]]['zeroing_count'] = $z[2];
+              $_db_mt5_z = new iSQL(DB_mt5);
+              $query = "SELECT Login, SUM(Profit), count(Login) FROM mt5_deals WHERE Action=2 AND Comment='Zeroing' AND DATE(`Time`) = '$today' GROUP BY Login";
+              $_db_mt5_z->LINK->query($query, MYSQLI_ASYNC);
+
+              /* Login Groups */
+              $_db_mt5_groups = new iSQL(DB_mt5);
+              $query = "SELECT `Login`,`Group` FROM `mt5_users` WHERE `Group` LIKE 'real%'";
+              $_db_mt5_groups->LINK->query($query, MYSQLI_ASYNC);
+
+              /* Res - Profit Swap */
+              $_db_mt5_ps_res = $_db_mt5_ps->LINK->reap_async_query();
+
+              /* Res - Bonus In */
+              $_db_mt5_bins_res = $_db_mt5_bins->LINK->reap_async_query();
+
+              /* Res - Bonus Out */
+              $_db_mt5_bout_res = $_db_mt5_bout->LINK->reap_async_query();
+
+              /* Res - Withdrawal */
+              $_db_mt5_w_res = $_db_mt5_w->LINK->reap_async_query();
+
+              /* Res - Deposit */
+              $_db_mt5_d_res = $_db_mt5_d->LINK->reap_async_query();
+
+              /* Res - Correction */
+              $_db_mt5_c_res = $_db_mt5_c->LINK->reap_async_query();
+
+              /* Res - Zeroing */
+              $_db_mt5_z_res = $_db_mt5_z->LINK->reap_async_query();
+
+              /* Res - Login Groups  */
+              $_db_mt5_groups_res = $_db_mt5_groups->LINK->reap_async_query();
+
+              $max_row_mt5 = max(array(
+                  $_db_mt5_ps_res->num_rows,
+                  $_db_mt5_bins_res->num_rows,
+                  $_db_mt5_bout_res->num_rows,
+                  $_db_mt5_w_res->num_rows,
+                  $_db_mt5_d_res->num_rows,
+                  $_db_mt5_c_res->num_rows,
+                  $_db_mt5_z_res->num_rows
+              ));
+
+              $tps_mt5=array();
+              for ($i=1; $i<=$max_row_mt5; $i++) {
+
+                  /* Profit & Swap */
+                  $ps = $_db_mt5_ps_res->fetch_row();
+                  if($ps[0]){
+                      $tps_mt5[$ps[0]]['profit'] = $ps[1];
+                      $tps_mt5[$ps[0]]['swap'] = $ps[2];
+                      $tps_mt5[$ps[0]]['trades_count'] = $ps[3];
+                  }
+
+                  /* Bonus In */
+                  $bin = $_db_mt5_bins_res->fetch_row();
+                  if($bin[0]) {
+                      $tps_mt5[$bin[0]]['bonus_in'] = $bin[1];
+                      $tps_mt5[$bin[0]]['bonus_in_count'] = $bin[2];
+                  }
+
+                  /* Bonus Out */
+                  $bout = $_db_mt5_bout_res->fetch_row();
+                  if($bout[0]) {
+                      $tps_mt5[$bout[0]]['bonus_out'] = $bout[1];
+                      $tps_mt5[$bout[0]]['bonus_out_count'] = $bout[2];
+                  }
+
+                  /* Withdrawal */
+                  $w = $_db_mt5_w_res->fetch_row();
+                  if($w[0]) {
+                      $tps_mt5[$w[0]]['withdrawal'] = $w[1];
+                      $tps_mt5[$w[0]]['withdrawal_count'] = $w[2];
+                  }
+
+                  /* Deposit */
+                  $d = $_db_mt5_d_res->fetch_row();
+                  if($d[0]) {
+                      $tps_mt5[$d[0]]['deposit'] = $d[1];
+                      $tps_mt5[$d[0]]['deposit_count'] = $d[2];
+                  }
+
+                  /* Correction */
+                  $c = $_db_mt5_c_res->fetch_row();
+                  if($c[0]) {
+                      $tps_mt5[$c[0]]['correction'] = $c[1];
+                      $tps_mt5[$c[0]]['correction_count'] = $c[2];
+                  }
+
+                  /* Zeroing */
+                  $z = $_db_mt5_z_res->fetch_row();
+                  if($z[0]) {
+                      $tps_mt5[$z[0]]['zeroing'] = $z[1];
+                      $tps_mt5[$z[0]]['zeroing_count'] = $z[2];
+                  }
+
               }
 
-          }
+              $list_login_mt5 = implode(',', array_keys($tps_mt5));
+              if($list_login_mt5 ?? false){
+                  $where = 'group_id=2 AND login IN ('.$list_login_mt5.')';
+                  $user_tps_mt5 = $db->select('tp', $where);
+              }
+              $login_groups_mt5 = array_column($_db_mt5_groups_res->fetch_all(),1,0);
 
-          $list_login_mt5 = implode(',', array_keys($tps_mt5));
-          if($list_login_mt5 ?? false){
-              $where = 'group_id=2 AND login IN ('.$list_login_mt5.')';
-              $user_tps_mt5 = $db->select('tp', $where);
-          }
-          $login_groups_mt5 = array_column($_db_mt5_groups_res->fetch_all(),1,0);
+              if($user_tps_mt5 ?? false) foreach($user_tps_mt5 as $user_tp){
 
-          if($user_tps_mt5 ?? false) foreach($user_tps_mt5 as $user_tp){
+                  $tps_mt5[$user_tp['login']]['retention_id'] = $user_tp['retention'];
+                  $tps_mt5[$user_tp['login']]['conversion_id'] = $user_tp['conversion'];
 
-              $tps_mt5[$user_tp['login']]['retention_id'] = $user_tp['retention'];
-              $tps_mt5[$user_tp['login']]['conversion_id'] = $user_tp['conversion'];
+                  if(date("Y-m-d",strtotime($user_tp['ftd'])) == $today ) {
+                      $tps_mt5[$user_tp['login']]['ret_amount'] = $tps_mt5[$user_tp['login']]['deposit'] - $user_tp['ftd_amount'];
+                      $tps_mt5[$user_tp['login']]['ftd_amount'] = $user_tp['ftd_amount'];
+                  } else {
+                      $tps_mt5[$user_tp['login']]['ret_amount'] = $tps_mt5[$user_tp['login']]['deposit'];
+                      $tps_mt5[$user_tp['login']]['ftd_amount'] = 0;
+                  }
 
-              if(date("Y-m-d",strtotime($user_tp['ftd'])) == $today ) {
-                  $tps_mt5[$user_tp['login']]['ret_amount'] = $tps_mt5[$user_tp['login']]['deposit'] - $user_tp['ftd_amount'];
-                  $tps_mt5[$user_tp['login']]['ftd_amount'] = $user_tp['ftd_amount'];
-              } else {
-                  $tps_mt5[$user_tp['login']]['ret_amount'] = $tps_mt5[$user_tp['login']]['deposit'];
-                  $tps_mt5[$user_tp['login']]['ftd_amount'] = 0;
+                  $tps_mt5[$user_tp['login']]['ib_id'] = $user_tp['ib'];
+
+                  $tps_mt5[$user_tp['login']]['user_id'] = $user_tp['user_id'];
+                  $user_data = $userManager->getCustom($user_tp['user_id'],'email,unit');
+                  $tps_mt5[$user_tp['login']]['email'] = $user_data['email'];
+                  $tps_mt5[$user_tp['login']]['unit'] = $user_data['unit'];
+                  $tps_mt5[$user_tp['login']]['login'] = $user_tp['login'];
+                  $tps_mt5[$user_tp['login']]['day'] = $today;
+
+                  /*
+                   *  ALTER TABLE `tp_report_mt5` ADD UNIQUE `login_day`(`login`, `day`);
+                   */
+                  if($login_groups_mt5[$user_tp['login']] ?? false){
+                      if( in_array($login_groups_mt5[$user_tp['login']], $crm_groups) ){
+                          $tps_mt5[$user_tp['login']]['mt5_group'] = $login_groups_mt5[$user_tp['login']];
+                          $db->insert('tp_report_mt5', $tps_mt5[$user_tp['login']], 1);
+                          $mt5_count++;
+                      } else {
+                          $mt5_skip++;
+                      }
+                  }
               }
 
-              $tps_mt5[$user_tp['login']]['ib_id'] = $user_tp['ib'];
-
-              $tps_mt5[$user_tp['login']]['user_id'] = $user_tp['user_id'];
-              $user_data = $userManager->getCustom($user_tp['user_id'],'email,unit');
-              $tps_mt5[$user_tp['login']]['email'] = $user_data['email'];
-              $tps_mt5[$user_tp['login']]['unit'] = $user_data['unit'];
-              $tps_mt5[$user_tp['login']]['login'] = $user_tp['login'];
-              $tps_mt5[$user_tp['login']]['day'] = $today;
-
-              /*
-               *  ALTER TABLE `tp_report_mt5` ADD UNIQUE `login_day`(`login`, `day`);
-               */
-              if($login_groups_mt5[$user_tp['login']] ?? false){
-                  $tps_mt5[$user_tp['login']]['mt5_group'] = $login_groups_mt5[$user_tp['login']];
-                  $db->insert('tp_report_mt5', $tps_mt5[$user_tp['login']], 1);
-                  $mt5_count++;
-              }
-          }
-
-          $output['count'] = $mt5_count;
-          $this->_end(__FUNCTION__,$log_id, json_encode($output));
+              $output['count'] = $mt5_count;
+              $this->_end(__FUNCTION__,$log_id, json_encode($output));
+         }
       }
+
 
       // Func - Database Backup
       public function databaseBackup() {

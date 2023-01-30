@@ -11,7 +11,6 @@ GF::p($params);
     $e = $mt5api->Error;
     $api = $mt5api->Response;
     $chart_data = array_map("eFun::epoch2date", $api->answer);
-    // GF::cLog($chart_data,1);
 
 
 ?>

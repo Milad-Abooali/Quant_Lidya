@@ -1,8 +1,6 @@
 <?php
 
     $symbol = eFun::getPrice($params['symbol'])[0];
-    GF::cLog($params,1);
-    GF::cLog($symbol,1);
 
     // Check for IMTConSymbol::ExpirFlags  |  EnExpirationFlags
     $symbol_detail = eFun::getSymbol($params['symbol']);

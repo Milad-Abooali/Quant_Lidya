@@ -55,8 +55,6 @@
                                 $api = $mt5api->Response;
                                 $group = $api->answer->group;
 
-                                GF::cLog($tp_account['login'].':'.$group);
-
                                 $demo_groups = array('LidyaGOLD', 'LidyaSTD', 'LidyaVIP');
                                 $is_demo = ($group != str_ireplace($demo_groups,"XX",$group))? true: false;
                             ?>

@@ -1,7 +1,5 @@
 <?php
 
-    GF::cLog($params,1);
-
     $mt5api = new mt5API();
 
     $api_params['ticket']  = $params['order'];

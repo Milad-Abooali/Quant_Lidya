@@ -383,12 +383,12 @@ class GF {
         return $dash_str;
     }
 
-    public static function cLog($string, $json=false) {
-        if($json==1){
-            echo "<script>console.log(JSON.parse('".json_encode($string)."'))</script>";
-        }else{
-            echo "<script>console.log('$string')</script>";
-        }
+    public static function cLog($string, $raw=false) {
+            if (is_array($string) || is_object($string)){
+                echo "<script>console.log(JSON.parse('".json_encode($string)."'))</script>";
+            } else {
+                echo "<script>console.log('$string')</script>";
+            }
     }
 
     public static function encodeAm ($string, $key=null) {

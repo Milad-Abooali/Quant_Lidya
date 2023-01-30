@@ -256,6 +256,13 @@
                 /**
                  * MT5 Database
                  */
+                $where = 'type=2';
+                $crm_groups = $db->select('mt_groups',$where,'name');
+                $crm_groups = array_column($crm_groups,'name');
+                array_walk($crm_groups, function (&$value, $key) {
+                    $value='real\\'.$value;
+                });
+                if(empty($crm_groups)) { exit('Empty MT_Groups in CRM !');}
 
                 /* Profit Swap */
                 $_db_mt5_ps = new iSQL(DB_mt5);
@@ -456,9 +463,15 @@
                          *  ALTER TABLE `tp_report_mt5` ADD UNIQUE `login_day`(`login`, `day`);
                          */
                         if($login_groups_mt5[$user_tp['login']] ?? false){
-                            $tps_mt5[$user_tp['login']]['mt5_group'] = $login_groups_mt5[$user_tp['login']];
-                            $db->insert('tp_report_mt5', $tps_mt5[$user_tp['login']], 1);
-                            $mt5_count++;
+
+                            if( in_array($login_groups_mt5[$user_tp['login']], $crm_groups) ){
+                                $tps_mt5[$user_tp['login']]['mt5_group'] = $login_groups_mt5[$user_tp['login']];
+                                $db->insert('tp_report_mt5', $tps_mt5[$user_tp['login']], 1);
+                                $mt5_count++;
+                            } else {
+                                $mt5_skip++;
+                                GF::cLog($login_groups_mt5[$user_tp['login']] . ' Skipped.');
+                            }
                         }
                     }
                 }
