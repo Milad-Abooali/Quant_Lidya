@@ -210,3 +210,34 @@ $(".users_merge .doA-empty").click(function(){
     }
 });
 
+// Duplicates
+$('.users_duplicates  #duplicates_email').DataTable();
+$('.users_duplicates  #duplicates_phone').DataTable();
+$('.users_duplicates .form-select3').selectpicker({
+    tickIcon: 'fas fa-check',
+    liveSearch: true
+});
+$('.users_duplicates .do-clear-filters').on('click', function() {
+    let target = '#'+$(this).data('target')
+    let itar = '#'+$(this).data('itar')
+    $(target).selectpicker('deselectAll');
+    $(itar).val('');
+});
+
+$(".users_duplicates .users_merge .do-filter").click(function(){
+        merged_user = {
+            users:{},
+            user_extra:{},
+            marketing:{},
+            gi:{},
+            fx:{},
+            tp:{}
+        }
+        let uid = $(this).data('uid');
+        $('.main-user-select').removeClass('alert-success').addClass('alert-danger');
+        $(this).removeClass('alert-danger').addClass('alert-success');
+        $('tr.items').removeClass('alert-success');
+        $('#u-item-'+uid+' tr.items').each(async function(i, obj) {
+            await selectItem(obj);
+        });
+    });

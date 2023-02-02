@@ -66,7 +66,7 @@
                                         <a class="nav-link" data-toggle="tab" href="#tab-email">Emails</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" data-toggle="tab" href="#tab-client">Clients</a>
+                                        <a class="nav-link" data-toggle="tab" href="#tab-users">Users</a>
                                     </li>
                                 </ul>
 
@@ -91,15 +91,15 @@
                                     </div>
 
 
-                                    <div class="tab-pane pt-3" id="tab-client">
+                                    <div class="tab-pane pt-3" id="tab-users">
                                         <div class="row">
                                             <div class="col-2">
                                                 <div class="nav flex-column nav-pills vtab">
-                                                    <a class="nav-link" data-toggle="pill" href="client_duplicates">Duplicates</a>
+                                                    <a class="nav-link" data-toggle="pill" href="users_duplicates" data-page="test">Duplicate Finder</a>
                                                 </div>
                                             </div>
                                             <div class="col-10">
-                                                <?php if($parent=='client'): ?>
+                                                <?php if($parent=='users'): ?>
                                                     <div class="tab-content">
                                                         <?php if (file_exists($section_file)) include($section_file); ?>
                                                     </div>
@@ -107,6 +107,7 @@
                                             </div>
                                         </div>
                                     </div>
+
 
                                 </div>
 
