@@ -29,6 +29,7 @@ include('includes/head.php'); ?>
         $search = ($_POST['search']) ?? $_GET['s'];
         $search = trim($search);
         $search = preg_replace('/[\x00-\x1F\x7F]/u', '', $search);
+        if(strlen($search)<3) die('Search string is too short!');
 
         $filter = ($_POST['filter']) ?? $_GET['f'];
         $_SESSION['M']['search_filter'] = $filter;
