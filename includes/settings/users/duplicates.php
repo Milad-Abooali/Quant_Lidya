@@ -1,8 +1,5 @@
 <?php
-
     global $db;
-
-
 
 $unit = array();
 if($_SESSION["type"] == "Manager")
@@ -30,10 +27,10 @@ if($unit_s)
 if(isset($_GET['skip_archived']))
     $where .=' And status != 16';
 
-$sql ="SELECT SUBSTR(phone, -10, 10) l10, COUNT(*) d_count FROM user_extra $where GROUP BY SUBSTR(phone, -10, 10) HAVING d_count > 1";
+$sql ="SELECT GROUP_CONCAT(user_id) as targets, SUBSTR(phone, -10, 10) l10, COUNT(*) d_count FROM user_extra $where GROUP BY SUBSTR(phone, -10, 10) HAVING d_count > 1";
 $duplicate_phones = $db->query($sql);
 
-$sql ="SELECT email, COUNT(*) d_count FROM useres $where GROUP BY email HAVING d_count > 1";
+$sql ="SELECT GROUP_CONCAT(id) as targets, email, COUNT(*) d_count FROM useres $where GROUP BY email HAVING d_count > 1";
 $duplicate_emails = $db->query($sql);
 
 $units = $db->select('units','broker_id='.Broker['id']);
@@ -101,9 +98,9 @@ $units = $db->select('units','broker_id='.Broker['id']);
                 <tbody>
                 <?php if($duplicate_emails) foreach($duplicate_emails as $item) { ?>
                     <tr>
-                        <td><?= $item['Email'] ?></td>
+                        <td><?= $item['email'] ?></td>
                         <td><?= $item['d_count'] ?></td>
-                        <td><button class="doM-d-email btn btn-sm btn-primary" data-email="<?= $item['email'] ?>">View</button></td>
+                        <td><button class="doM-duplicates btn btn-sm btn-primary" data-type='email' data-target="<?= $item['email'] ?>">View</button></td>
                     </tr>
                 <?php } ?>
                 </tbody>
@@ -124,7 +121,7 @@ $units = $db->select('units','broker_id='.Broker['id']);
                     <tr>
                         <td><?= $item['l10'] ?></td>
                         <td><?= $item['d_count'] ?></td>
-                        <td><button class="doM-d-l10 btn btn-sm btn-primary" data-l10="<?= $item['l10'] ?>">View</button></td>
+                        <td><button class="doM-duplicates btn btn-sm btn-primary" data-type='l10' data-target="<?= $item['l10'] ?>">View</button></td>
                     </tr>
                 <?php } ?>
                 </tbody>

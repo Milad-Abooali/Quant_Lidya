@@ -392,3 +392,14 @@ function resetPasswordRequest() {
     }
     echo json_encode($output);
 }
+
+function listDuplicates(){
+    global $db;
+    $output = new stdClass();
+    $output->e = (($_POST['target']) ?? false) ? false : "target expected!";
+    $output->e = (($_POST['type']) ?? false) ? false : "type expected!";
+    if(!$output->e){
+        $db-
+    }
+    echo json_encode($output);
+}
