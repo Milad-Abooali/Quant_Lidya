@@ -395,12 +395,24 @@ function resetPasswordRequest() {
 
 // Merge Duplicate users
 function mergeDuplicates() {
-    global $db;
     $output = new stdClass();
-    $output->e = (($_POST['user_id']) ?? false) ? false : "user id expected!";
+    $output->e = (($_POST['keepId']) ?? false) ? false : "keepId expected!";
+    $output->e = (($_POST['target']) ?? false) ? false : "target expected!";
+    $output->e = (($_POST['type']) ?? false) ? false : "type expected!";
+    $output->e = (($_POST['users']) ?? false) ? false : "users expected!";
     if(!$output->e){
-
-
+        global $db;
+        global $userManager;
+        $output->res = array();
+        $users = explode(',',$_POST['users']);
+        foreach($users as $user_id){
+            if($user_id==$_POST['keepId']) continue;
+            $update['user_id'] = $_POST['keepId'];
+            $where =" user_id= $user_id ";
+            $db->updateAny('notes',$update,$where);
+            $userManager->delete($user_id);
+            $output->res[] = "$user_id Merged.";
+        }
     }
     echo json_encode($output);
 }

@@ -283,7 +283,9 @@ include('includes/head.php'); ?>
                                         $countF = array();
                                         global $userManager;
                                         if($_SESSION["type"] == "Admin" OR $_SESSION["type"] == "Manager" OR $_SESSION["type"] == "Retention Agent" OR $_SESSION["type"] == "Sales Agent"  ) {
+                                            $user_ids = array();
                                             if($result) while ($rowResult = mysqli_fetch_array($result)) {
+                                                $user_ids[]=$rowResult['id'];
                                                 $unit = factory::getCustomDataByID ($rowResult['id'], 'unit')['unit'];
                                                 $status_id = $userManager->getCustom ($rowResult['id'], 'status')['extra']['status'];
                                                 $sql = "SELECT status FROM status WHERE id = ".$status_id;
@@ -392,9 +394,10 @@ include('includes/head.php'); ?>
                         });
                     $("body").on('click', '.doA-merge-duplicates', function(){
                         let data = {
-                            id: $(this).data('id'),
+                            keepId: $(this).data('id'),
                             target: '<?= $_GET['s'] ?>',
-                            type: '<?= $_GET['f'] ?>'
+                            type: '<?= $_GET['f'] ?>',
+                            users: '<?= implode(',', $user_ids) ?>',
                         }
                         const r = confirm("Are you sure ti merge (notes) for these clients and delete them?");
                         if (r === true) {
