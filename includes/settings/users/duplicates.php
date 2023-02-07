@@ -8,23 +8,25 @@ $unit = array();
 if($_SESSION["type"] == "Manager")
     $unit[] = $_SESSION["unitn"];
 else if(isset($_GET['units']))
-    $unit[] = $_GET['units'];
+    $unit = explode(',', $_GET['units']);
 if($unit)
-    $unit = implode(',', $unit);
+    $unit_s = implode(',', $unit);
 
 $client = array();
-if(isset($_GET['filter'])){
+if(isset($_GET['leads']) || isset($_GET['trader']) || isset($_GET['IB'])){
     if(isset($_GET['leads']))   $client [] = 1;
-    if(isset($_GET['Trader']))  $client [] = 2;
+    if(isset($_GET['trader']))  $client [] = 2;
     if(isset($_GET['IB']))      $client [] = 3;
 } else {
     $client = array(1,2,3);
 }
 $client_s = implode(',', $client);
-
     $where = " WHERE type IN($client_s) ";
-if($unit)
-    $where .= "And unit IN ($unit)";
+
+if($unit_s)
+    $where .= "And unit IN ($unit_s)";
+
+
 if(isset($_GET['skip_archived']))
     $where .=' And status != 16';
 
@@ -68,7 +70,7 @@ $units = $db->select('units','broker_id='.Broker['id']);
                 <button type="button" class="do-clear-filters btn btn-sm" data-target="filterUnit"><i class="fa fa-times-circle"></i></button>
                 <select class="form-control form-select3" name="unit" id="filterUnit" multiple="multiple">
                     <?php if($units) foreach($units as $item) { ?>
-                        <option value="<?= $item['id'] ?>"><?= $item['name'] ?></option>
+                        <option value="<?= $item['id'] ?>" <?= (in_array($item['id'], $unit)) ? 'selected' : '' ?> > <?= $item['name'] ?></option>
                     <?php } ?>
                 </select>
             </div>
@@ -101,7 +103,7 @@ $units = $db->select('units','broker_id='.Broker['id']);
                     <tr>
                         <td><?= $item['Email'] ?></td>
                         <td><?= $item['d_count'] ?></td>
-                        <td><button class="btn btn-sm btn-primary" data-email="<?= $item['email'] ?>">View</button></td>
+                        <td><button class="doM-d-email btn btn-sm btn-primary" data-email="<?= $item['email'] ?>">View</button></td>
                     </tr>
                 <?php } ?>
                 </tbody>
@@ -122,7 +124,7 @@ $units = $db->select('units','broker_id='.Broker['id']);
                     <tr>
                         <td><?= $item['l10'] ?></td>
                         <td><?= $item['d_count'] ?></td>
-                        <td><button class="btn btn-sm btn-primary" data-l10="<?= $item['l10'] ?>">View</button></td>
+                        <td><button class="doM-d-l10 btn btn-sm btn-primary" data-l10="<?= $item['l10'] ?>">View</button></td>
                     </tr>
                 <?php } ?>
                 </tbody>

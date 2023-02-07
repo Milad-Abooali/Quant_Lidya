@@ -47,7 +47,7 @@
     }
 
     $staffs=array();
-    foreach ($staff_list as $staff){
+    if($staff_list) foreach ($staff_list as $staff){
         $staffs[$staff['id']] = $staff;
     }
 

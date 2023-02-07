@@ -145,7 +145,6 @@ $(".users_merge #doA-moveLogs").click(async function(){
     }
 });
 
-
 // Move Sessions Archive
 $(".users_merge #doA-sessionsArchive").click(async function(){
     const r = confirm("Do you want to move users sessions from archive to selected user?");
@@ -198,7 +197,6 @@ $(document).ready(function () {
     });
 });
 
-
 // Empty merge list
 $(".users_merge .doA-empty").click(function(){
     let id = $(this).data('id');
@@ -224,20 +222,27 @@ $('.users_duplicates .do-clear-filters').on('click', function() {
     $(itar).val('');
 });
 
-$(".users_duplicates .users_merge .do-filter").click(function(){
-        merged_user = {
-            users:{},
-            user_extra:{},
-            marketing:{},
-            gi:{},
-            fx:{},
-            tp:{}
-        }
-        let uid = $(this).data('uid');
-        $('.main-user-select').removeClass('alert-success').addClass('alert-danger');
-        $(this).removeClass('alert-danger').addClass('alert-success');
-        $('tr.items').removeClass('alert-success');
-        $('#u-item-'+uid+' tr.items').each(async function(i, obj) {
-            await selectItem(obj);
-        });
-    });
+$(".users_duplicates .do-filter").click(function(){
+    const filter = {};
+    filter.leads        = $('#leads').is(':checked');
+    filter.trader       = $('#trader').is(':checked');
+    filter.IB           = $('#IB').is(':checked');
+    filter.skipArchived = $('#skip_archived').is(':checked');
+    filter.units        = $('#filterUnit').val().toString();
+    console.log(filter);
+    let url = 'manager_panel.php?section=users_duplicates&'
+    if(filter.leads)        url += 'leads&';
+    if(filter.trader)       url += 'trader&';
+    if(filter.IB)           url += 'IB&';
+    if(filter.skipArchived) url += 'skip_archived&';
+    if(filter.units.length > 0) url += `units=${filter.units}`;
+    console.log(url);
+    window.location.replace(url);
+});
+
+$(".users_duplicates .doM-d-l10").click(function(){
+    let item = $(this).data('l10');
+    console.log(item);
+});
+
+
