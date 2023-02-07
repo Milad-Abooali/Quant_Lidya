@@ -240,20 +240,4 @@ $(".users_duplicates .do-filter").click(function(){
     window.location.replace(url);
 });
 
-$(".users_duplicates .doM-duplicates").click(function(){
-    let item = $(this).data('target');
-    let type = $(this).data('type');
-    let data = {
-        target:item,
-        type:type
-    }
-    ajaxCall ('global', 'listDuplicates',data, function(response){
-        let resObj = JSON.parse(response);
-        if(resObj.res) {
-            $('#modalMain').modal('toggle');
-            $('.content-page').fadeIn();
-        }
-    });
-});
-
 
