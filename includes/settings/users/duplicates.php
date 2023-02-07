@@ -100,7 +100,7 @@ $units = $db->select('units','broker_id='.Broker['id']);
                     <tr>
                         <td><?= $item['email'] ?></td>
                         <td><?= $item['d_count'] ?></td>
-                        <td><a target="_blank"  class="btn btn-sm btn-primary" href="search.php?q=<?= $item['email'] ?>">View</a></td>
+                        <td><a target="_blank"  class="btn btn-sm btn-primary" href="search.php?duplicate=1&f=email&s=<?= $item['email'] ?>">View</a></td>
                     </tr>
                 <?php } ?>
                 </tbody>
@@ -121,7 +121,7 @@ $units = $db->select('units','broker_id='.Broker['id']);
                     <tr>
                         <td><?= $item['l10'] ?></td>
                         <td><?= $item['d_count'] ?></td>
-                        <td><a target="_blank"  class="btn btn-sm btn-primary" href="search.php?q=<?= $item['l10'] ?>">View</a></td>
+                        <td><a target="_blank"  class="btn btn-sm btn-primary" href="search.php?duplicate=1&f=phone&s=<?= $item['l10'] ?>">View</a></td>
                     </tr>
                 <?php } ?>
                 </tbody>

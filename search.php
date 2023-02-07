@@ -316,6 +316,14 @@ include('includes/head.php'); ?>
 
                                                     <div class="card <?php echo $card; ?> text-center item">
                                                         <div class="card-header">
+                                                            <?php if(isset($_GET['duplicate'])){ ?>
+                                                            <style>
+                                                                #resp .item {height: 350px!important;}
+                                                                #resp .selected{box-shadow: inset -1px 1px 20px 20px;opacity: 0.5;}
+                                                            </style>
+                                                                <button data-id="<?= $rowResult['id'] ?>" class="doA-select-keep btn btn-outline-dark">Select to Keep</button>
+                                                            <hr>
+                                                            <?php } ?>
                                                             <?php echo $type; ?>
                                                             <span class="float-right badge-pill bg-dark text-success">
                                                                 <?= $unit; ?>
@@ -368,6 +376,46 @@ include('includes/head.php'); ?>
             <script src="assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
             <script>
                 $(document).ready( function () {
+
+                    <?php if(isset($_GET['duplicate'])){ ?>
+                        $("body").on('click', '.doA-select-keep', function(){
+                            $('.card').addClass('selected');
+                            $(this).closest('.card').removeClass('selected');
+
+                            $('.doA-merge-duplicates').addClass('doA-select-keep btn-outline-dark');
+                            $('.doA-merge-duplicates').html('Select to Keep');
+                            $('.doA-merge-duplicates').removeClass('doA-merge-duplicates btn-success');
+
+                            $(this).removeClass('doA-select-keep btn-outline-dark');
+                            $(this).addClass('doA-merge-duplicates btn-success');
+                            $(this).html('Start Merge ');
+                        });
+                    $("body").on('click', '.doA-merge-duplicates', function(){
+                        let data = {
+                            id: $(this).data('id'),
+                            target: '<?= $_GET['s'] ?>',
+                            type: '<?= $_GET['f'] ?>'
+                        }
+                        const r = confirm("Are you sure ti merge (notes) for these clients and delete them?");
+                        if (r === true) {
+                            ajaxCall('users', 'mergeDuplicates', data, function (response) {
+                                let resObj = JSON.parse(response);
+                                if (resObj.e) {
+                                    toastr.error("Error on request !");
+                                } else if (resObj.res) {
+                                    toastr.success("Your request has been done.");
+                                    setTimeout(function() {
+                                        location.reload();
+                                    }, 1950);
+                                }
+                            });
+                        }
+                    });
+
+
+
+
+                    <?php } ?>
 
                     /* Filter Counter */
                     $('button[data-filter="u-Turkish"]').append(' (<?= $countF['Unit']['Turkish'] ?? 0 ?>)');

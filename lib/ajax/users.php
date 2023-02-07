@@ -393,3 +393,16 @@ function resetPasswordRequest() {
     echo json_encode($output);
 }
 
+// Merge Duplicate users
+function mergeDuplicates() {
+    global $db;
+    $output = new stdClass();
+    $output->e = (($_POST['user_id']) ?? false) ? false : "user id expected!";
+    if(!$output->e){
+
+
+    }
+    echo json_encode($output);
+}
+
+
