@@ -96,6 +96,8 @@
             'forget-password.php',
             'reset-password.php',
             'api/lead_add.php',
+            'api/telegram.php',
+            'telegram.php',
             'lead_add.php',
             'balance.php',
             'app.php'
