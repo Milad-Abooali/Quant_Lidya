@@ -18,6 +18,6 @@ module.exports = {
 	isDevEnv: isDevEnv,
 	ssl		: true,
 	appPath : __dirname, /* '/home/lidyapartners/public_html/lidyacrm/app/socket' */
-	appUrl  : (isDevEnv) ? 'https://lidya' : 'https://clientzone2.lidyaportal.com',
-	appHost : (isDevEnv) ? 'lidya' : 'clientzone2.lidyaportal.com'
+	appUrl  : (isDevEnv) ? 'https://lidya' : 'https://clientzone4.lidyaportal.com',
+	appHost : (isDevEnv) ? 'lidya' : 'clientzone4.lidyaportal.com'
 };

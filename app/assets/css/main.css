@@ -492,29 +492,27 @@ form #select-country svg {
     background: #21252973;
 }
 .row-symbol .Symbol{
-    margin-bottom: 20px;
+    margin-bottom: 0px;
 }
 .row-symbol .Ask{
     margin-bottom: -20px;
     padding: 5px 10px;
-    border: 1px solid #198754;
-    background: #fff;
-    color: #000;
-    font-weight: 800;
-    min-width: 90px;
+    color: #fff;
+    font-weight: 900;
+    min-width: 100px;
     border-radius: 5px;
     text-align: center;
+    font-size: 150%;
 }
 .row-symbol .Bid {
     margin-bottom: -20px;
     padding: 5px 10px;
-    border: 1px solid #dc3545;
-    background: #fff;
-    color: #000;
-    font-weight: 800;
-    min-width: 90px;
+    color: #fff;
+    font-weight: 900;
+    min-width: 100px;
     border-radius: 5px;
     text-align: center;
+    font-size: 150%;
 }
 .row-symbol .Bid > span,
 .row-symbol .Ask > span{

@@ -79,10 +79,14 @@ $("body").on('click','.h-menu #doS-jump', function(e) {
     const jumpTarget = $('.h-menu #jump-input').val();
     $('.h-menu #jump-input').val('').trigger('keyup');
     let screen = false;
-    $('.screen').each(function(i, obj) {
+    let screenList = [
+        'home',
+        'trade',
+        'profile'
+    ];
+    $(screenList).each(function(i, obj) {
         if($(this).attr('id') === jumpTarget){
             screen = jumpTarget;
-
         }
     });
     if(screen){

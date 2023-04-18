@@ -14,7 +14,7 @@
     $mt5api->get('/api/position/get_total', $api_params);
     $e_test = $mt5api->Error;
     $api_test = $mt5api->Response;
-
+    GF::cLog($api_test, true);
 
 ?>
 <?php $form_name = 'trade-view-deposit'; ?>
