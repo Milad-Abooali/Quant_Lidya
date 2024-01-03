@@ -61,24 +61,36 @@
                 </div>
             </div>
             <div class="col text-end">
-                <span class="text-opacity-25">Last Update: </span><br>
-                <span id="update-time" class="text-light"></span>
+                <span class="text-opacity-25">Last Update: </span> <span id="update-time" class="text-light"></span>
             </div>
         </div>
-
+        <div class="row">
+            <div class="col-12">
+                <form id="market-search" class="text-center container">
+                    <input id="pair-input" list="pairs-list" type="search" class="form-control" placeholder="Filter Pairs..." aria-label="Filter Pair" autocomplete="off">
+                </form>
+            </div>
+        </div>
+        <datalist id="pairs-list"></datalist>
         <div class="wrapper-market container">
             <?php
                 if($api->answer) foreach($api->answer as $symbol){
             ?>
                 <div class="row-symbol row align-items-center" data-symbol="<?= $symbol->Symbol ?>">
-                    <div class="col-12">
+
+                    <div class="col-6">
                         <span data-form-params='{"symbol":"<?= $symbol->Symbol ?>","login":"<?= $login ?>"}' data-login="<?= $login ?>" data-form-name="trade_view_chart-simple" title="<?= $symbol->Symbol ?> Chart - Simple" class="doM-form btn btn-dark"><i class="fa fa-info-circle"></i> Chart</span>
+                    </div>
+                    <div class="col-6 text-end">
+                        <button type="button" class="remove-pair btn btn-dark" data-symbol="<?= $symbol->Symbol ?>"><i class="text-success fa fa-eye"></i></button>
+                        <button type="button" class="add-pair btn btn-dark" data-symbol="<?= $symbol->Symbol ?>"><i class="text-danger fa fa-eye-slash"></i></button>
                     </div>
                     <div class="col-4">
                         <span class="float-start Bid mb-2 mt-2"><?= GF::nf($symbol->Bid, $symbol->Digits) ?></span>
                     </div>
                     <div class="col-4">
                         <div class="text-white text-center Symbol h6"><strong><?= $symbol->Symbol ?></strong></div>
+
                     </div>
                     <div class="col-4">
                         <span class="float-end Ask mb-2 mt-2"><?= GF::nf($symbol->Ask, $symbol->Digits) ?></span>

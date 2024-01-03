@@ -78,22 +78,17 @@ $("body").on('click','.h-menu #doS-jump', function(e) {
     e.preventDefault();
     const jumpTarget = $('.h-menu #jump-input').val();
     $('.h-menu #jump-input').val('').trigger('keyup');
-    let screen = false;
     let screenList = [
         'home',
         'trade',
         'profile'
     ];
-    $(screenList).each(function(i, obj) {
-        if($(this).attr('id') === jumpTarget){
-            screen = jumpTarget;
-        }
-    });
-    if(screen){
-        APP.screen = screen;
+    if( screenList.includes(jumpTarget) ){
+        APP.screen = jumpTarget;
         showScreen(APP.screen)
     } else {
         console.log('Search', jumpTarget);
+        appAlert('danger', '<i class="fas fa-exclamation-triangle"></i> Error', `"${jumpTarget}" page not found!`);
     }
     $('.h-menu .r-menu').fadeOut();
     $('.h-menu .l-menu').fadeOut();

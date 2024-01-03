@@ -303,7 +303,8 @@ include('includes/css.php');
            		ON mt5_users.Login = mt5_deals.Login
         LEFT JOIN lidyapar_admin.tp 
            		ON tp.login = mt5_deals.Login 
-        WHERE  mt5_users.Group LIKE 'real%' 
+        WHERE  mt5_users.Group LIKE 'real%'
+        AND mt5_users.Group NOT LIKE 'real%TC%'
         AND mt5_deals.Action IN ( '2', '6' )
         AND mt5_deals.Time BETWEEN '".$startTime."' AND '".$endTime."'";
     }
@@ -424,7 +425,8 @@ include('includes/css.php');
         		ON mt5_users.Login = mt5_deals.Login
         LEFT JOIN lidyapar_admin.tp 
         		ON tp.login = mt5_deals.Login
-        WHERE  mt5_users.Group LIKE 'real\\\\\\\\".$g."%' 
+        WHERE  mt5_users.Group LIKE 'real\\\\\\\\".$g."%'
+        AND mt5_users.Group NOT LIKE 'real%TC%'
         AND mt5_deals.Action IN ( '2', '6' )
         AND mt5_deals.Time BETWEEN '".$startTime."' AND '".$endTime."'";
     } else if($_SESSION["type"] == "Admin"){
@@ -539,7 +541,8 @@ include('includes/css.php');
         		ON mt5_users.Login = mt5_deals.Login
         LEFT JOIN lidyapar_admin.tp 
         		ON tp.login = mt5_deals.Login 
-        WHERE  mt5_users.Group LIKE 'real%' 
+        WHERE  mt5_users.Group LIKE 'real%'
+        AND mt5_users.Group NOT LIKE 'real%TC%'
         AND mt5_deals.Action IN ( '2', '6' )
         AND mt5_deals.Time BETWEEN '".$startTime."' AND '".$endTime."'";
     }
@@ -605,6 +608,7 @@ include('includes/css.php');
             LEFT JOIN lidyapar_admin.tp 
                		ON tp.login = mt5_deals.Login 
         WHERE  mt5_users.Group LIKE 'real\\\\\\\\".$g."%'
+            AND mt5_users.Group NOT LIKE 'real%TC%'
             AND mt5_deals.Action IN ( '0', '1', '2', '6' )
             AND mt5_deals.Time BETWEEN '".$startTime3."' AND '".$endTime3."'
             AND tp.retention = ".$userAgent."";
@@ -653,6 +657,7 @@ include('includes/css.php');
             LEFT JOIN lidyapar_admin.tp 
                		ON tp.login = mt5_deals.Login 
         WHERE  mt5_users.Group LIKE 'real%' 
+            AND mt5_users.Group NOT LIKE 'real%TC%'
             AND mt5_deals.Action IN ( '0', '1', '2', '6' )
             AND mt5_deals.Time BETWEEN '".$startTime3."' AND '".$endTime3."'
             AND tp.retention = ".$userAgent."";

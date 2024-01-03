@@ -21,6 +21,8 @@ include('includes/head.php'); ?>
     include('includes/topbar.php');
     include('includes/sidebar.php');
 
+    require_once "config.php";
+
     /**
      * Escape User Input Values POST & GET
      */
@@ -98,50 +100,89 @@ if(isset($_POST['submit'])){
         $array = str_replace(",", '","', $unitn);
         $prefixed_array = str_replace(",", '","real\\\\', $unitn);
         
-        $sql1 = 'SELECT 
-        	mt5_users.Name as Name,
-        	mt5_deals.Login AS SLogin,
-        	(SELECT COUNT(mt5_deals.Order) 
-        		FROM (SELECT * FROM (SELECT max(`Order`) AS Order,SUBSTRING_INDEX(SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT Time SEPARATOR ","), ",", 1), ",", -1) AS OPEN_TIME,SUBSTRING_INDEX(SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT Time SEPARATOR ","), ",", 2), ",", -1) AS CLOSE_TIME,max(Profit) AS Profit,max(Storage) AS Storage, max(Storage) AS Storage FROM `mt5_deals` WHERE Time BETWEEN "'.$startTime.'" AND "'.$endTime.'" AND Entry IN ("0","1") GROUP By PositionID) AS Main WHERE OPEN_TIME != CLOSE_TIME)
-        		WHERE Login = SLogin 
-        		AND mt5_deals.Entry <> "0" 
-        		AND mt5_deals.CLOSE_TIME BETWEEN "'.$startTime.'" AND "'.$endTime.'" 
-        		AND TIMESTAMPDIFF(MINUTE,mt5_deals.OPEN_TIME,mt5_deals.CLOSE_TIME) <= "'.$Time.'" 
-        		AND mt5_deals.Action <= 1
-        	) as Scalp,
-        	SUM(mt5_deals.Profit+mt5_deals.Storage) as Profit,
-        	(SELECT COUNT(mt5_deals.order) 
-        		FROM mt5_deals 
-        		WHERE Login = SLogin 
-        		AND mt5_deals.CLOSE_TIME BETWEEN "'.$startTime.'" AND "'.$endTime.'" 
-        		AND mt5_deals.Action <= 1 
-        		AND mt5_deals.Entry <> "0"
-        	) as Trades,
-        	(SELECT SUM(mt5_deals.Profit+mt5_deals.Storage) 
-        		FROM mt5_deals 
-        		WHERE Login = SLogin 
-        		AND mt5_deals.CLOSE_TIME BETWEEN "'.$startTime.'" AND "'.$endTime.'" 
-        		AND mt5_deals.Entry <> "0" 
-        		AND mt5_deals.Action <= 1
-        	) as PL 
-        FROM (SELECT * FROM (SELECT max(`Order`) AS Order,SUBSTRING_INDEX(SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT Time SEPARATOR ","), ",", 1), ",", -1) AS OPEN_TIME,SUBSTRING_INDEX(SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT Time SEPARATOR ","), ",", 2), ",", -1) AS CLOSE_TIME,max(Profit) AS Profit,max(Storage) AS Storage, max(Storage) AS Storage FROM `mt5_deals` WHERE Time BETWEEN "'.$startTime.'" AND "'.$endTime.'" AND Entry IN ("0","1") GROUP By PositionID) AS Main WHERE OPEN_TIME != CLOSE_TIME)
-        LEFT JOIN mt5_users ON mt5_deals.Login = mt5_users.Login 
-        WHERE mt5_users.Group IN ("'.$prefixed_array.'") 
-        	AND mt5_deals.CLOSE_TIME BETWEEN "'.$startTime.'" AND "'.$endTime.'" 
-        	AND TIMESTAMPDIFF(MINUTE,mt5_deals.OPEN_TIME,mt5_deals.CLOSE_TIME) <= "'.$Time.'" 
-        	AND mt5_deals.Action <= 1 
-        GROUP BY mt5_deals.Login';
-        echo $sql1;
-        $result1 = $conn->query($sql1);
+        $sql1 = 'SELECT mt5_users.Name AS Name, 
+                       Test2.Login AS SLogin, 
+                          ( 
+                              SELECT COUNT(Test.Order) 
+                              FROM( 
+                                  SELECT * 
+                                  FROM ( 
+                                      SELECT MAX(`Order`) AS `Order`,
+                                      SUBSTRING_INDEX(SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT Time SEPARATOR ","), ",", 1), ",", -1) AS OPEN_TIME,
+                                      SUBSTRING_INDEX(SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT Time SEPARATOR ","), ",", -1), ",", -1) AS CLOSE_TIME,
+                                      SUM(Profit) AS Profit,
+                                      SUM(Storage) AS Storage,
+                                      MAX(Login) AS Login,
+                                      MAX(Action) AS Action,
+                                      MAX(Entry)	AS Entry
+                                      FROM `mt5_deals` 
+                                      WHERE Time BETWEEN "'.$startTime.'" AND "'.$endTime.'" 
+                                      AND Entry IN ("0","1")
+                                      AND Action IN ("0","1")
+                                      GROUP BY PositionID) AS Main 
+                                  WHERE  OPEN_TIME != CLOSE_TIME
+                              ) As Test
+                              WHERE  Login = SLogin 
+                              AND    Test.Entry <> "0" 
+                              AND    Test.CLOSE_TIME BETWEEN "'.$startTime.'" AND "'.$endTime.'" 
+                              AND    TIMESTAMPDIFF(MINUTE,Test.OPEN_TIME,Test.CLOSE_TIME) <= "'.$Time.'"
+                              AND    Test.Action <= 1 
+                          ) AS Scalp, 
+                          SUM(Test2.Profit+Test2.Storage) AS Profit, 
+                          SUM(Test2.Volume) AS Volume, 
+                          ( 
+                              SELECT COUNT(mt5_deals.order) 
+                              FROM   mt5_deals 
+                              WHERE  Login = SLogin 
+                              AND    mt5_deals.Time BETWEEN "'.$startTime.'" AND "'.$endTime.'" 
+                              AND    mt5_deals.Action <= 1 
+                              AND    mt5_deals.Entry <> "0" ) AS Trades, 
+                          ( 
+                              SELECT SUM(mt5_deals.Profit+mt5_deals.Storage) 
+                              FROM   mt5_deals 
+                              WHERE  Login = SLogin 
+                              AND    mt5_deals.Time BETWEEN "'.$startTime.'" AND "'.$endTime.'" 
+                              AND    mt5_deals.Entry <> "0" 
+                              AND    mt5_deals.Action <= 1 
+                          ) AS PL 
+                FROM      ( 
+                             SELECT * 
+                             FROM( 
+                                 SELECT MAX(`Order`) AS `Order`,
+                                 SUBSTRING_INDEX(SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT Time SEPARATOR ","), ",", 1), ",", -1) AS OPEN_TIME,
+                                 SUBSTRING_INDEX(SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT Time SEPARATOR ","), ",", -1), ",", -1) AS CLOSE_TIME,
+                                 SUM(Profit) AS Profit,
+                                 SUM(Volume) AS Volume,
+                                 SUM(Storage) AS Storage,
+                                 MAX(Login) AS Login,
+                                 MAX(Action) AS Action,
+                                 MAX(Entry) AS Entry
+                                 FROM `mt5_deals` 
+                                 WHERE Time BETWEEN "'.$startTime.'" AND "'.$endTime.'"
+                                 AND Entry IN ("0","1")
+                                 AND Action IN ("0","1")
+                                 GROUP BY PositionID) AS Main1
+                             WHERE OPEN_TIME != CLOSE_TIME
+                          ) As Test2
+                LEFT JOIN mt5_users 
+                ON        Test2.Login = mt5_users.Login 
+                WHERE     Test2.CLOSE_TIME BETWEEN "'.$startTime.'" AND "'.$endTime.'"
+                AND       TIMESTAMPDIFF(MINUTE,Test2.OPEN_TIME,Test2.CLOSE_TIME) <= "'.$Time.'" 
+                AND       Test2.Action <= 1
+                AND       mt5_users.Group LIKE "real%"
+                AND       mt5_users.Group NOT LIKE "real%TC%"
+                GROUP BY  Test2.Login';
+        //echo $sql1;
+        $result1 = $DB_mt5->query($sql1);
     } else {
         
     }
     
     //$sql1 = 'SELECT MT4_USERS.NAME as NAME,MT4_TRADES.LOGIN AS SLOGIN,(SELECT COUNT(MT4_TRADES.TICKET) FROM MT4_TRADES WHERE LOGIN = SLOGIN AND MT4_TRADES.CLOSE_TIME <> "1970-01-01 00:00:00" AND MT4_TRADES.OPEN_TIME BETWEEN "'.$startTime.'" AND "'.$endTime.'" AND TIMESTAMPDIFF(MINUTE,MT4_TRADES.OPEN_TIME,MT4_TRADES.CLOSE_TIME) <= "'.$Time.'" AND MT4_TRADES.CMD <= 1) as SCALP,SUM(MT4_TRADES.PROFIT) as PROFIT,(SELECT COUNT(MT4_TRADES.TICKET) FROM MT4_TRADES WHERE LOGIN = SLOGIN AND MT4_TRADES.CLOSE_TIME BETWEEN "'.$startTime.'" AND "'.$endTime.'" AND MT4_TRADES.CMD <= 1 AND MT4_TRADES.CLOSE_TIME <> "1970-01-01 00:00:00") as TRADES,(SELECT SUM(MT4_TRADES.PROFIT+MT4_TRADES.SWAPS) FROM MT4_TRADES WHERE LOGIN = SLOGIN AND MT4_TRADES.OPEN_TIME BETWEEN "'.$startTime.'" AND "'.$endTime.'" AND MT4_TRADES.CLOSE_TIME <> "1970-01-01 00:00:00" AND MT4_TRADES.CMD <= 1) as PL FROM `MT4_TRADES` LEFT JOIN MT4_USERS ON MT4_TRADES.LOGIN = MT4_USERS.LOGIN WHERE MT4_TRADES.LOGIN NOT IN '.$notin.' AND MT4_USERS.GROUP IN '.$in.' AND MT4_TRADES.CLOSE_TIME BETWEEN "'.$startTime.'" AND "'.$endTime.'" AND TIMESTAMPDIFF(MINUTE,MT4_TRADES.OPEN_TIME,MT4_TRADES.CLOSE_TIME) <= "'.$Time.'" AND MT4_TRADES.CMD <= 1 GROUP BY MT4_TRADES.LOGIN';
-    echo $sql1;
+    //echo $sql1;
     //$result1 = $conn->query($sql1);
     
-    $conn->close();
+    //$conn->close();
     
 }
 ?>
@@ -258,18 +299,18 @@ if(isset($_POST['submit'])){
                                                     while($row1 = $result1->fetch_assoc()) {
                                             ?>
                         					    <tr>
-                        					        <td><?php echo $row1['NAME']; ?></td>
-                        					        <td><?php echo $row1['SLOGIN']; ?></td>
-                        					        <td><?php echo $row1['SCALP']; ?></td>
-                        					        <td><?php echo $row1['TRADES']; ?></td>
+                        					        <td><?php echo $row1['Name']; ?></td>
+                        					        <td><?php echo $row1['SLogin']; ?></td>
+                        					        <td><?php echo $row1['Scalp']; ?></td>
+                        					        <td><?php echo $row1['Trades']; ?></td>
                         					        <td>
                         					            <?php
-                        					                $Percentage = ($row1['SCALP']/$row1['TRADES'])*100;
+                        					                $Percentage = ($row1['Scalp']/$row1['Trades'])*100;
                         					                $Number = round($Percentage, 2);
                         					                echo number_format($Number, 2, '.', ''); 
                         					            ?> %
                         					        </td>
-                        					        <td><?php echo round($row1['PROFIT'], 2); ?></td>
+                        					        <td><?php echo round($row1['Profit'], 2); ?></td>
                         					        <td><?php echo round($row1['PL'], 2); ?></td>
                         					    </tr>
                         					<?php

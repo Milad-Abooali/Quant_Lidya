@@ -42,10 +42,10 @@ function load() {
     return (!$error);
 }
 
-
 // Load payment information
 function paymentInfo() {
     $error = !(($_POST['lang']) ?? false);
     if (!$error) include_once "raw/paymentInfo_".$_POST['lang'].".php";
     return (!$error);
 }
+

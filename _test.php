@@ -21,17 +21,20 @@
         <div class="col-md-6 alert alert-secondary">
             <h6 class="text-center">Test Pad</h6>
             <?php
-                global $db;
-                $mt5api = new mt5API();
-                $api_symbol['symbol'] = 'EURUSD';
-                $mt5api->get('/api/tick/last', $api_symbol);
-                $e = $mt5api->Error;
-                $res = $mt5api->Response->answer;
 
-                GF::p($e, 1);
-                GF::p($res, 1);
+                include 'gateways/paynet/main.php';
+                $paynet = new paynet('./', 1);
 
+                $order = [
+                        'id' => 1500,
+                        'amount' => 1.01,
+                ];
+                $result = $paynet->create_payment_link($order);
+
+                GF::p($result);
             ?>
+
+
             <script>
 
                 

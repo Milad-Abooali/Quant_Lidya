@@ -22,10 +22,15 @@
     </div>
 
     <form id="h-jump" class="text-center d-hide">
-        <input id="jump-input" type="search" list="jumping-list" class="form-control" placeholder="Jump to..." aria-label="Jump TO" autocomplete="off">
+        <input id="jump-input" type="search" list="jumping" class="form-control" placeholder="Jump to..." aria-label="Jump TO" autocomplete="off">
         <button id="doS-jump" class="btn btn-sm btn-outline-primary d-hide">GO</button>
         <button id="doO-search-menu" class="btn doO-search-menu text-center"><i class="fa fa-angle-up"></i></button>
     </form>
+    <datalist id="jumping">
+        <option value="home">
+        <option value="trade">
+        <option value="profile">
+    </datalist>
 
     <?php include_once('l-menu.php') ?>
 

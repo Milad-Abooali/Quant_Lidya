@@ -82,7 +82,7 @@ include('includes/head.php'); ?>
                                     </tr>  
                                 </thead>
                                 <tbody>
-                                    <?php foreach($notifications as $item) { ?>
+                                    <?php if($notifications) foreach($notifications as $item) { ?>
                                     <tr>
                                         <td><?= $item['id'] ?></td>
                                         <td><?= $item['source'] ?></td>

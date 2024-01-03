@@ -16,6 +16,7 @@ function c_10 ($data, $row, $col) {
     $camps = ($col[15] || $col[16])
     ? '<div class="data-hide camp-hide"><small class="bg-gradient-dark text-white btn-sm col-md-12 col-sm-6 text-center">Campaigns</small><span><strong>Main:</strong><br> '.$col[15].'<br><strong>Extra:</strong><br>'.$col[16].'</span></div>'
     : null;
-    return $main.$camps;
+    $affiliate = ($col[18]) ? '<div>Affiliate:'.$col[18].'</div>' : '';
+    return $main.$camps.$affiliate;
 }
 

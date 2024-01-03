@@ -45,7 +45,7 @@
             $transaction_data['created_at'] = $this->db->DATE;
             $transaction_data['created_by'] = $_SESSION['id'];
             $transaction_data['status'] = "Pending";
-            if(($type=='deposit') && ($source==3)) $transaction_data['status'] = "Payment";
+            if(($type=='deposit') && (in_array($source,[7,9]))) $transaction_data['status'] = "Payment";
             $transaction_id = $this->db->insert($this->t_transactions, $transaction_data);
             if ($transaction_id && $comment) $this->addComment($transaction_id, $comment);
             return ($transaction_id) ?? false;

@@ -14,6 +14,11 @@
     $where = "status=1";
     $gateways = $db->select('payment_gateways',$where, '*',null,'id ASC');
 
+    if($_SESSION['unit'] === 'Turkish') {
+        global $db;
+        $where = "Symbol='USDTRY'";
+        $usdtry_rate = $db->selectRow('lidyapar_mt5.mt5_prices', $where)['AskLast'];
+    }
 
     if($is_pending_transaction) {
 
@@ -21,7 +26,7 @@
         $docs = $Transaction->loadDocs($pending_transaction['id']);
 
 
-        if(($pending_transaction['type']=='Deposit') && ($pending_transaction['source']==3) && $pending_transaction['status']=='Payment') {
+        if(($pending_transaction['type']=='Deposit') && (in_array($pending_transaction['source'],[7,9])) && $pending_transaction['status']=='Payment') {
             $where = "status=1 AND transactions_id=".$pending_transaction['id'];
             $payment = $db->selectRow('payment_orders',$where);
             if ($payment) {
@@ -42,7 +47,7 @@
     ?>
 
 
-<p><?= $_L->T('Active_Eequest','transaction') ?></p>
+<p><?= $_L->T('Active_Eequest','transactions') ?></p>
         <div id="tActive" class="card mini-stat border-secondary">
             <div class="card-body mini-stat-img">
                 <div class="row">
@@ -60,13 +65,13 @@
                     </div>
                 </div>
 
-                <?php if($pending_transaction['type']=='Deposit' && $pending_transaction['source']==3  && $pending_transaction['status']=='Payment') { ?>
+                <?php if($pending_transaction['type']=='Deposit' && in_array($pending_transaction['source'],[7,9])  && $pending_transaction['status']=='Payment') { ?>
                     <div class="float-left">
                         <div class="input-group ">
                             <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fa fa-money-bill mr-2"></i> <?= $db->selectId('payment_gateways',$pending_transaction['source'],'name')['name']; ?></span>
+                                <span class="input-group-text"><i class="fa fa-money-bill mr-2"></i> <span id="selected-gateway"><?= $db->selectId('payment_gateways',$pending_transaction['source'],'name')['name']; ?></span></span>
                             </div>
-                            <input type="button" data-tid="<?= $pending_transaction['id'] ?>"  data-now="<?= strtotime("now") ?>"  data-expire="<?= strtotime($pending_transaction['created_at']) + (5 * 60) ?>" data-amount="<?= $pending_transaction['amount'] ?>" data-gateway="<?= $pending_transaction['source'] ?>" class="doM-payNow btn btn-sm btn-outline-success px-3" value="<?= $_L->T('Pay_Now','transactions') ?>">
+                            <input type="button" data-tid="<?= $pending_transaction['id'] ?>"  data-now="<?= strtotime("now") ?>"  data-expire="<?= strtotime($pending_transaction['created_at']) + (15 * 60) ?>" data-amount="<?= $pending_transaction['amount'] ?>" data-gateway="<?= $pending_transaction['source'] ?>" class="doM-payNow btn btn-sm btn-outline-success px-3" value="<?= $_L->T('Pay_Now','transactions') ?>">
                         </div>
                     </div>
                 <?php } ?>
@@ -75,7 +80,7 @@
                 <?php if(!$pending_transaction['desk_verify']) {  ?>
                 <button data-tid="<?= $pending_transaction['id'] ?>" class="doA-cancel float-right small btn btn-sm btn-outline-danger"><i class="fa fa-minus-circle mr-2"></i> <?= $_L->T('Cancel','general') ?></button>
                 <?php } else { ?>
-                    <span class="float-right small btn btn-sm btn-outline-secondary" data-toggle="tooltip" data-placement="right" title="" data-original-title="<?= $_L->T('Cancel_cant','transaction') ?>"><i class="fa fa-minus-circle mr-2"></i> <?= $_L->T('Cancel','general') ?></span>
+                    <span class="float-right small btn btn-sm btn-outline-secondary" data-toggle="tooltip" data-placement="right" title="" data-original-title="<?= $_L->T('Cancel_cant','transactions') ?>"><i class="fa fa-minus-circle mr-2"></i> <?= $_L->T('Cancel','general') ?></span>
                 <?php }  ?>
 
 
@@ -99,10 +104,10 @@
 
             <form id="tUpdate" name="tUpdate" method="post" enctype="multipart/form-data">
                 <div class="col-sm-12 mb-3" id="receipt">
-                    <label for="doc"><?= $_L->T('New_Document','doc') ?> /<small><?= $_L->T('New_up_to','transaction',3) ?></small></label>
+                    <label for="doc"><?= $_L->T('New_Document','doc') ?> /<small><?= $_L->T('New_up_to','transactions',3) ?></small></label>
                     <div class="custom-file my-1">
                         <input type="file" class="custom-file-input" id="doc" name="doc[]">
-                        <label class="custom-file-label" for="doc"><?= $_L->T('Choose_Receipt','transaction') ?></label>
+                        <label class="custom-file-label" for="doc"><?= $_L->T('Choose_Receipt','transactions') ?></label>
                     </div>
                     <span style="display: none" data-max="2" class="da-addDoc small btn btn-sm btn-light"><i class="fa fa-plus text-success"></i> <?= $_L->T('Add_more','doc') ?></span>
                 </div>
@@ -114,13 +119,14 @@
                     <input type="hidden" name="transaction_id" value="<?= $pending_transaction['id'] ?>">
                     <input type="hidden" name="user_id" value="<?= $user_id ?>">
                     <button class="btn btn-primary"  type="submit"><?= $_L->T('Submit','general') ?></button>
-                    <small class="float-right" style="line-height: 33px;">* <?= $_L->T('data_note','transaction') ?></small>
+                    <small class="float-right" style="line-height: 33px;">* <?= $_L->T('data_note','transactions') ?></small>
                     <div id="fRes" class="mt-3 alert" style="display: none;"></div>
                 </div>
             </form>
 
 <?php
-    } else {
+    }
+    else {
         global $db;
         $where = "user_id=$user_id AND group_id=2";
         $tp_accounts = $db->select('tp', $where);
@@ -132,8 +138,8 @@
             <div class="col-sm-6 my-3">
                 <label for="inputType"><span class="text-danger">*</span> <?= $_L->T('Type','general') ?></label>
                 <select class="form-control" id="transferType" name="type" required>
-                    <option value="deposit" selected><?= $_L->T('Deposit','transaction') ?></option>
-                    <option value="withdraw"><?= $_L->T('Withdraw','transaction') ?></option>
+                    <option value="deposit" selected><?= $_L->T('Deposit','transactions') ?></option>
+                    <option value="withdraw"><?= $_L->T('Withdraw','transactions') ?></option>
                 </select>
             </div>
             <div class="col-sm-6 my-3">
@@ -146,8 +152,8 @@
             </div>
         </div>
         <div class="col-sm-12 mb-3">
-            <label for="inputUnit"><span class="text-danger">*</span> <?= $_L->T('Amount','trade') ?> /<small><?= $_L->T('Please_specify_the_amount','transaction') ?></small></label>
-            <?php if(in_array($_SESSION['unitn'], array(1,3,4,5,6,7,8))) {
+            <label for="inputUnit"><span class="text-danger">*</span> <?= $_L->T('Amount','trade') ?> /<small><?= $_L->T('Please_specify_the_amount','transactions') ?></small></label>
+            <?php if($_SESSION['unit'] === 'Turkish') {
 
                 global $db;
                 $where ="Symbol='USDTRY'";
@@ -172,7 +178,7 @@
                     </div>
                 </div>
                 <div class="text-center">
-                    <small><?= $_L->T('Current_Exchange_Rate','transaction') ?>: <strong class="badge badge-info px-2"><?= number_format($usdtry_rate, 2, '.', '') ?></strong></small>
+                    <small><?= $_L->T('Current_Exchange_Rate','transactions') ?>: <strong class="badge badge-info px-2"><?= number_format($usdtry_rate, 2, '.', '') ?></strong></small>
                 </div>
             <?php } else { ?>
                 <div class="input-group mb-3">
@@ -198,7 +204,7 @@
         <div class="col-sm-12">
             <input type="hidden" name="user_id" value="<?= $user_id ?>">
             <button class="btn btn-primary" type="submit"><?= $_L->T('Submit','general') ?></button>
-            <small class="float-right" style="line-height: 33px;">* <?= $_L->T('data_note','transaction') ?></small>
+            <small class="float-right" style="line-height: 33px;">* <?= $_L->T('data_note','transactions') ?></small>
             <div id="fRes" class="mt-3 alert" style="display: none;"></div>
         </div>
     </form>
@@ -206,14 +212,14 @@
 
 <?php
         } else {
-           echo ' <p class="alert alert-warning">'.$_L->T('no_trad_account','transaction').'</p>';
+           echo ' <p class="alert alert-warning">'.$_L->T('no_trad_account','transactions').'</p>';
         }
     }
 ?>
 
 
     <script>
-<?php if(in_array($_SESSION['unitn'], array(1,3,4,5,6,7,8))) { ?>
+<?php if($_SESSION['unit'] === 'Turkish') { ?>
         // turkish amount
         var usdTry = <?= number_format($usdtry_rate, 2, '.', '') ?>;
 
@@ -243,30 +249,30 @@
             '</div>';
         var cc_info =
             '<p class="col-sm-12 mb-3" id="bank">' +
-            '<span class="text-danger">*</span> <?= $_L->T('pay_next_step','transaction') ?>' +
+            '<span class="text-danger">*</span> <?= $_L->T('pay_next_step','transactions') ?>' +
             '</p>';
         var doc_d =
             '<div class="col-sm-12 mb-3" id="receipt">' +
-            '<label for="doc"><span class="text-danger">*</span> <?= $_L->T('Document','doc') ?> /<small><?= $_L->T('New_up_to','transaction',5) ?></small></label>' +
+            '<label for="doc"><span class="text-danger">*</span> <?= $_L->T('Document','doc') ?> /<small><?= $_L->T('New_up_to','transactions',5) ?></small></label>' +
             '<div class="custom-file my-1">' +
             '<input type="file" class="custom-file-input" id="doc" name="doc[]" required>' +
-            '<label class="custom-file-label" for="doc"><?= $_L->T('Choose_your_Receipt','transaction') ?></label>' +
+            '<label class="custom-file-label" for="doc"><?= $_L->T('Choose_your_Receipt','transactions') ?></label>' +
             '</div>' +
             '<span style="display: none" data-max="4" class="da-addDoc small btn btn-sm btn-light"><i class="fa fa-plus text-success"></i> <?= $_L->T('Add_more','doc') ?></span>' +
             '</div>';
         var doc_w =
             '<div class="col-sm-12 mb-3" id="receipt">' +
-            '<label for="doc"><?= $_L->T('Document','doc') ?> /<small><?= $_L->T('New_up_to','transaction',5) ?></small></label>' +
+            '<label for="doc"><?= $_L->T('Document','doc') ?> /<small><?= $_L->T('New_up_to','transactions',5) ?></small></label>' +
             '<div class="custom-file my-1">' +
             '<input type="file" class="custom-file-input" id="doc" name="doc[]">' +
-            '<label class="custom-file-label" for="doc"><?= $_L->T('Choose_your_Receipt','transaction') ?></label>' +
+            '<label class="custom-file-label" for="doc"><?= $_L->T('Choose_your_Receipt','transactions') ?></label>' +
             '</div>' +
             '<span style="display: none" data-max="4" class="da-addDoc small btn btn-sm btn-light"><i class="fa fa-plus text-success"></i> <?= $_L->T('Add_more','doc') ?></span>' +
             '</div>';
         var bank =
             '<div class="col-sm-12 mb-3" id="bank">' +
-            '<label for="inputComment"><span class="text-danger">*</span> <?= $_L->T('Bank_Account','transaction') ?> /<small><?= $_L->T('choose_Bank_Account','transaction') ?></small></label>' +
-            '<input class="form-control" type="text" id="bankAccount" name="bankAccount" placeholder="<?= $_L->T('Bank_Account_Number','transaction') ?>" required>' +
+            '<label for="inputComment"><span class="text-danger">*</span> <?= $_L->T('Bank_Account','transactions') ?> /<small><?= $_L->T('choose_Bank_Account','transactions') ?></small></label>' +
+            '<input class="form-control" type="text" id="bankAccount" name="bankAccount" placeholder="<?= $_L->T('Bank_Account_Number','transactions') ?>" required>' +
             '</div>';
 
         $('form#tRequest #wraper-gw').html(gw_d);
@@ -275,11 +281,9 @@
         // Gateway
         $("body").on("change","form#tRequest #gateway", function() {
             let gateway = $('#gateway').val();
-            if (gateway!=1) $('form#tRequest #wraper').html(cc_info);
-            if (gateway==1) $('form#tRequest #wraper').html(doc_d);
-            if (gateway==7) $('form#tRequest #wraper').html(doc_d);
-            if (gateway==8) $('form#tRequest #wraper').html(doc_d);
-            if (gateway==9) $('form#tRequest #wraper').html(doc_d);
+            if (gateway==='7') $('form#tRequest #wraper').html(cc_info);
+            if (gateway==='9') $('form#tRequest #wraper').html(cc_info);
+            if (gateway==='1') $('form#tRequest #wraper').html(doc_d);
         });
 
         function detectCardType(number) {
@@ -335,10 +339,9 @@
             }
         });
 
+        var bankCheck;
         // Submit Request
         $("body").on("click","#tActive .doM-payNow", function(e) {
-
-
             if ($(this).data('now') > $(this).data('expire')) {
                 const data = {
                     'transaction_id': $(this).data('tid')
@@ -348,7 +351,7 @@
                     if (resObj.e) {
                         console.log(resObj);
                     } else {
-                        alert ('<?= $_L->T('request_expired','transaction') ?>')
+                        alert ('<?= $_L->T('request_expired','transactions') ?>')
                         setTimeout(function(){
                             $("#wg-transaction .reload").trigger("click");
                         }, 50);
@@ -356,205 +359,62 @@
                 });
                 return;
             }
-
-
-            let body =
-                '    <div class="row d-flex justify-content-center">' +
-                '        <div class="col-sm-12"><form id="cc-pay" action="gateways/halkbank/3d.php" method="post">' +
-                '            <div class="card card-bank bg-light text-center p-4" style="display:none;">' +
-                '            <i class="fa fa-spinner fa-spin text-secondary fa-4x"></i><hr>' +
-                '            <p class="border-bottom border-success"><?= $_L->T('request_expired','transaction') ?></p>' +
-                '            </div>' +
-                '            <div class="card">' +
-                '                <div class="card-body">' +
-                '                    <div class="row">' +
-                '                        <div class="col-sm-12">' +
-                '                        <div id="saved-cards"></div>' +
-                '                            <div class="form-group">' +
-                '                                <div class="float-right"><input class="form-check-input" type="checkbox" id="rsave" name="save" value="1">' +
-                '                                <label class="form-check-label" for="rsave">Save Card</label></div>' +
-                '                                <label for="name">Name</label>' +
-                '                                <input class="form-control" id="name" name="holder" type="text" placeholder="Enter your name" required >' +
-                '                            </div>' +
-                '                        </div>' +
-                '                    </div>' +
-                '                    <div class="row">' +
-                '                        <div class="col-sm-12">' +
-                '                            <div class="form-group">' +
-                '                                <label for="ccnumber">Credit Card Number</label>' +
-                '                                <div class="input-group">' +
-                '                                    <input class="form-control" type="text" id="card-number" name="card" placeholder="0000 0000 0000 0000" autocomplete="email" required >' +
-                '                                    <div class="input-group-append">' +
-                '                                        <span class="input-group-text">' +
-                '                                            <i class="mdi mdi-credit-card"></i>' +
-                '                                        </span>' +
-                '                                    </div>' +
-                '                                </div>' +
-                '                            </div>' +
-                '                        </div>' +
-                '                    </div>' +
-                '                    <div id="cc-type" class="p-3 text-center"></div>' +
-                '                    <div class="row">' +
-                '                        <div class="form-group col-sm-4">' +
-                '                            <label for="ccmonth">Month</label>' +
-                '                            <select class="form-control" id="ccmonth" name="exp_mm" required >' +
-                '                                <option>01</option>' +
-                '                                <option>02</option>' +
-                '                                <option>03</option>' +
-                '                                <option>04</option>' +
-                '                                <option>05</option>' +
-                '                                <option>06</option>' +
-                '                                <option>07</option>' +
-                '                                <option>08</option>' +
-                '                                <option>09</option>' +
-                '                                <option>10</option>' +
-                '                                <option>11</option>' +
-                '                                <option>12</option>' +
-                '                            </select>' +
-                '                        </div>' +
-                '                        <div class="form-group col-sm-4">' +
-                '                            <label for="ccyear">Year</label>' +
-                '                            <select class="form-control" id="ccyear" name="exp_yy" required >' +
-                '                                <option>2014</option>' +
-                '                                <option>2015</option>' +
-                '                                <option>2016</option>' +
-                '                                <option>2017</option>' +
-                '                                <option>2018</option>' +
-                '                                <option>2019</option>' +
-                '                                <option>2020</option>' +
-                '                                <option>2021</option>' +
-                '                                <option>2022</option>' +
-                '                                <option>2023</option>' +
-                '                                <option>2024</option>' +
-                '                                <option>2025</option>' +
-                '                                <option>2026</option>' +
-                '                                <option>2027</option>' +
-                '                                <option>2028</option>' +
-                '                                <option>2029</option>' +
-                '                                <option>2030</option>' +
-                '                            </select>' +
-                '                        </div>' +
-                '                        <div class="col-sm-4">' +
-                '                            <div class="form-group">' +
-                '                                <label for="cvv">CVV/CVC</label>' +
-                '                                <input class="form-control" id="cvv" type="text" placeholder="123" name="cvv" required >' +
-                '                            </div>' +
-                '                        </div>' +
-                '                    </div>' +
-                '                </div>' +
-                '                <div class="card-footer">' +
-                '                    <input type="hidden" name="gateway_id" value="3" required >' +
-                '                    <input type="hidden" id="amount_o" name="amount" value="<?= $pending_transaction["amount"] ?? 0 ?>" required >' +
-                '                    <input type="hidden" name="user_id" value="<?= $pending_transaction["user_id"] ?? 0 ?>" required >' +
-                '                    <input type="hidden" name="transactions_id" value="<?= $pending_transaction["id"] ?? 0 ?>" required >' +
-                '                    <input type="hidden" id="order_id" name="order_id" value="" required >' +
-                '                    <input type="hidden" id="cc_id" name="cc_id" value="" required >' +
-                '                    <input type="hidden" id="USDTRY" name="USDTRY" value="" required >' +
-                '                    <input type="hidden" id="cardType" name="cardType" value="" required >' +
-                '                    <button class="doA-ccSave btn btn-sm btn-primary float-right" type="submit">' +
-                '                        <i class="mdi mdi-gamepad-circle"></i> Continue <i class="fa fa-angle-right"></i> </button>' +
-                '                    <button class="btn btn-sm btn-danger" type="reset"><i class="mdi mdi-lock-reset"></i> Clear</button>' +
-                '                </div>' +
-                '            </div>' +
-                '     </form></div>' +
-                '</div>';
-            makeModal('Payment', body);
-            $('#saved-cards').html('');
-            ajaxCall('transaction', 'loadCC', 'user_id=<?= $_SESSION['id'] ?>', function(orderRes){
+            const orderData = {
+                transactions_id: $(this).data('tid'),
+                user_id: <?= $_SESSION['id'] ?>,
+                amount: (parseFloat($(this).data('amount'))*parseFloat(<?= $usdtry_rate ?>) ).toFixed(2),
+                gateway_id: $(this).data('gateway'),
+                USDTRY: '<?= $usdtry_rate ?>'
+            }
+            ajaxCall('transaction', 'orderAdd', orderData, function(orderRes){
                 let orderResObj = JSON.parse(orderRes);
-                savedCC = orderResObj.res;
-                if (savedCC) {
-                    $.each( savedCC, function( k, v ) {
-                        const ccType = detectCardType(v.number);
-                        let ccimg = (ccType) ? '<img src="/assets/images/cc-logo/'+ccType+'.png" class="d-inline" style="max-height: 40px; max-width: 40px;">' : '';
-                        let card =  '<div id="card-'+v.id+'" class="alert alert-info row mx-2" class="mb-1">'+
-                                    '<div class="col-md-4"><button type="button" data-id="'+v.id+'" data-num="'+v.number+'" class="btn doA-removeCC mr-2 text-danger"><i class="fa fa-times-circle"></i></button>'+ccimg+
-                                    '   </div><div class="col-md-5">'+
-                                    '   <div class="small text-primary">'+v.holder+'</div>'+
-                                    '   <div class="strong mt-1 text-muted">'+v.number+'</div></div>'+
-                                    '   <div class="col-md-3 pt-2"><button data-card=\''+JSON.stringify(v)+'\' type="button" class="doA-selectCC btn float-right btn-sm btn-outline-secondary">Select</button></div>'+
-                                    '</div>';
-                        $('#saved-cards').append(card);
+                if (orderResObj.res > 0) {
+                    console.log(orderResObj);
 
+                    let func_data = {
+                        'amount': orderData.amount,
+                        'id': orderResObj.res
+                    };
+                    const selected_gateway = $('#selected-gateway').html().toLowerCase();
+                    let data = {
+                        'GW': selected_gateway,
+                        'FUNC': 'paymentLink',
+                        'DATA': func_data
+                    };
+
+                    ajaxCall('gateway', 'gatewayDo', data, function (gwResponse) {
+                        let gwResObj = JSON.parse(gwResponse);
+                        setTimeout(function() {
+                            window.open(gwResObj.link,'_blank');
+                        }, 1000);
+                        bankCheck = setInterval(function() {
+                            // Check Result
+                            bankResp(orderResObj.res);
+                        }, 1500);
                     });
                 }
             });
-
+            let body = `<div id="check-bank" class="text-center"><i class="fa fa-spinner fa-spin text-secondary fa-4x"></i></center>`;
+            makeModal('Check Payment', body);
         });
 
-        // Select CC
-        $("body").on("click","form#cc-pay .doA-selectCC", function(e) {
-            let card = $(this).data('card');
-            $("form#cc-pay #name").val(card.holder);
-            $("form#cc-pay #card-number").val(card.number);
-            $("form#cc-pay #ccmonth").val(card.exp_mm);
-            $("form#cc-pay #ccyear").val(card.exp_yy);
-            $("form#cc-pay #cvv").val(card.cvv);
-            $('form#cc-pay #card-number').trigger("keyup");
-        });
-
-        // Remove CC
-        $("body").on("click","form#cc-pay .doA-removeCC", function(e) {
-            let card = $(this).data('id');
-            let num = $(this).data('num');
-            let delData = {
-                'card_id': card,
-                'card_num': num
-            };
-            ajaxCall('transaction', 'removeCC', delData, function(delRes){
-                let delResObj = JSON.parse(delRes);
-                if (delResObj.res) {
-                    $('#card-'+card).fadeOut();
-                }
-            });
-        });
-
-        // Submit Payment to bank
-        var bankCheck;
-        $("body").on("submit","form#cc-pay", function(e) {
-            e.preventDefault();
-            let ccData = $( "form#cc-pay" ).serialize();
-            let realThis = this;
-            ajaxCall('transaction', 'ccAdd', ccData, function(ccRes){
-                $('form#cc-pay .card').fadeOut();
-                $('form#cc-pay .card-bank').fadeIn();
-                let ccResObj = JSON.parse(ccRes);
-                let ccid = ccResObj.res;
-                let orderData = ccData+'&ccID='+ccid;
-                $('form#cc-pay #cc_id').val(ccid);
-                ajaxCall('transaction', 'orderAdd', orderData, function(orderRes){
-                    let orderResObj = JSON.parse(orderRes);
-                    if (orderResObj.res > 0) {
-                        $('form#cc-pay #order_id').val(orderResObj.res);
-                        setTimeout(function() {
-                            window.open('', 'form_cc', 'width=400,height=600,resizeable,scrollbars');
-                            realThis.target = 'form_cc';
-                            realThis.submit();
-                        }, 1000);
-                        setTimeout(function() {
-                            bankCheck = setInterval(function() {bankResp(orderResObj.res)}, 1000*5);
-                        }, 1000*12);
-                    }
-                });
-            });
-        });
 
         // Bank response
         function bankResp(orderID) {
             let orderData = {
-              id: orderID
+                id: orderID
             };
             ajaxCall('transaction', 'orderCheck', orderData, function(bankRes){
                 let bankResObj = JSON.parse(bankRes);
                 console.log('Check Bank:'+bankResObj.res);
                 if (bankResObj.res==1) {
                     const resHTML =
-        '            <div class="card card-bank bg-light text-center p-4">' +
-        '            <i class="fa fa-cart text-success fa-4x"></i><hr>' +
-        '            <p class="border-bottom border-success">Transaction Done.</p>' +
-        '            </div>';
+                        '            <div class="card card-bank bg-light text-center p-4">' +
+                        '            <i class="fa fa-cart text-success fa-4x"></i><hr>' +
+                        '            <p class="border-bottom border-success">Transaction Done.</p>' +
+                        '            </div>';
                     clearInterval(bankCheck);
-                    $( "form#cc-pay" ).html(resHTML);
+                    $( "#check-bank" ).html(resHTML);
                     $("#wg-transaction .reload").trigger("click");
                 } else if (bankResObj.res > 0) {
                     const resHTML =
@@ -562,12 +422,13 @@
                         '            <i class="fa fa-cart text-danger fa-4x"></i><hr>' +
                         '            <p class="border-bottom border-danger">Error, Code: '+bankResObj.res+'</p>' +
                         '            </div>';
-                    $( "form#cc-pay" ).html(resHTML);
+                    $( "#check-bank" ).html(resHTML);
                 }
             });
         }
 
-        // Submit Request
+
+// Submit Request
         $("body").on("submit","form#tRequest", function(e) {
             e.preventDefault();
             var formData = new FormData(this);
@@ -582,14 +443,13 @@
                 if (resObj.res) {
                     fResp.addClass('alert-success');
                     fResp.fadeIn();
-                    fResp.html('<?= $_L->T('Request_Added','transaction') ?>');
+                    fResp.html('<?= $_L->T('Request_Added','transactions') ?>');
                     setTimeout(function(){
                         $("#wg-transaction .reload").trigger("click");
                     }, 1500);
                 }
             });
         });
-
 
         // Submit Update
         $("body").on("submit","form#tUpdate", function(e) {
@@ -601,12 +461,12 @@
                 if (resObj.e) {
                     fResp.addClass('alert-warning');
                     fResp.fadeIn();
-                    fResp.html('<?= $_L->T('Check_Inputs','transaction') ?>');
+                    fResp.html('<?= $_L->T('Check_Inputs','transactions') ?>');
                 }
                 if (resObj.res) {
                     fResp.addClass('alert-success');
                     fResp.fadeIn();
-                    fResp.html('<?= $_L->T('Request_Added','transaction') ?>');
+                    fResp.html('<?= $_L->T('Request_Added','transactions') ?>');
                     setTimeout(function(){
                         $("#wg-transaction .reload").trigger("click");
                     }, 1500);
@@ -633,4 +493,5 @@
         setInterval(function(){
             $("#wg-transaction .reload").trigger("click");
         }, 1000*60*3);
+
     </script>

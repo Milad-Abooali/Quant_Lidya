@@ -274,11 +274,11 @@ if ($_SESSION["captcha_force"] && (strtoupper($_POST['captcha']) != $_SESSION['c
     $times['now']        = date('Y-m-d H:i:s');
     $followup_and_offset = strtotime($_POST['followup'])-$_SESSION["timeoffset"];
     $times['followup']   = date('Y-m-d H:i:s', $followup_and_offset);
-
+    echo $times['followup'];
     if($times['now'] > $times['followup']) {
-        $data['user_id'] = $_POST['user_id'];
-        $data['followup'] = $times['followup'];
-        $db->insert('user_followup',$data);
+        $followup['user_id'] = $_POST['user_id'];
+        $followup['followup'] = $times['followup'];
+        $db->insert('user_followup',$followup);
     }
 
 ?>

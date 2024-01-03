@@ -121,7 +121,12 @@ include('includes/head.php'); ?>
                                         'db' => 'user_extra.logins',
                                         'dt' => 17,
                                         'th' => 'tp.logins'
-                                    )
+                                    ),
+                                    array(
+                                        'db' => '(SELECT username FROM users WHERE user_marketing.affiliate = users.id)',
+                                        'dt' => 18,
+                                        'th' => 'affiliate'
+                                    ),
                                 );
     $option = "
         		'columnDefs': [
@@ -175,6 +180,11 @@ include('includes/head.php'); ?>
         		        },
         		        {
                             'targets': 17,
+                            'orderable':false,
+                            'visible': false
+        		        },
+        		        {
+                            'targets': 18,
                             'orderable':false,
                             'visible': false
         		        }
@@ -461,7 +471,7 @@ include('includes/head.php'); ?>
                 DT_leads_main.columns(14).search( this.value ).draw();
             } );
             $('#filterAffiliate').on('change', function () {
-                DT_leads_main.columns(15).search( this.value ).draw();
+                DT_leads_main.columns(18).search( this.value ).draw();
             } );
             $('#filterUnit').on('change', function () {
                 DT_leads_main.columns(11).search( this.value ).draw();

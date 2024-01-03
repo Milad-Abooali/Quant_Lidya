@@ -203,6 +203,16 @@ header .avatar {
     width: 100%;
     padding: 15px;
 }
+#market #market-search{
+    position: relative;
+}
+#market #doS-open-pair{
+    position: absolute;
+    top: 4px;
+    right: 50px;
+    padding-left: 1.5em;
+    padding-right: 1.5em;
+}
 .h-menu #doS-jump{
     position: absolute;
     top: 19px;
