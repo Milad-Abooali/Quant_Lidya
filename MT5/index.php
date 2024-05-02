@@ -156,9 +156,12 @@ class CMT5Request
 set_time_limit(60);
 
 $request = new CMT5Request();
+$req_Init = $request->Init(MT5_AUTH['url'].':'.MT5_AUTH['port']);
+$req_auth = $request->Auth(MT5_AUTH['login'],MT5_AUTH['password'],MT5_AUTH['build'],MT5_AUTH['agent']);
+
 $ok=$error=0;
 for($i=0;$i<20;$i++) {
-  if($request->Init("mt5.tradeclan.co.uk:443") && $request->Auth(1000,"@Sra7689227",3500,"WebManager")) {
+  if($req_Init && $req_auth) {
     $ok++;
   } else {
     echo $i.'<br>';

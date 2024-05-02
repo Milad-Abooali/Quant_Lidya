@@ -18,8 +18,9 @@ function stats() {
     $output = new stdClass();
 
     $request = new CMT5Request();
-    // Authenticate on the server using the Auth command
-    if($request->Init('mt5.tradeclan.co.uk:443') && $request->Auth(1000,"@Sra7689227",1950,"WebManager"))
+    $req_Init = $request->Init(MT5_AUTH['url'].':'.MT5_AUTH['port']);
+    $req_auth = $request->Auth(MT5_AUTH['login'],MT5_AUTH['password'],MT5_AUTH['build'],MT5_AUTH['agent']);
+    if($req_Init && $req_auth)
     {
         // USER GET State
     	$result = $request->Get('/api/user/account/get_batch?login='.$_POST['logins']);
@@ -68,8 +69,9 @@ function openPositions() {
     $output = new stdClass();
 
     $request = new CMT5Request();
-    // Authenticate on the server using the Auth command
-    if($request->Init('mt5.tradeclan.co.uk:443') && $request->Auth(1000,"@Sra7689227",1950,"WebManager"))
+    $req_Init = $request->Init(MT5_AUTH['url'].':'.MT5_AUTH['port']);
+    $req_auth = $request->Auth(MT5_AUTH['login'],MT5_AUTH['password'],MT5_AUTH['build'],MT5_AUTH['agent']);
+    if($req_Init && $req_auth)
     {
         // USER GET State
     	$result = $request->Get('/api/position/get_page?login='.$_POST['logins'].'&offset=0&total=100');
@@ -111,8 +113,9 @@ function closePosition() {
     $output = new stdClass();
 
     $request = new CMT5Request();
-    // Authenticate on the server using the Auth command
-    if($request->Init('mt5.tradeclan.co.uk:443') && $request->Auth(1000,"@Sra7689227",1950,"WebManager"))
+    $req_Init = $request->Init(MT5_AUTH['url'].':'.MT5_AUTH['port']);
+    $req_auth = $request->Auth(MT5_AUTH['login'],MT5_AUTH['password'],MT5_AUTH['build'],MT5_AUTH['agent']);
+    if($req_Init && $req_auth)
     {
         $result = $request->Get('/api/position/get_batch?ticket='.$_POST['position']);
     	//$output->result = $result;

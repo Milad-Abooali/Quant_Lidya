@@ -9,6 +9,16 @@
     define('DEF_TIME',60*30); // 30 Minutes
     define('REMEMBER_TIME',60*60*24*30); // 1 Month
 
+    // MT5 Server AUTH
+    define("MT5_AUTH", [
+        'url'      => 'mt5.fx-technology.com',
+        'port'     => '443',
+        'login'    => '1000',
+        'password' => '@Sra7689227',
+        'build'    => '1950',
+        'agent'    => 'WebManager'
+    ]);
+
     // Check is Lab
     define('IS_LAB',($_SERVER['SERVER_ADDR'] == "::1"));
 
@@ -52,9 +62,9 @@
         define("DB_admin", [
             "hostname"  => "136.243.109.195",
             "port"      => 3306,
-            "name"      => "lidyapar_admin",
+            "name"      => "fourinfx_admin",
             "prefix"    => '',
-            "username"  => "lidyapar_admin",
+            "username"  => "fourinfx_all",
             "password"  => "@Sra7689227"
         ]);
         define("DB_mt4", [
@@ -91,6 +101,7 @@
     ];
 
     const REDIRECT_TO = [
-        "web_trader"    =>"/app",
+        "web_trader"    =>"/webapp",
+        "webapp"        =>"/webapp",
         "app"           =>"/app"
     ];

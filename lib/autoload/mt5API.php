@@ -14,7 +14,8 @@ class mt5API {
 
     function __construct() {
         $this->server = new CMT5Request();
-        $this->connection = ($this->server->Init('mt5.tradeclan.co.uk:443') && $this->server->Auth(1000,"@Sra7689227",3500,"WebManager"));
+        $this->connection = ($this->server->Init(MT5_AUTH['url'].':'.MT5_AUTH['port'])
+            && $this->server->Auth(MT5_AUTH['login'],MT5_AUTH['password'],MT5_AUTH['build'],MT5_AUTH['agent']));
         if($this->connection) $this->Error[] = 'Connection';
     }
 

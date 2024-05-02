@@ -134,7 +134,9 @@ include('includes/head.php');
             					        <?php
             					        $trades_rows = array();
                                         $request = new CMT5Request();
-                                        if($request->Init('mt5.tradeclan.co.uk:443') && $request->Auth(1000,"@Sra7689227",1950,"WebManager"))
+                                        $req_Init = $request->Init(MT5_AUTH['url'].':'.MT5_AUTH['port']);
+                                        $req_auth = $request->Auth(MT5_AUTH['login'],MT5_AUTH['password'],MT5_AUTH['build'],MT5_AUTH['agent']);
+                                        if($req_Init && $req_auth)
                                         {
                                             $totalURL = '/position_get_total?login=107095';
                                     	    $resultTotal = $request->Get($totalURL);

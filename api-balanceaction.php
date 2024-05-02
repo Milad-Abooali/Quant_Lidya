@@ -93,7 +93,8 @@ if(($_SESSION["type"] == "Admin" OR $_SESSION["type"] == "Manager") && $_SERVER[
             curl_close($curl3);
     	} else if ($server == "MT5") {
             $request = new CMT5Request();
-            if($request->Init('mt5.tradeclan.co.uk:443') && $request->Auth(1000,"@Sra7689227",1950,"WebManager"))
+            $req_Init = $request->Init(MT5_AUTH['url'].':'.MT5_AUTH['port']);
+            $req_auth = $request->Auth(MT5_AUTH['login'],MT5_AUTH['password'],MT5_AUTH['build'],MT5_AUTH['agent']);
             {
                 $comment  = urlencode($comment);
                 $type_mt5 = ($is_bonus) ? 6 : 2; // 6: Bonus | 2: D || W

@@ -21,8 +21,9 @@ $date = new DateTime();
 	$tp_id = $_GET['login'];
 	
 	$request = new CMT5Request();
-    // Authenticate on the server using the Auth command
-    if($request->Init('mt5.tradeclan.co.uk:443') && $request->Auth(1000,"@Sra7689227",1950,"WebManager"))
+    $req_Init = $request->Init(MT5_AUTH['url'].':'.MT5_AUTH['port']);
+    $req_auth = $request->Auth(MT5_AUTH['login'],MT5_AUTH['password'],MT5_AUTH['build'],MT5_AUTH['agent']);
+    if($req_Init && $req_auth)
     {
         // USER GET State
         $code = '/user_get?login='.$tp_id;

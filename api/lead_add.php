@@ -7,16 +7,16 @@
 
 require_once "../config.php";
 
-/**
- * Escape User Input Values POST & GET
- */
-GF::escapeReq();
+    /**
+     * Escape User Input Values POST & GET
+     */
+    GF::escapeReq();
 
-// Check if the user is logged in, if not then redirect him to login page
-if($_REQUEST['api_key'] !== "7689227" || !$_POST['email']){
-    header("location: ../login.php");
-    exit;
-}
+    // Check if the user is logged in, if not then redirect him to login page
+    if($_REQUEST['api_key'] !== "7689227" || !$_POST['email']){
+        header("location: ../login.php");
+        exit;
+    }
 
     $turkish = array("ı", "ğ", "ü", "ş", "ö", "ç", "Ğ", "İ", "Ş", "Ö", "Ü", "Ç");//turkish letters
     $english = array("i", "g", "u", "s", "o", "c", "G", "I", "S", "O", "U", "C");//english cooridinators letters
@@ -144,16 +144,29 @@ if($_REQUEST['api_key'] !== "7689227" || !$_POST['email']){
 	$sql4 = "INSERT INTO users (username,password,email,unit,type,pa,created_at) VALUES ('$email','$password','$email','$unit','$typeN','$pass','$date')";
 
     $email = $db->escape($email);
-    
+
+    $force_update = $_POST['fupdate'] ?? false;
     $where = "email='$email' AND unit IN (".Broker['units'].")";
     $exist = $db->exist('users',$where);
-    if(!$exist) {
+
+    if($exist && $force_update){
+        $where = "email='$email' AND unit IN (".Broker['units'].")";
+        $user_id = $db->selectRow('users',$where)['id'];
+        $userManager->delete($user_id);
+    }
+
+    if(!$exist ||  $force_update) {
         $phone = $db->escape($phone);
         $where = "phone='$phone'";
         $exist = $db->exist('user_extra',$where);
     }
+    if($exist && $force_update){
+        $where = "phone='$phone'";
+        $user_id = $db->selectRow('user_extra',$where)['user_id'];
+        $userManager->delete($user_id);
+    }
 
-    if (!$exist) {
+    if (!$exist || $force_update) {
         if (mysqli_query($DB_admin, $sql4)) {
             //echo $ips;
             $sql3 = "SELECT id FROM users WHERE email = '$email' AND unit = '$unit'";
@@ -170,19 +183,19 @@ if($_REQUEST['api_key'] !== "7689227" || !$_POST['email']){
                     echo json_encode(array("statusCode"=>200));
 
                     // Send Email
-                    global $_Email_M;
-                    $receivers[] = $act_detail = array (
-                        'id'    =>  $user_id,
-                        'email' =>  $email,
-                        'data'  =>  array(
-                            'fname'     =>  $fname,
-                            'lname'     =>  $lname,
-                            'email'     =>  $email,
-                            'pass'      =>  $pass
-                        )
-                    );
-                    $subject = $theme = 'CRM_New_Account';
-                    $_Email_M->send($receivers, $theme, $subject);
+                    //global $_Email_M;
+                    //$receivers[] = $act_detail = array (
+                    //    'id'    =>  $user_id,
+                    //    'email' =>  $email,
+                    //    'data'  =>  array(
+                    //        'fname'     =>  $fname,
+                    //        'lname'     =>  $lname,
+                    //        'email'     =>  $email,
+                    //        'pass'      =>  $pass
+                    //    )
+                    //);
+                    //$subject = $theme = 'CRM_New_Account';
+                    //$_Email_M->send($receivers, $theme, $subject);
 
                     // Add actLog
                     global $actLog; $actLog->add('New Lead', $user_id, 1, json_encode($act_detail));
@@ -194,7 +207,8 @@ if($_REQUEST['api_key'] !== "7689227" || !$_POST['email']){
         } else {
             echo json_encode(array("statusCode"=>202));
         }
-    } else {
+    }
+    else {
         $sql3 = "SELECT id FROM users WHERE email = '$email' AND unit = '$unit'";
         $userLeadNew = $DB_admin->query($sql3);
         while ($rowLeadNew = mysqli_fetch_array($userLeadNew)) {
@@ -231,9 +245,5 @@ if($_REQUEST['api_key'] !== "7689227" || !$_POST['email']){
         echo json_encode(array("statusCode"=>203));
     }
 	mysqli_close($DB_admin);
-
-
-
-
 
 ?>

@@ -31,34 +31,44 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	if($platform == "MT5"){
     	// Example of use
         $request = new CMT5Request();
-        // Authenticate on the server using the Auth command
-        if($request->Init('mt5.tradeclan.co.uk:443') && $request->Auth(1000,"@Sra7689227",1950,"WebManager"))
+        $req_Init = $request->Init(MT5_AUTH['url'].':'.MT5_AUTH['port']);
+        $req_auth = $request->Auth(MT5_AUTH['login'],MT5_AUTH['password'],MT5_AUTH['build'],MT5_AUTH['agent']);
+        if($req_Init && $req_auth)
         {
-            function rand_string( $length ) {
-            $chars = "abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ123456789";
-            return substr(str_shuffle($chars),0,$length);
-            
+
+            function password_generate($length=8,$symbol='@') {
+                $shuffled_char = str_shuffle('ABEFGHJKLMNPQRTYZabdefghijkmnpqrtyz');
+                $shuffled_num = str_shuffle('123456789');
+                return str_shuffle(substr($shuffled_char,-($length-3)).$symbol).substr($shuffled_num,0,1).substr($shuffled_char,0,1);
             }
-            $main_pass = rand_string(8);
-            $investor_pass = rand_string(8);
+
+            $main_pass = password_generate();
+            $investor_pass = password_generate();
             if($type == "2"){
                 $prefixgroup = "real\\";
             } else {
                 $prefixgroup = "demo\\";
             }
             // USER GET State
-            $code = '/user_add?pass_main='.$main_pass.'&pass_investor='.$investor_pass.'&group='.$prefixgroup.''.$group.'&name=test&email='.$email.'&leverage=200';
-            echo $code;
+            $output = new stdClass();
+
+            $code = '/user_add?pass_main='.$main_pass.'&pass_investor='.$investor_pass.'&group='.$prefixgroup.$group.'&name=test&email='.$email.'&leverage=200';
+            $output->code = $code;
         	$result=$request->Get($code);
-        	if($result!=false)
-        	{	
-        	    echo $result;
-        		$json=json_decode($result);
-        		$login_5 = $json->answer->Login;
-        		if($type == "1"){
-            	    $result2=$request->Get('/trade_balance?login='.$login_5.'&type=2&balance='.$amount.'&comment=Deposit');
-            	}
-        	}
+
+            if($result!=false)
+            {
+                $json=json_decode($result);
+                if($json->retcode!='3 Invalid parameters'){
+                    $login_5 = $json->answer->Login;
+                    if($type == "1"){
+                        $result2=$request->Get('/trade_balance?login='.$login_5.'&type=2&balance='.$amount.'&comment=Deposit');
+                    }
+                } else {
+                    $output->e[] = $json;
+                }
+           }
+            echo json_encode($output);
         }
         $request->Shutdown();
 	} else {
@@ -194,7 +204,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $sqlPass = "INSERT INTO tp (user_id,login,password,group_id,server,created_at,created_by,updated_at,updated_by) VALUES ('$userId','$login_5','$main_pass','$type','$platform','$date','".$_SESSION["id"]."','$date','".$_SESSION["id"]."')";
 
         $request1 = new CMT5Request();
-        if($request1->Init('mt5.tradeclan.co.uk:443') && $request1->Auth(1000,"@Sra7689227",1950,"WebManager"))
+        $req_Init = $request1->Init(MT5_AUTH['url'].':'.MT5_AUTH['port']);
+        $req_auth = $request1->Auth(MT5_AUTH['login'],MT5_AUTH['password'],MT5_AUTH['build'],MT5_AUTH['agent']);
+        if($req_Init && $req_auth)
         {
             $result1=$request1->Get('/user_get?login='.$login_5);
         	if($result1!=false)
@@ -260,7 +272,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             )
         );
         $subject = $theme = 'TP_New_Account';
-        $_Email_M->send($receivers, $theme, $subject);
+        //$_Email_M->send($receivers, $theme, $subject);
     }
 
     // Add actLog
