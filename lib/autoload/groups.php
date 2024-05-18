@@ -50,7 +50,7 @@ class groups
         $groups = ','.$group_set;
 
         $where = "id IN ($id_set)";
-        $res = $this->db->append($this->table_u,'groups',$where, $groups);
+        $res = $this->db->append($this->table_u, 'groups', $groups, $where);
 
         if ($res) {
             $count = (count($ids) ?? 1);

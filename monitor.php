@@ -30,7 +30,7 @@ include('includes/head.php'); ?>
     $query['table_html']     = 'margincall_main';
     $query['group_by'] = '`mt5_users`.`Login`';
 
-    if($_SESSION["type"] == "Admin") $query['query'] = "`lidyapar_mt5`.`mt5_users` LEFT JOIN `lidyapar_mt5`.`mt5_accounts` USING(`Login`) WHERE `mt5_users`.`Group` LIKE '%real%' AND `mt5_accounts`.`MarginLevel` > 0 AND `mt5_accounts`.`MarginLevel` < 100";
+if ($_SESSION["type"] == "Admin") $query['query'] = "`lidyapar_mt5`.`mt5_users` LEFT JOIN `lidyapar_mt5`.`mt5_accounts` USING(`Login`) WHERE `mt5_users`.`Group` LIKE '%real%4%' AND `mt5_accounts`.`MarginLevel` > 0 AND `mt5_accounts`.`MarginLevel` < 100";
     
     $query['key']       = '`mt5_users`.`Login`';
     $query['columns']   = array(
@@ -106,8 +106,8 @@ include('includes/head.php'); ?>
     $query1['db']        = 'DB_mt5';
     $query1['table_html']     = 'accounts_main';
     $query1['group_by'] = '`mt5_users`.`Login`';
-    
-    if($_SESSION["type"] == "Admin") $query1['query'] = "`lidyapar_mt5`.`mt5_users` LEFT JOIN `lidyapar_mt5`.`mt5_accounts` USING(`Login`) WHERE `mt5_users`.`Group` LIKE '%real%'";
+
+if ($_SESSION["type"] == "Admin") $query1['query'] = "`lidyapar_mt5`.`mt5_users` LEFT JOIN `lidyapar_mt5`.`mt5_accounts` USING(`Login`) WHERE `mt5_users`.`Group` LIKE '%real%4%'";
 
     $query1['key']       = '`mt5_users`.`Login`';
     $query1['columns']   = array(

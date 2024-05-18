@@ -14,26 +14,33 @@
   }
 
 // Get current user Notify
-function getNotify() {
+function getNotify()
+{
     $output = new stdClass();
     $output->e = false;
     $db = new iSQL(DB_admin);
 
-    $where = 'receiver='.$_SESSION["id"]." AND seen_time is NULL";
-    $notification = $db->select('notify',$where);
+    $where = 'receiver=' . $_SESSION["id"] . " AND seen_time is NULL";
+    $notification = $db->select('notify', $where);
     $notify_types = $db->select('notify_type');
     if ($notification) foreach ($notification as $key => $notify) {
-        $notify_type = $notify['notify_type'] -1;
+        $notify_type = $notify['notify_type'] - 1;
         $notification[$key]['type'] = $notify_types[$notify_type]['name'];
         $notification[$key]['cat'] = $notify_types[$notify_type]['cat'];
         $notification[$key]['n_text'] = $notify_types[$notify_type]['notify_text'];
-        
+
         // Transaction Details Start
-        if(in_array($notify_type,array('2','3','4'))){
-            $notification[$key]['details'] = $db->selectId('transactions',$notify['notify_data']);
-            $userManager = new userManager();
-            $notification[$key]['user'] = $userManager->getCustom($notification[$key]['details']['user_id'],'email')['email'];
-            //$notification[$key]['user'] = $db->selectId('users',$notification[$key]['details']['user_id']);
+        if (in_array(intval($notify['notify_type']), array(2, 3, 4)) && $notify['notify_data']) {
+            $notification_transactions = $db->selectId('transactions', intval($notify['notify_data']));
+            if ($notification_transactions) {
+                $ajax_userManager = new userManager();
+                $notification[$key]['details'] = $notification_transactions;
+                $notification[$key]['user'] = $ajax_userManager->getCustom($notification[$key]['details']['user_id'], 'email')['email'];
+            } else {
+                $notification[$key]['details'] = '???';
+                $notification[$key]['user'] = '???';
+                //unset($notification[$key]);
+            }
         }
         // Transaction Details End
     }

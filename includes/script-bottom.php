@@ -22,7 +22,7 @@ global $_L;
             /**
              *  Check for Agreement
              */
-            <?php if($_SESSION["id"]) if(!$_SESSION["date_approve"] || $_SESSION["date_approve"] == '0000-00-00 00:00:00') { ?>
+            <?php if( isset($_SESSION["id"]) ) if(!$_SESSION["date_approve"] || $_SESSION["date_approve"] == '0000-00-00 00:00:00') { ?>
             $('.content-page').hide();
             $(window).on('load', function() {
                 let body = '<div id="agreement" class="row p-2"></div>';
@@ -44,8 +44,8 @@ global $_L;
             <?php } ?>
 
 
-            <?php 
-                if($id_verify !== "1" or $poa_verify !== "1"){
+            <?php
+            if( isset($_SESSION['id']) && ($id_verify !== "1" || $poa_verify !== "1") ){
             ?>
                     $(".container-fluid").prepend('<div class="clearfix">&nbsp;</div><div class="alert alert-danger mb-0" role="alert"><ul class="mb-0"></ul></div>');
             <?php
@@ -399,14 +399,14 @@ global $_L;
             });
         }
 
-        <?php if ($_SESSION['new_login']): ?>
+        <?php if ( isset($_SESSION['new_login']) ){ ?>
             // last page after login
             let lastPath = '<?php global $actLog;echo $actLog->lastPageVisited(); ?>';
             toastr.options = {
                 "positionClass": "toast-bottom-full-width",
             }
             toastr.warning("<a href='"+lastPath+"'>Your last visited page "+lastPath+"</a>");
-        <?php endif; ?>
+        <?php } ?>
 
         $("body").on("click", ".notification-item-list .notify-item", function(event){
             let clicked = $(this);
@@ -834,6 +834,46 @@ global $_L;
                     }
                 });
             }
+        });
+
+
+        /*  Show Contracts Modal */
+        $("body").on("click", '.doM-contract', function () {
+            const id = $(this).data('uid');
+            ajaxCall('ib', 'myContracts', {id: id}, function (response) {
+                makeModal('Contracts', response, 'xl');
+            });
+        });
+
+        /*  Show One TimePass Modal */
+        $("body").on("click", '.doA-onetimePass', function () {
+            const id = $(this).data('uid');
+            ajaxCall('users', 'tempPassword', {id: id}, function (response) {
+                resObj = JSON.parse(response);
+                let body = '';
+                if (resObj?.e) {
+                    toastr.error("Error on request !");
+                } else {
+                    body = `<div class="text-center cb-copy-html h4 py-4 text-primary" style="letter-spacing:3px">${resObj.res}</div><br><small class="text-muted">* Click To Copy</small>`;
+                }
+                makeModal('One Time Password', body, 'sm');
+            });
+        });
+
+        /*  Show DocMan Modal */
+        $("body").on("click", '.doM-docman', function () {
+            const id = $(this).data('uid');
+            ajaxCall('docman', 'modal', {id: id}, function (response) {
+                makeModal('Documents', response, 'xl');
+            });
+        });
+
+        /*  Show Questionnaires Modal */
+        $("body").on("click", '.doM-questionnaires', function () {
+            const id = $(this).data('uid');
+            ajaxCall('qa', 'userResult', {id: id}, function (response) {
+                makeModal('Questionnaires', response, 'xl');
+            });
         });
 
     </script>

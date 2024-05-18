@@ -27,7 +27,7 @@ class actLog {
         $data['detail'] = $detail;
         $data['status'] = $status;
         $data['sess_id'] = $_SESSION['sess_id'] ?? session_id();
-        if(!$_SESSION["id"]) $data['referer'] = $_SERVER['HTTP_REFERER'];
+        if (!isset($_SESSION["id"])) $data['referer'] = $_SERVER['HTTP_REFERER'] ?? 'self';
         return $this->db->insert($table,$data);
     }
 

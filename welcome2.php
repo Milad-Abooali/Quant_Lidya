@@ -486,29 +486,7 @@ include('includes/head.php'); ?>
                                 </div>
                             </div>
                         </div>
-                        <?php 
-                            $userManager = new userManager();
-                            $cid = $userManager->getCustom($_SESSION['id'],'cid')['cid'];
-                            if (!in_array($cid, array(null,"0000-00-00 00:00:00"))) {
-                        ?>
-                        <div class="card mb-3 col-lg-12" style="padding: 0px;">
-                            <div class="row no-gutters">
-                                <div class="col-sm-12 col-md-4 bg-dark">
-                                    <a href="https://clientzone.lidyaportal.com/LidyaFX_Forex_E-Book_v1.2.pdf"><img src="assets/e-book/LidyaFX_Forex_E-Book_600-200.png" style="width: 100%;"/></a>
-                                </div>
-                                <div class="col-sm-12 col-md-8">
-                                    <div class="card-body">
-                                        <h5 class="card-title">Yatirim Rehberi</h5>
-                                        <p class="card-text">Forex piyasalarını daha iyi tanımanız ve olumsuz sonuçlanan deneyimlerden uzaklaşmanızı sağlamak adına bilmeniz gereken temel bilgileri sizin için eğitim kitapçığı haline getirdik.
-                                        </br></br>Siz'de bu kitapçığı indirme hakkına sahip olan seçili yatırımcılarımızdan birisiniz.</p>
-                                        <p class="card-text"><a href="<?= DOWNLOAD_LINK['Forex_E-Book'] ?>" class="btn bg-gradient-primary text-white">Şimdi İndirin</a></p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <?php 
-                            } 
-                        ?>
+
                         <!-- end row -->
                         <?php 
                             $amountDP = 0;
@@ -524,13 +502,14 @@ include('includes/head.php'); ?>
                             $totalvolume = 0;
                             $totalcommisions = 0;
                             $pnl = 0;
+                        $swaps = 0;
                             $winning = 0;
                             $losing = 0;
                             
                             $dp = array("Deposit", "DEPOSIT", "DEPOSIT WIRE TRANSFER", "Deposit Wire Transfer", "Deposit Credit Card", "DEPOSIT CREDIT CARD", "Wire In", "wire in", "WIRE IN");
                             $wd = array("Withdrawal", "WITHDRAWAL", "WITHDRAWAL WIRE TRANSFER", "Withdrawal Wire Transfer", "Withdrawal Credit Card", "WITHDRAWAL CREDIT CARD", "Wire Out", "wire out", "WIRE OUT", "Withdraw", "WITHDRAW", "Account Transfer");
                             $accounts = "";
-                            if($rowTRADES) while($rowTRADES = $result1->fetch_assoc()) {
+                        if (isset($rowTRADES)) while ($rowTRADES = $result1->fetch_assoc()) {
                                 if($rowTRADES['CMD'] == 6){
                                     if($rowTRADES['PROFIT'] >= 0){
                                         if(!in_array($rowTRADES['COMMENT'], $dp)){
@@ -610,7 +589,7 @@ include('includes/head.php'); ?>
                                             </div>
                                             <div class="text-white">
                                                 <h6 class="text-uppercase mb-3"><?= $_L->T('Traded_Volume','trade') ?></h6>
-                                                <h4 class="mb-4"><?= $_L->T('Lot','trade', number_format($totalvolume, 2, '.', ',')) ?></h4>
+                                                <h4 class="mb-4"><?= $_L->T('Lot', 'trade', [number_format($totalvolume, 2, '.', ',')]) ?></h4>
                                                 <span class="badge badge-info"> +11% </span> <span class="ml-2"><?= $_L->T('From_Previous_Period','dashboard') ?></span>
                                             </div>
                                         </div>
@@ -674,7 +653,7 @@ include('includes/head.php'); ?>
                                                     $repvolume2 = 0;
                                                     $repswaps2 = 0;
                                                     $repprofit2 = 0;
-                                                    if  ($rowReport) foreach($data_array as $rowReport) {
+                                                if (isset($rowReport)) foreach ($data_array as $rowReport) {
                                                         if($rowReport['YEAR'] == date('Y') AND $rowReport['MONTH'] == date('m')){
                                                             $repvolume2 += $rowReport['VOLUME'];
                                                             $repswaps2 += $rowReport['SWAPS'];
@@ -711,7 +690,7 @@ include('includes/head.php'); ?>
                                                     $repvolume3 = 0;
                                                     $repswaps3 = 0;
                                                     $repprofit3 = 0;
-                                                    if($rowReport) foreach($data_array as $rowReport) {
+                                                if (isset($rowReport)) foreach ($data_array as $rowReport) {
                                                         if($rowReport['YEAR'] == date('Y')){
                                                             $repvolume3 += $rowReport['VOLUME'];
                                                             $repswaps3 += $rowReport['SWAPS'];
@@ -1381,7 +1360,7 @@ include('includes/head.php'); ?>
                     $etime = strtotime($endTime);
                     ?>
                     var start = <?php echo date('dd/mm/Y', $stime); ?>;
-                    var end = <?php echo date('dd/mm/Y', $estime); ?>;
+                    var end = <?php echo date('dd/mm/Y', $etime); ?>;
                 
                     $('#reportrange').daterangepicker({
                         startDate: start,

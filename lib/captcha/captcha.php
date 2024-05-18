@@ -17,7 +17,7 @@ function simple_php_captcha($config = array()) {
     $font_path = dirname(__FILE__) . '/fonts/';
 
     // Default values
-    $captcha_length = ($_SESSION['captcha_length'] < 10) ? $_SESSION['captcha_length'] : 9;
+    $captcha_length = (isset($_SESSION['captcha_length'])) ? $_SESSION['captcha_length'] : 9;
     $captcha_length = ($captcha_length) ?? 1;
     $rate = intval($captcha_length/3);
     $captcha_config = array(

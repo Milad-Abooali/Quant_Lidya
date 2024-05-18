@@ -17,12 +17,27 @@ global $_L;
      */
     GF::escapeReq();
 
-    $affiliate = ($_GET["af"]) ?? (($_COOKIE['affiliate']) ?? null);
+$affiliate = ($_GET["af"]) ?? (($_COOKIE['affiliate']) ?? '');
     setcookie('affiliate', $affiliate, time() + (86400 * 180), "/");
 
-    $unit = ($_GET["lang"]) ?? Broker['def_unit'];
+if (isset($_GET['language'])) {
+    if (in_array($_GET['language'], ['russian', 'Russian']))
+        $unit = '10';
+    else if (in_array($_GET['language'], ['english', 'English']))
+        $unit = '5';
+    else if (in_array($_GET['language'], ['arabic', 'Arabic']))
+        $unit = '4';
+
+} else {
+    $unit = Broker['def_unit'];
+}
+if (isset($_GET['unit'])) {
+    $unit = $_GET['unit'];
+}
+
+
     $source = $_SERVER['HTTP_REFERER'];
-    $campaign = htmlspecialchars($_GET["camp"]);
+$campaign = htmlspecialchars($_GET["camp"] ?? '');
     //echo $source;
 
 ?>

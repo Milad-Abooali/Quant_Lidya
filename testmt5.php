@@ -122,10 +122,9 @@ class CMT5Request
 }
  
 // Example of use
-    $request = new CMT5Request();
-    $req_Init = $request->Init(MT5_AUTH['url'].':'.MT5_AUTH['port']);
-    $req_auth = $request->Auth(MT5_AUTH['login'],MT5_AUTH['password'],MT5_AUTH['build'],MT5_AUTH['agent']);
-    if($req_Init && $req_auth)
+$request = new CMT5Request();
+// Authenticate on the server using the Auth command
+if ($request->Init('mt5.fx-technology.com:443') && $request->Auth(1000, "@Sra7689227", 3500, "WebManager"))
 {
     // USER GET State
 	$result=$request->Get('/user_account_get_batch?group=TEST*,real\\*');

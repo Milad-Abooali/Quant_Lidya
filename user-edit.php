@@ -562,7 +562,9 @@ $query['columns']       = array(
                                 <div class="form-row">
                                     <div class="col-md-4 mb-3">
                                         <label for="type">Type:</label>
-                                        <select class="form-control" name="type" id="type">
+                                        <select class="form-control <?= (in_array($_SESSION["type"], ["Sales Agent", "Retention Agent"])) ? 'd-none' : '' ?>"
+                                                name="type"
+                                                id="type" <?= (in_array($_SESSION["type"], ["Sales Agent", "Retention Agent"])) ? 'readonly' : '' ?>>
                                         <?php
                                             if($_SESSION["type"] == "Sales Agent"){
                                                 $sqlTYPE = 'SELECT id, name FROM type WHERE id < 4 ORDER BY id';
@@ -610,7 +612,8 @@ $query['columns']       = array(
                                     </div>
                                     <div class="col-md-4 mb-3">
                                         <label for="followup">Follow-Up:</label>
-                                        <input type="text" class="form-control" name="followup" id="followup" value="<?php echo $rowGD['followup']?>" required/>
+                                        <input type="datetime-local" class="form-control" name="followup" id="followup"
+                                               value="<?php echo $rowGD['followup'] ?>" required/>
                                     </div>
                                     <div class="col-md-4 mb-3">
                                         <label for="ip">IP:</label>
@@ -1571,14 +1574,13 @@ $(document).ready( function () {
     });
     
     var today = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
-    
+    /*
 	$('#followup').datetimepicker({ 
         uiLibrary: 'bootstrap4',
         iconsLibrary: 'fontawesome', 
         format: 'yyyy-mm-dd HH:MM'
-        //minDate: today
     });
-    
+    */
     $('#bd').datepicker({ 
         uiLibrary: 'bootstrap',
         iconsLibrary: 'fontawesome', 
@@ -2116,15 +2118,15 @@ $(document).ready( function () {
             endDate: end,
             opens: 'left',
             ranges: {
-               'Today': [moment(), moment().add(1, 'days')],
-               'Yesterday': [moment().subtract(1, 'days'), moment()],
-               'Last 7 Days': [moment().subtract(8, 'days'), moment()],
-               'Last 30 Days': [moment().subtract(31, 'days'), moment()],
-               'Last 90 Days': [moment().subtract(91, 'days'), moment()],
-               'This Month': [moment().startOf('month'), moment().endOf('month').add(1, 'days')],
-               'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month').add(1, 'days')],
-               'Last 3 Month': [moment().subtract(3, 'month').startOf('month'), moment().endOf('month').add(1, 'days')],
-               'Total': [moment().subtract(300, 'month').startOf('month'), moment().endOf('month').add(1, 'days')]
+                '<?= $_L->T('Today', 'general') ?>': [moment(), moment().add(1, 'days')],
+                '<?= $_L->T('Yesterday', 'general') ?>': [moment().subtract(1, 'days'), moment()],
+                '<?= $_L->T('Last_7_Days', 'general') ?>': [moment().subtract(8, 'days'), moment()],
+                '<?= $_L->T('Last_30_Days', 'general') ?>': [moment().subtract(31, 'days'), moment()],
+                '<?= $_L->T('Last_90_Days', 'general') ?>': [moment().subtract(91, 'days'), moment()],
+                '<?= $_L->T('This_Month', 'general') ?>': [moment().startOf('month'), moment().endOf('month')],
+                '<?= $_L->T('Last_Month', 'general') ?>': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month').add(1, 'days')],
+                '<?= $_L->T('Last_3_Month', 'general') ?>': [moment().subtract(3, 'month').startOf('month'), moment().endOf('month').add(1, 'days')],
+                '<?= $_L->T('Total', 'general') ?>': [moment().subtract(300, 'month').startOf('month'), moment().endOf('month').add(1, 'days')]
             }
         }, function(start, end, label){
             var user_id = $('#user_id').val();

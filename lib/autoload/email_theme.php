@@ -17,12 +17,11 @@
 
         private $db,$table,$path;
 
-
         function __construct() {
             global $db;
             $this->db = $db;
             $this->table = 'email_themes';
-            $this->path = 'includes/email-themes/';
+            $this->path = 'includes' . DIRECTORY_SEPARATOR . 'email-themes' . DIRECTORY_SEPARATOR;
 
         }
 
@@ -36,8 +35,16 @@
         public function make($id, $data=null, $message=null)
         {
             global $_L;
-
-            $content = file_get_contents((file_exists($this->path.$id.'.htm')) ? $this->path.$id.'.htm' : '../'.$this->path.$id.'.htm');
+            $path = false;
+            if (file_exists($this->path . $id . '.htm')) {
+                $path = $this->path . $id . '.htm';
+            } else {
+                $path = CRM_ROOT . $this->path . $id . '.htm';
+            }
+            if ($path == false) {
+                return false;
+            }
+            $content = file_get_contents($path);
             $searchVal[] = '{__ExtraMessage__}';
             $replaceVal[] = $message;
             if ($data) foreach ($data as $k => $v) {

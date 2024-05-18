@@ -21,11 +21,11 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-body">
-                        <?php while ($rowCredit = mysqli_fetch_array($Credit)) { 
-                            $TRY = ($rowCredit['Total']) - (38331.97 + 89659.59 + 51510.96 + 87940 + 58580 + 113305 + 36499 + 64870 + 58100);
+                        <?php while ($rowCredit = mysqli_fetch_array($Credit)) {
+                            $TRY = ($rowCredit['Total']) - (38331.97 + 89659.59 + 51510.96 + 87940 + 58580 + 113305 + 36499 + 64870 + 58100 + 81550 + 84661 + 145040.16 + 83790 + 139245 + 40116 + 43600);
                         ?>
                             <div><h5>Total Credit Card:</h5> <?= $TRY; ?> TRY</div>
-                            <div><h5>Total Webmoney (346353150377):</h5> 5036.44 USD</div>
+                            <div><h5>Total Webmoney (346353150377):</h5> 1508.44 USD</div>
                             <div><h5>Total Webmoney (530473471195):</h5> 30.92 USD</div>
                             <div><h5>Total Bitcoin:</h5> 0.08037704 BTC</div>
                         <? } ?>

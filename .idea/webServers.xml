@@ -2,7 +2,7 @@
 <project version="4">
   <component name="WebServers">
     <option name="servers">
-      <webServer id="8b49effe-ef06-4882-b06c-aa314dae2079" name="QCRM" url="http://136.243.109.195">
+      <webServer id="86320b93-ad34-4ce3-9f80-b3240dc59292" name="Hosting" url="http://136.243.109.195">
         <fileTransfer host="136.243.109.195" port="21">
           <advancedOptions>
             <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
@@ -10,5 +10,13 @@
         </fileTransfer>
       </webServer>
     </option>
+    <groups>
+      <group>
+        <name>QCRM</name>
+        <servers>
+          <name value="Hosting" />
+        </servers>
+      </group>
+    </groups>
   </component>
 </project>

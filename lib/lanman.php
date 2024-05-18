@@ -59,11 +59,12 @@ class LangMan
     /**
      * Language
      * @param string $phrase language text
-     * @param array|string|null $vars vars in array to insert in text
+     * @param array $vars vars in array to insert in text
      * @param string $section The section of language file
      * @param bool $eol if end of line
      */
-    public function T(string $phrase,string $section='core', $vars=null, bool $eol=false) {
+    public function T(string $phrase, string $section = 'core', $vars = [], bool $eol = false)
+    {
         $output='';
         if (self::$PHRASE_LIST[$section][$phrase] ?? false) {
             $output.= ($vars) ? vsprintf(self::$PHRASE_LIST[$section][$phrase], $vars) : self::$PHRASE_LIST[$section][$phrase];

@@ -44,7 +44,7 @@ include('includes/head.php'); ?>
     $query['table_html']     = 'win_main';
     $query['group_by'] = 'Deals.Login';
     //SELECT Users.Name, Deals.Login, (SUM(IF(Deals.Profit < 0, 1, 0))/Count(Deal))*100 as WinningRate, SUM(IF(Deals.Profit >= 0, 1, 0)) as WinningOrders, Count(Deal) as TotalOrders, SUM(Deals.Profit+Deals.Storage) as PNL, Users.Group FROM `mt5_deals` as Deals LEFT JOIN mt5_users as Users ON Deals.Login = Users.Login WHERE Time BETWEEN "2021-01-01 00:00:00" AND "2021-04-30 00:00:00" AND Deals.Action < 2 AND Deals.Entry IN (1,3) AND Users.Group LIKE "%real%" GROUP BY Login
-    if($_SESSION["type"] == "Admin") $query['query'] = '`lidyapar_mt5`.`mt5_deals` as Deals LEFT JOIN `lidyapar_mt5`.`mt5_users` as Users ON Deals.Login = Users.Login LEFT JOIN `lidyapar_mt5`.`mt5_accounts` as Accounts ON Deals.Login = Accounts.Login WHERE Time BETWEEN "'.$startTime.'" AND "'.$endTime.'" AND Deals.Action <= "1" AND Deals.Entry IN (1,3) AND Users.Group LIKE "real%"';
+if ($_SESSION["type"] == "Admin") $query['query'] = '`lidyapar_mt5`.`mt5_deals` as Deals LEFT JOIN `lidyapar_mt5`.`mt5_users` as Users ON Deals.Login = Users.Login LEFT JOIN `lidyapar_mt5`.`mt5_accounts` as Accounts ON Deals.Login = Accounts.Login WHERE Time BETWEEN "' . $startTime . '" AND "' . $endTime . '" AND Deals.Action <= "1" AND Deals.Entry IN (1,3) AND Users.Group LIKE "real%4%"';
 
     $query['key']       = 'Deals.Deal';
     $query['columns']   = array(
@@ -129,7 +129,7 @@ include('includes/head.php'); ?>
     $query1['table_html']     = 'loss_main';
     $query1['group_by'] = 'Deals.Login';
     //SELECT Users.Name, Deals.Login, (SUM(IF(Deals.Profit < 0, 1, 0))/Count(Deal))*100 as WinningRate, SUM(IF(Deals.Profit >= 0, 1, 0)) as WinningOrders, Count(Deal) as TotalOrders, SUM(Deals.Profit+Deals.Storage) as PNL, Users.Group FROM `mt5_deals` as Deals LEFT JOIN mt5_users as Users ON Deals.Login = Users.Login WHERE Time BETWEEN "2021-01-01 00:00:00" AND "2021-04-30 00:00:00" AND Deals.Action < 2 AND Deals.Entry IN (1,3) AND Users.Group LIKE "%real%" GROUP BY Login
-    if($_SESSION["type"] == "Admin") $query1['query'] = '`lidyapar_mt5`.`mt5_deals` as Deals LEFT JOIN `lidyapar_mt5`.`mt5_users` as Users ON Deals.Login = Users.Login LEFT JOIN `lidyapar_mt5`.`mt5_accounts` as Accounts ON Deals.Login = Accounts.Login WHERE Time BETWEEN "'.$startTime.'" AND "'.$endTime.'" AND Deals.Action <= "1" AND Deals.Entry IN (1,3) AND Users.Group LIKE "real%"';
+if ($_SESSION["type"] == "Admin") $query1['query'] = '`lidyapar_mt5`.`mt5_deals` as Deals LEFT JOIN `lidyapar_mt5`.`mt5_users` as Users ON Deals.Login = Users.Login LEFT JOIN `lidyapar_mt5`.`mt5_accounts` as Accounts ON Deals.Login = Accounts.Login WHERE Time BETWEEN "' . $startTime . '" AND "' . $endTime . '" AND Deals.Action <= "1" AND Deals.Entry IN (1,3) AND Users.Group LIKE "real%4%"';
 
     $query1['key']       = 'Deals.Deal';
     $query1['columns']   = array(

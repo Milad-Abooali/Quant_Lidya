@@ -13,11 +13,18 @@ require_once "config.php";
     GF::escapeReq();
 
 $token = ($_GET['token']) ?? false;
+global $sess;
+if ($token || $sess->forceChangePasswod($_SESSION['id'])) {
 
-if($token) {
+    if ($token) {
+        $where = "token='$token' AND unit IN (" . Broker['units'] . ")";
+        $user = $db->selectRow('users', $where);
+    }
 
-    $where = "token='$token' AND unit IN (".Broker['units'].")";
-    $user = $db->selectRow('users', $where);
+    if ($sess->forceChangePasswod($_SESSION['id'])) {
+        $user = $db->selectId('users', $_SESSION['id']);
+    }
+
 
     if($user) {
 
@@ -49,21 +56,13 @@ if($token) {
             // Check input errors before updating the database
             if(empty($new_password_err) && empty($confirm_password_err)){
 
-                $sql = "UPDATE users SET password = ?, pa = ? WHERE email = ?";
+                $update['password'] = password_hash($new_password, PASSWORD_DEFAULT);
+                $update['pa'] = GF::encodeAm($new_password);
 
-                if($stmt = mysqli_prepare($DB_admin, $sql)){
-                    // Bind variables to the prepared statement as parameters
-                    mysqli_stmt_bind_param($stmt, "sss", $param_password, $param_pa, $param_email );
-
-                    // Set parameters
-                    $param_password = password_hash($new_password, PASSWORD_DEFAULT);
-                    $param_email = $user['email'];
-                    $param_pa = GF::encodeAm($new_password);
-
-                    // Attempt to execute the prepared statement
-                    if(mysqli_stmt_execute($stmt)){
+                if ($db->updateId('users', $user['id'], $update)) {
 
                         $db->updateId('users', $user['id'], array('token'=>null));
+                    $db->updateId('users', $user['id'], array('fchange_pass' => 0));
 
                         // Send Email
                         global $_Email_M;
@@ -86,7 +85,7 @@ if($token) {
                     } else {
                         $error = 'Oops! Something went wrong. Please try again later.';
                     }
-                }
+
 
                 // Close statement
                 mysqli_stmt_close($stmt);
@@ -119,7 +118,8 @@ if($token) {
                 <div class="card-body">
 
                     <h3 class="text-center m-0">
-                        <a href="index.php" class="logo logo-admin"><img src="assets/images/logo.png" height="50" alt="logo"></a>
+                        <a href="index.php" class="logo logo-admin"><img src="media/broker/<?= Broker['logo'] ?>"
+                                                                         height="50" alt="logo"></a>
                     </h3>
                     <?php if($error) { ?>
                     <div class="p-3">

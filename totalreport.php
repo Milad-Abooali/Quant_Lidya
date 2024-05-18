@@ -310,9 +310,9 @@ include('includes/css.php');
         /* C  DAY(CLOSE_TIME) */
         DAY(mt5_deals.Time) AS DAY,
         
-        (CASE WHEN mt5_users.Group LIKE 'real%' THEN 
+        (CASE WHEN mt5_users.Group LIKE 'real%4%' THEN 
          CASE 
-        WHEN mt5_users.Group LIKE '%TUR%'  THEN 'Turkish'
+        WHEN mt5_users.Group LIKE '%TUR4%'  THEN 'Turkish'
         WHEN mt5_users.Group LIKE '%STPL%' THEN 'STPL'
         WHEN mt5_users.Group LIKE '%PERS%' THEN 'Farsi'
         WHEN mt5_users.Group LIKE '%ARAB%' THEN 'Arabic'
@@ -377,9 +377,9 @@ include('includes/css.php');
         /* C  DAY(CLOSE_TIME) */
         DAY(mt5_deals.Time) AS DAY,
         
-        (CASE WHEN mt5_users.Group LIKE 'real%' THEN 
+        (CASE WHEN mt5_users.Group LIKE 'real%4%' THEN 
          CASE 
-        WHEN mt5_users.Group LIKE '%TUR%' THEN 'Turkish'
+        WHEN mt5_users.Group LIKE '%TUR4%' THEN 'Turkish'
         WHEN mt5_users.Group LIKE '%STPL%' THEN 'STPL'
         WHEN mt5_users.Group LIKE '%PERS%' THEN 'Farsi'
         WHEN mt5_users.Group LIKE '%ARAB%' THEN 'Arabic'
@@ -545,9 +545,9 @@ include('includes/css.php');
         /* C  DAY(CLOSE_TIME) */
         DAY(mt5_deals.Time) AS DAY,
         
-        (CASE WHEN mt5_users.Group LIKE 'real%' THEN 
+        (CASE WHEN mt5_users.Group LIKE 'real%4%' THEN 
          CASE 
-        WHEN mt5_users.Group LIKE '%TUR%'  THEN 'Turkish'
+        WHEN mt5_users.Group LIKE '%TUR4%'  THEN 'Turkish'
         WHEN mt5_users.Group LIKE '%STPL%' THEN 'STPL'
         WHEN mt5_users.Group LIKE '%PERS%' THEN 'Farsi'
         WHEN mt5_users.Group LIKE '%ARAB%' THEN 'Arabic'
@@ -709,9 +709,9 @@ include('includes/css.php');
         /* C  DAY(CLOSE_TIME) */
         DAY(mt5_deals.Time) AS DAY,
         
-        (CASE WHEN mt5_users.Group LIKE 'real%' THEN 
+        (CASE WHEN mt5_users.Group LIKE 'real%4%' THEN 
          CASE 
-        WHEN mt5_users.Group LIKE '%TUR%' THEN 'Turkish'
+        WHEN mt5_users.Group LIKE '%TUR4%' THEN 'Turkish'
         WHEN mt5_users.Group LIKE '%STPL%' THEN 'STPL'
         WHEN mt5_users.Group LIKE '%PERS%' THEN 'Farsi'
         WHEN mt5_users.Group LIKE '%ARAB%' THEN 'Arabic'

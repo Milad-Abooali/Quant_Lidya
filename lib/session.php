@@ -36,8 +36,8 @@
             ini_set('session.gc_probability', 1);
             session_start();
         }
-        if ($_SESSION["remember"]==false) {
-            $time = $_SERVER['REQUEST_TIME'];
+        $time = $_SERVER['REQUEST_TIME'];
+        if (isset($_SESSION["remember"]) && !$_SESSION["remember"]) {
             if (isset($_SESSION['M']['LAST_ACTIVITY']) && ($time - $_SESSION['M']['LAST_ACTIVITY']) > DEF_TIME) {
                 session_unset();
                 session_destroy();
@@ -281,6 +281,13 @@
       }
       return true;
     }
+
+      public function forceChangePasswod($user_id)
+      {
+          global $db;
+          $db_res = $db->selectId('users', $user_id, 'fchange_pass');
+          return boolval($db_res['fchange_pass']);
+      }
 
   /**
    * Get Username by Phone

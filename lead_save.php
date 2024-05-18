@@ -39,6 +39,8 @@ if ($_SESSION["captcha_force"] && (strtoupper($_POST['captcha']) != $_SESSION['c
 
     if($_SESSION["type"] == "Admin" OR $_SESSION["type"] == "Manager" OR $_SESSION["type"] == "Retention Agent" OR $_SESSION["type"] == "Sales Agent")
     {
+
+
         $user_id = $_POST['user_id'] ?? false;
         $retention = $_POST['retention'] ?? 0;
         $conversion = $_POST['conversion'] ?? 0;
@@ -127,22 +129,49 @@ if ($_SESSION["captcha_force"] && (strtoupper($_POST['captcha']) != $_SESSION['c
     	//$sql7 = "UPDATE user_gi SET bd = '$bd', whatsapp = '$whatsapp', telegram = '$telegram', facebook = '$facebook', instagram = '$instagram', twitter = '$twitter', updated_at = '$date', updated_by = '".$_SESSION["id"]."' WHERE user_id = '$user_id'";
     	$sql8 = "INSERT INTO user_marketing (user_id,lead_src,lead_camp,affiliate,created_at,created_by,updated_at,updated_by) VALUES ('$user_id','$source','$campaign','$affiliate','$date','".$_SESSION["id"]."','$date','".$_SESSION["id"]."') ON DUPLICATE key UPDATE lead_src = '$source', lead_camp = '$campaign', affiliate = '$affiliate', updated_at = '$date', updated_by = '".$_SESSION["id"]."'";
 
+
+        $output = array();
+        //  Follow up Temp Table
+
+        $followup_client = str_replace('T', ' ', $_POST['followup']);
+
+        $datetime = new DateTime();
+        $server_offset = $datetime->getOffset();
+        $client_offset = $server_offset - $_SESSION["timeoffset"];
+        $now = strtotime(date('Y-m-d H:i:s'));
+        $followup_and_offset = strtotime($followup_client) - $client_offset;
+        $followup_server = date('Y-m-d H:i:s', $followup_and_offset);
+
+        $output['server'] = date('Y-m-d H:i:s');
+        $output['followup_client'] = $followup_client;
+        $output['followup_server'] = $followup_server;
+        $output['client_offset'] = $client_offset;
+        $output['server_offset'] = $server_offset;
+
+
+        if ($now < $followup_and_offset) {
+            global $db;
+            $new_followup['user_id'] = $user_id;
+            $new_followup['followup'] = $followup_server;
+            $db->insert('user_followup', $new_followup);
+        }
+    
+    
     	$sql9 = "UPDATE users SET username='$email', email='$email', type = '$typeN', unit = '$unit' WHERE id = '$user_id'";
 
     	//echo $sql7;
     	if (mysqli_query($DB_admin, $sql5) && mysqli_query($DB_admin, $sql6) && mysqli_query($DB_admin, $sql7) && mysqli_query($DB_admin, $sql8) && mysqli_query($DB_admin, $sql9)) {
             $_act_status = 1;
-            echo json_encode(array("statusCode"=>200));
+            $output['statusCode'] = 200;
     	} 
     	else {
             $_act_status = 0;
-            echo mysqli_error($DB_admin);
-    		echo json_encode(array("statusCode"=>201));
+            $output['mysqli_error'] = mysqli_error($DB_admin);
+            $output['statusCode'] = 201;
     	}
     	mysqli_close($DB_admin);
+        echo json_encode($output);
 
-        
-        	
     } else {
         $turkish = array("ı", "ğ", "ü", "ş", "ö", "ç", "Ğ", "İ", "Ş", "Ö", "Ü", "Ç");//turkish letters
         $english = array("i", "g", "u", "s", "o", "c", "G", "I", "S", "O", "U", "C");//english cooridinators letters
@@ -201,7 +230,7 @@ if ($_SESSION["captcha_force"] && (strtoupper($_POST['captcha']) != $_SESSION['c
         
     	$date = date('Y-m-d H:i:s');
     	$user_id = $_POST['user_id'];
-    	
+        $json_result = array();
     	$sql5 = "UPDATE user_extra SET fname = '$fname', lname = '$lname', phone = '$phone', country = '$country', city = '$city', address = '$address', interests = '$interests', hobbies = '$hobbies', followup = '$followup', updated_at = '$date', updated_by = '".$_SESSION["id"]."' WHERE user_id = '$user_id'";
         $sql6 = "UPDATE user_fx SET job_cat = '$job_cat', job_title = '$job_title', exp_fx = '$exp_fx', exp_fx_year = '$exp_fx_year', exp_cfd = '$exp_cfd', exp_cfd_year = '$exp_cfd_year', income = '$income', investment = '$investment', strategy = '$strategy', updated_at = '$date', updated_by = '".$_SESSION["id"]."' WHERE user_id = '$user_id'";
     	$sql7 = "UPDATE user_gi SET bd = '$bd', whatsapp = '$whatsapp', telegram = '$telegram', facebook = '$facebook', instagram = '$instagram', twitter = '$twitter', updated_at = '$date', updated_by = '".$_SESSION["id"]."' WHERE user_id = '$user_id'";
@@ -209,17 +238,21 @@ if ($_SESSION["captcha_force"] && (strtoupper($_POST['captcha']) != $_SESSION['c
     	//echo $sql5;
     	if (mysqli_query($DB_admin, $sql5) && mysqli_query($DB_admin, $sql6) && mysqli_query($DB_admin, $sql7)) {
     	    $_act_status = 1;
-    		echo json_encode(array("statusCode"=>200));
+            $json_result['statusCode'] = 200;
     	} 
     	else {
             $_act_status = 0;
-            echo mysqli_error($DB_admin);
-    		echo json_encode(array("statusCode"=>201));
+            $json_result['statusCode'] = 201;
+            $json_result['mysqli_error'] = mysqli_error($DB_admin);
     	}
     	mysqli_close($DB_admin);
+
+        echo json_encode($json_result);
+
     }
 
-    // Profile Rate
+
+// Profile Rate
     if ($_act_status) GF::profileRateCal(GF::getUserProfile($_POST['user_id']));
 
     // Act LOG
@@ -268,17 +301,6 @@ if ($_SESSION["captcha_force"] && (strtoupper($_POST['captcha']) != $_SESSION['c
         $actLog->add('Edit', $_POST['user_id'], $_act_status, $_act_detail);
     }
 
-    //  Follow up Temp Table
 
-
-    $times['now']        = date('Y-m-d H:i:s');
-    $followup_and_offset = strtotime($_POST['followup'])-$_SESSION["timeoffset"];
-    $times['followup']   = date('Y-m-d H:i:s', $followup_and_offset);
-    echo $times['followup'];
-    if($times['now'] > $times['followup']) {
-        $followup['user_id'] = $_POST['user_id'];
-        $followup['followup'] = $times['followup'];
-        $db->insert('user_followup',$followup);
-    }
 
 ?>

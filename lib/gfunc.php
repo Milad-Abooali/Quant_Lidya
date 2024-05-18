@@ -400,8 +400,10 @@ class GF {
 
     public static function escapeReq() {
         global $db;
+        $post_escaped = array();
         if ($_POST) foreach ($_POST as $k => $v) $post_escaped[$k] = $db->escape($v);
         $_POST = $post_escaped;
+        $get_escaped = array();
         if ($_GET) foreach ($_GET as $k => $v) $get_escaped[$k] = $db->escape($v);
         $_GET = $get_escaped;
         return true;

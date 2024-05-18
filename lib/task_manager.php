@@ -2,8 +2,8 @@
 
 class taskManager
 {
-    
-    
+
+    private $db;
     /**
      * Constructor.
      */

@@ -22,6 +22,9 @@
     // Constants
     require_once "lib/gconst.php";
 
+// Composer
+require_once 'vendor/autoload.php';
+
     // global Functions
     require_once "lib/gfunc.php";
 
@@ -32,6 +35,9 @@
     // iSQL
     require_once "lib/isql.php";
     $db = new iSQL(DB_admin);
+
+// CRM ROOT Path
+define('CRM_ROOT', __DIR__ . DIRECTORY_SEPARATOR);
 
 /**
  * Construct App For Broker
@@ -44,7 +50,7 @@
         $_broker['email'] = "info@example.com";
         $_broker['web_url'] = $_SERVER['HTTP_HOST'];
         $_broker['crm_url'] = $_SERVER['HTTP_HOST'];
-        $_broker['session_path'] = $_SERVER['DOCUMENT_ROOT'].((IS_LAB) ? "/_sessions" : "/lidyacrm/_sessions");
+        $_broker['session_path'] = $_SERVER['DOCUMENT_ROOT'] . "/_sessions";
         $_broker['terms_file'] = "includes/tos/d.html";
         $_broker['logo'] = "d.png";
         $_broker['dark_logo'] = "d-dark.png";
@@ -93,6 +99,10 @@
             'callback.php',
             '/halkbank/callback.php',
             '/gateways/halkbank/callback.php',
+            '/webpay/callback.php',
+            '/gateways/webpay/callback.php',
+            '/gateways/streampay/callback.php',
+            '/streampay/callback.php',
             'forget-password.php',
             'reset-password.php',
             'api/lead_add.php',
@@ -100,31 +110,25 @@
             'telegram.php',
             'lead_add.php',
             'balance.php',
-            'app.php'
+            'app.php',
+            'webapp.php'
         );
-        if( $sess->IS_LOGIN==false && !in_array($requested_page, $guest_permited_pages)) {
-            exit(header("Location: login.php"));
+        if (!$sess->IS_LOGIN && !in_array($requested_page, $guest_permited_pages)) {
+            header("Location: login.php");
+            exit();
+        } else if ($sess->IS_LOGIN && $sess->forceChangePasswod($_SESSION['id']) && $requested_page != 'reset-password.php') {
+            header("Location: reset-password.php");
+            exit();
         }
     }
 
     //DevMod
     if (isset($_GET['DevMod'])) $_SESSION['M']['DevMod'] = $_GET['DevMod'];
-    define("DevMod", (IS_LAB || $_SESSION['M']['DevMod']));
+define("DevMod", (IS_LAB || isset($_SESSION['M']['DevMod'])));
 
     // Factory
     require_once "lib/factory.php";
     $factory = new factory();
-
-    // permission
-    require_once "lib/perm.php";
-    $_perm = new perm();
-    $_path = basename($_SERVER['PHP_SELF']);
-    $_permit  = $_perm->getUserPermOnPath($_SESSION['id'], $_path);
-    function permit($act){
-        global $_permit;
-        if (!$_permit[$act]) include("includes/access-deny/$act.php");
-        return true;
-    }
 
 /**
  * Global Setting
@@ -140,7 +144,7 @@
  */
     mb_internal_encoding('utf-8');
     mb_http_output('utf-8');
-    mb_http_input('utf-8');
+mb_http_input('I');
     mb_language('uni');
     mb_regex_encoding('utf-8');
 
@@ -160,15 +164,18 @@
 
     // Language Manager   
     require_once "lib/lanman.php";
-    $_language = ($_GET['language']) ?? ( ($_SESSION['language']) ? $_SESSION['language'] : Broker['def_language'] );
+$_language = $_GET['language'] ?? $_SESSION['language'] ?? Broker['def_language'];
     define('LANGUAGE_NAME',$_language);
-    if ($_SESSION['id']) {
+if (isset($_SESSION['id'])) {
         $where = 'user_id='.$_SESSION['id'];
         $data['language'] = $db->escape($_language);
         $db->updateAny('user_extra',$data, $where);
         $_SESSION['language'] = $_language;
     }
     $_L = new LangMan($_language, (Broker['maintenance'] ?? false));
+
+//  $_L = new LangMan($_language, (Broker['maintenance'] ?? false));
+
 
     // Permission System
     require_once "lib/autoload/groups.php";

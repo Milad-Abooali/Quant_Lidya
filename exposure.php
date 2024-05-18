@@ -26,7 +26,7 @@
     $query['table_html']     = 'exposure_main';
     $query['group_by'] = '`mt5_positions`.`Symbol`';
 
-    if($_SESSION["type"] == "Admin") $query['query'] = "`lidyapar_mt5`.`mt5_positions` LEFT JOIN `lidyapar_mt5`.`mt5_users` ON `mt5_users`.`Login` = `mt5_positions`.`Login` WHERE `mt5_users`.`Group` LIKE '%real%'";
+if ($_SESSION["type"] == "Admin") $query['query'] = "`lidyapar_mt5`.`mt5_positions` LEFT JOIN `lidyapar_mt5`.`mt5_users` ON `mt5_users`.`Login` = `mt5_positions`.`Login` WHERE `mt5_users`.`Group` LIKE '%real%4%'";
 
     $query['key']       = '`mt5_positions`.`Profit`';
     $query['columns']   = array(

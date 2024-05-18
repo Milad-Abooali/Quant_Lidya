@@ -36,7 +36,7 @@
 
   }
 
-  if($error) {
+if (isset($error)) {
       $output = new stdClass();
       $output->e = $error;
       echo json_encode($output);

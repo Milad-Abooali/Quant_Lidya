@@ -263,9 +263,82 @@ require_once "config.php";
                             <!-- Tools -->
                             <?php if($userID!=$_SESSION['id']) { ?>
                                 <div class="dropdown float-right ml-1">
-                                    <button type="button" class="btn btn-outline-default btn-sm dropdown-toggle" data-toggle="dropdown">
+                                    <button type="button" class="btn btn-outline-default btn-sm dropdown-toggle"
+                                            data-toggle="dropdown">
                                         <i class="fa-fw fas fa-cog"></i>
                                     </button>
+                                    <ul id="adminTools" class="dropdown-menu admin-tools pt-0 rounded-5">
+                                        <li class="py-1 text-center bg-gradient-primary text-white">Password</li>
+                                        <li>
+                                            <a data-uid="<?= $userID ?>"
+                                               data-email="<?= $userManager->getCustom($userID, 'email')['email'] ?>"
+                                               href="javascript:;" class="dropdown-item doA-onetimePass">
+                                                <i class="fa-fw fas fa-magic"></i>
+                                                One-Time <?= $_L->T('Password', 'login') ?></a>
+                                        </li>
+                                        <li>
+                                            <a data-id="<?= $userID ?>"
+                                               data-email="<?= $userManager->getCustom($userID, 'email')['email'] ?>"
+                                               href="javascript:;" class="dropdown-item doA-resetPassword">
+                                                <i class="fa-fw fas fa-lock"></i> <?= $_L->T('Reset_Password', 'login') ?>
+                                            </a>
+                                        </li>
+                                        <?php if (in_array($_SESSION["type"], ['Admin', 'Manager'])) { ?>
+                                            <li class="py-1 text-center bg-gradient-primary text-white"><?= $_L->T('Ebook', 'user_modal') ?></li>
+                                            <li>
+                                                <?php
+                                                $where = 'id=' . $userID;
+                                                $allow = $db->select('users', $where, 'cid', 1)[0]['cid'];
+                                                if ($allow == null || $allow == '0000-00-00 00:00:00') { ?>
+                                                    <a data-id="<?= $userID ?>" data-status='1'
+                                                       class="dropdown-item text-success doA-allow"><?= $_L->T('Allow', 'user_modal') ?> <?= $_L->T('EBook_Download', 'user_modal') ?></a>
+                                                <?php } else { ?>
+                                                    <a data-id="<?= $userID ?>" data-status='0'
+                                                       class="dropdown-item text-warning doA-allow"><?= $_L->T('Not_Allow', 'user_modal') ?>
+                                                        (<?= $allow ?>
+                                                        ) <?= $_L->T('EBook_Download', 'user_modal') ?></a>
+                                                <?php } ?>
+                                            </li>
+                                        <?php }
+                                        if ($_SESSION["type"] == "Admin") { ?>
+                                            <li class="py-1 text-center bg-gradient-primary text-white"><?= $_L->T('Clients_Agreement', 'agreement') ?></li>
+                                            <!-- Agreement -->
+
+                                            <?php
+                                            $where = 'user_id=' . $userID;
+                                            $agree = $db->select('user_extra', $where, 'date_approve', 1)[0]['date_approve'];
+                                            if ($agree == null || $agree == '0000-00-00 00:00:00') { ?>
+                                                <li>
+                                                <a data-id="<?= $userID ?>" data-status='1'
+                                                   class="dropdown-item text-success doA-agree"><?= $_L->T('Agree', 'general') ?></a>
+                                            <?php } else { ?>
+                                                <li class="dropdown-item">
+                                                    <?= $agree ?>
+                                                </li>
+                                                <li>
+                                                    <a data-id="<?= $userID ?>" data-status='0'
+                                                       class="dropdown-item text-warning doA-agree"><?= $_L->T('Need_Agree', 'general') ?></a>
+                                                </li>
+                                            <?php } ?>
+                                            <li class="py-1 text-center bg-gradient-primary text-white"><?= $_L->T('Manage', 'general') ?></li>
+                                            <li>
+                                                <a href="javascript:;" class="dropdown-item doA-addMerge"
+                                                   data-userid="<?= $userID ?>"><i
+                                                            class="fa-fw fas fa-user-ninja"></i> <?= $_L->T('Merge', 'user_modal') ?>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="javascript:;" class="dropdown-item text-danger doA-deleteUser"
+                                                   data-id="<?= $userID ?>"><i
+                                                            class="fa-fw fas fa-trash-alt"></i> <?= $_L->T('Delete_User', 'user_modal') ?>
+                                                </a>
+                                            </li>
+                                        <?php } ?>
+                                    </ul>
+                                </div>
+                                <!--<button type="button" class="btn btn-outline-default btn-sm dropdown-toggle" data-toggle="dropdown">
+                                    <i class="fa-fw fas fa-cog"></i>
+                                </button>-->
                                     <div  id="adminTools" class="dropdown-menu admin-tools">
                                         <a data-id="<?= $userID ?>" data-email="<?= $userManager->getCustom($userID, 'email')['email'] ?>" href="javascript:;" class="dropdown-item doA-resetPassword"><i class="fa-fw fas fa-lock"></i> Rest Password</a>
 
@@ -298,51 +371,71 @@ require_once "config.php";
                                             <a href="javascript:;" class="dropdown-item text-danger doA-deleteUser" data-id="<?= $userID ?>"><i class="fa-fw fas fa-trash-alt"></i> <?= $_L->T('Delete_User','user_modal') ?></a>
                                         <?php } ?>
                                     </div>
-                                </div>
+
                                 <div class="dropdown float-right ml-1">
-                                    <button type="button" class="btn btn-outline-default btn-sm dropdown-toggle" data-toggle="dropdown">
+                                    <button type="button" class="btn btn-outline-default btn-sm dropdown-toggle"
+                                            data-toggle="dropdown">
                                         <i class="fa-fw fas fa-user-clock"></i>
                                     </button>
                                     <div class="dropdown-menu">
 
                                         <?php if ($_SESSION["type"] == "Manager") { ?>
-                                            <a class="btn btn-sm bg-gradient-info text-white mx-1" target="_blank" href='manager_panel.php?section=email_logs&dt={"table":"DT_email_log","regex":"1","cols":{"1":"<?= $userID ?>"}}'><i class="fa-fw fas fa-envelope"></i> <?= $_L->T('Emails','user_modal') ?></a>
-                                        <?php } if ($_SESSION["type"] == "Admin") { ?>
-                                            <a class="dropdown-item" target="_blank" href='sys_settings.php?section=waf_session-user&search=<?= $userID ?>'><i class="fa-fw fas fa-desktop"></i> <?= $_L->T('Sessions','user_modal') ?></a>
-                                            <a class="dropdown-item" target="_blank" href='sys_settings.php?section=email_logs&dt={"table":"DT_email_log","regex":"1","cols":{"1":"<?= $userID ?>"}}'><i class="fa-fw fas fa-envelope"></i> <?= $_L->T('Emails','user_modal') ?></a>
-                                            <a class="dropdown-item" target="_blank" href='sys_settings.php?section=system_actlog&dt={"table":"DT_actlog_user","regex":"1","cols":{"2":"<?= $db->selectID('users',$userID,'username')['username'] ?>"}}'><i class="fa-fw fas fa-history"></i> <?= $_L->T('ActLogs','user_modal') ?></a>
+                                            <a class="btn btn-sm bg-gradient-info text-white mx-1" target="_blank"
+                                               href='manager_panel.php?section=email_logs&dt={"table":"DT_email_log","regex":"1","cols":{"1":"<?= $userID ?>"}}'><i
+                                                        class="fa-fw fas fa-envelope"></i> <?= $_L->T('Emails', 'user_modal') ?>
+                                            </a>
+                                        <?php }
+                                        if ($_SESSION["type"] == "Admin") { ?>
+                                            <a class="dropdown-item" target="_blank"
+                                               href='sys_settings.php?section=waf_session-user&search=<?= $userID ?>'><i
+                                                        class="fa-fw fas fa-desktop"></i> <?= $_L->T('Sessions', 'user_modal') ?>
+                                            </a>
+                                            <a class="dropdown-item" target="_blank"
+                                               href='sys_settings.php?section=email_logs&dt={"table":"DT_email_log","regex":"1","cols":{"1":"<?= $userID ?>"}}'><i
+                                                        class="fa-fw fas fa-envelope"></i> <?= $_L->T('Emails', 'user_modal') ?>
+                                            </a>
+                                            <a class="dropdown-item" target="_blank"
+                                               href='sys_settings.php?section=system_actlog&dt={"table":"DT_actlog_user","regex":"1","cols":{"2":"<?= $db->selectID('users', $userID, 'username')['username'] ?>"}}'><i
+                                                        class="fa-fw fas fa-history"></i> <?= $_L->T('ActLogs', 'user_modal') ?>
+                                            </a>
                                         <?php } ?>
                                     </div>
                                 </div>
                             <?php } ?>
 
                             <?php
-                                if(
-                                        $_SESSION["type"] == "Admin"
-                                    OR $_SESSION["type"] == "Manager"
-                                    OR $_SESSION["type"] == "Retention Manager"
-                                    OR $_SESSION["type"] == "Retention Agent"
-                                    OR $_SESSION["type"] == "Sales Agent"
-                                    OR $userID==$_SESSION['id']
-                                ){
-                            ?>
-                            <span class="bold size-30 float-right ml-1"><button type="button" class="btn bg-gradient-primary text-white btn-sm show-newaccount"><i class="fas fa-plus"></i></button></span>
-                                <?php if($userID!=$_SESSION['id']) { ?>
-                                    <span class="bold size-30 float-right ml-1"><button type="button" class="btn bg-gradient-primary text-white btn-sm show-existingaccount"><i class="fas fa-plus"></i> <?= $_L->T('Add_Existing_TP','user_modal') ?></button></span>
+                            if (
+                                $_SESSION["type"] == "Admin"
+                                or $_SESSION["type"] == "Manager"
+                                or $_SESSION["type"] == "Retention Manager"
+                                or $_SESSION["type"] == "Retention Agent"
+                                or $_SESSION["type"] == "Sales Agent"
+                                or $userID == $_SESSION['id']
+                            ) {
+                                ?>
+                                <span class="bold size-30 float-right ml-1"><button type="button"
+                                                                                    class="btn bg-gradient-primary text-white btn-sm show-newaccount"><i
+                                                class="fas fa-plus"></i></button></span>
+                                <?php if ($userID != $_SESSION['id']) { ?>
+                                    <span class="bold size-30 float-right ml-1"><button type="button"
+                                                                                        class="btn bg-gradient-primary text-white btn-sm show-existingaccount"><i
+                                                    class="fas fa-plus"></i> <?= $_L->T('Add_Existing_TP', 'user_modal') ?></button></span>
                                 <?php } ?>
-                            <?php
-                                } 
+                                <?php
+                            }
                             ?>
                             <div id="reportrange" class="bold size-30 float-right ml-1">
                                 <button type="button" class="btn bg-gradient-primary text-white btn-sm">
                                     <i class="fa fa-calendar"></i>&nbsp;
-                                    <span><?php echo $startTime." - ".$endTime; ?></span> <i class="fa fa-caret-down"></i>
+                                    <span><?php echo $startTime . " - " . $endTime; ?></span> <i
+                                            class="fa fa-caret-down"></i>
                                 </button>
+                            </div>
                             </div>
                         </div>
                     </div>
                     <hr class="mt-0">
-                    <div class="tab-content" id="pills-tabContent">
+            <div class="col-lg-12 tab-content" id="pills-tabContent">
                         <div class="alert alert-success alert-dismissible" id="success" style="display:none;">
                             <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
                         </div>
@@ -429,6 +522,7 @@ require_once "config.php";
                                         ?>
                                     </div>
                                 </div>
+                                    <?php if (!in_array($_SESSION["type"], ['Leads', 'Trader', 'IB'])) { ?>
                                 <div class="row">
                                     <div class="col-md-6 col-sm-12 col-xs-12 mb-3">
                                         <?php
@@ -450,6 +544,7 @@ require_once "config.php";
                                         ?>
                                     </div>
                                 </div>
+                                    <?php } ?>
                                 <div class="row">
                                     <div class="col-md-6 col-sm-12 col-xs-12 mb-3">
                                         <?php
@@ -652,6 +747,8 @@ require_once "config.php";
                                 }
                             ?>
                             <hr>
+                            <?php if (!in_array($_SESSION["type"], ['Leads', 'Trader', 'IB'])) { ?>
+
                             <?php
                                 while ($rowMT = mysqli_fetch_array($mt)) {
                                 $leadcheck = $rowMT['lead_src'];
@@ -682,6 +779,7 @@ require_once "config.php";
                                 </div>
                             <?php
                                 }
+                            }
                             ?>
                         </div>
                         <div class="tab-pane fade" id="pills-3" role="tabpanel" aria-labelledby="pills-3-tab">
@@ -1522,8 +1620,8 @@ $(document).ready( function () {
                     url: 'tp_ftd.php',
                     data: {
                         'userID': userID,
-                        'retention': <?= $retention ?>,
-                        'conversion': <?= $conversion ?>
+                        'retention': <?= ($retention) ? $retention : '' ?>,
+                        'conversion': <?= ($conversion) ? $conversion : ''  ?>
                     },
                     success: function(data) {
                         
@@ -1633,15 +1731,15 @@ $(document).ready( function () {
             "showDropdowns": true,
             "timePicker": true,
             ranges: {
-               'Today': [moment(), moment().add(1, 'days')],
-               'Yesterday': [moment().subtract(1, 'days'), moment()],
-               'Last 7 Days': [moment().subtract(8, 'days'), moment()],
-               'Last 30 Days': [moment().subtract(31, 'days'), moment()],
-               'Last 90 Days': [moment().subtract(91, 'days'), moment()],
-               'This Month': [moment().startOf('month'), moment().endOf('month').add(1, 'days')],
-               'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month').add(1, 'days')],
-               'Last 3 Month': [moment().subtract(3, 'month').startOf('month'), moment().endOf('month').add(1, 'days')],
-               'Total': [moment().subtract(300, 'month').startOf('month'), moment().endOf('month').add(1, 'days')]
+                '<?= $_L->T('Today', 'general') ?>': [moment(), moment().add(1, 'days')],
+                '<?= $_L->T('Yesterday', 'general') ?>': [moment().subtract(1, 'days'), moment()],
+                '<?= $_L->T('Last_7_Days', 'general') ?>': [moment().subtract(8, 'days'), moment()],
+                '<?= $_L->T('Last_30_Days', 'general') ?>': [moment().subtract(31, 'days'), moment()],
+                '<?= $_L->T('Last_90_Days', 'general') ?>': [moment().subtract(91, 'days'), moment()],
+                '<?= $_L->T('This_Month', 'general') ?>': [moment().startOf('month'), moment().endOf('month')],
+                '<?= $_L->T('Last_Month', 'general') ?>': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month').add(1, 'days')],
+                '<?= $_L->T('Last_3_Month', 'general') ?>': [moment().subtract(3, 'month').startOf('month'), moment().endOf('month').add(1, 'days')],
+                '<?= $_L->T('Total', 'general') ?>': [moment().subtract(300, 'month').startOf('month'), moment().endOf('month').add(1, 'days')]
             }
         }, function(start, end, label){
             let user_id = $('#user_id').val();

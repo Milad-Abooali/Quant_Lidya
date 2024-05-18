@@ -183,19 +183,19 @@ require_once "../config.php";
                     echo json_encode(array("statusCode"=>200));
 
                     // Send Email
-                    //global $_Email_M;
-                    //$receivers[] = $act_detail = array (
-                    //    'id'    =>  $user_id,
-                    //    'email' =>  $email,
-                    //    'data'  =>  array(
-                    //        'fname'     =>  $fname,
-                    //        'lname'     =>  $lname,
-                    //        'email'     =>  $email,
-                    //        'pass'      =>  $pass
-                    //    )
-                    //);
-                    //$subject = $theme = 'CRM_New_Account';
-                    //$_Email_M->send($receivers, $theme, $subject);
+                    global $_Email_M;
+                    $receivers[] = $act_detail = array(
+                        'id' => $user_id,
+                        'email' => $email,
+                        'data' => array(
+                            'fname' => $fname,
+                            'lname' => $lname,
+                            'email' => $email,
+                            'pass' => $pass
+                        )
+                    );
+                    $subject = $theme = 'CRM_New_Account';
+                    $_Email_M->send($receivers, $theme, $subject);
 
                     // Add actLog
                     global $actLog; $actLog->add('New Lead', $user_id, 1, json_encode($act_detail));

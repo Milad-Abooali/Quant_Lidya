@@ -26,27 +26,25 @@ if(mysqli_num_rows($result2) > 0){
 $media2 = 'SELECT media,verify FROM media WHERE user_id = '.$_SESSION["id"].' AND type = "ID"';
 $result3 = $DB_admin->query($media2);
 
+$id = "logo-sm.png";
+$id_verify = "3";
 if(mysqli_num_rows($result3) > 0){
     while ($ids = mysqli_fetch_array($result3)) {
         $id = $ids['media'];
         $id_verify = $ids['verify'];
     }
-} else {
-    $id = "logo-sm.png";
-    $id_verify = "3";
 }
 
 $media3 = 'SELECT media,verify FROM media WHERE user_id = '.$_SESSION["id"].' AND type = "Bill"';
 $result4 = $DB_admin->query($media3);
 
+$poa = "logo-sm.png";
+$poa_verify = "3";
 if(mysqli_num_rows($result4) > 0){
     while ($poas = mysqli_fetch_array($result4)) {
         $poa = $poas['media'];
         $poa_verify = $poas['verify'];
     }
-} else {
-    $poa = "logo-sm.png";
-    $poa_verify = "3";
 }
 ?>
 <!DOCTYPE html>
@@ -62,27 +60,8 @@ if(mysqli_num_rows($result4) > 0){
         <link rel="shortcut icon" href="assets/images/favicon.ico">
 
         <?= factory::header() ?>
-        
-<?php 
-    // Version Changer
-    $_version = ($_GET['_vch']) ?? false;
-    if ($_version) {
-        GF::makeJS('f','console.log("VCH is active: v '.$_version.'")');
-        $_vch_file = "_vch/$_version/$_path";
-        if(file_exists($_vch_file)) {
-            GF::makeJS('f','console.log("VCH file loaded.")');
 
-            $_vch_file = file_get_contents($_vch_file);
-            eval('?> '.$_vch_file.' ');
-            die();
-        }
-        die('VCH file is not exists');
-
-    }
-
-
-
-
+        <?php
 }
 ?>
 

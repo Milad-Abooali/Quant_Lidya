@@ -15,7 +15,10 @@
     class Transaction
     {
 
-        private $theme,$db,$table;
+        private $db;
+        private string $t_transactions;
+        private string $t_transactions_docs;
+        private string $t_transactions_comment;
 
         function __construct($theme=0) {
             global $db;
@@ -23,7 +26,6 @@
             $this->t_transactions = 'transactions';
             $this->t_transactions_docs = 'transactions_docs';
             $this->t_transactions_comment = 'transactions_comment';
-            $this->t_tp = 'tp';
         }
 
         /**

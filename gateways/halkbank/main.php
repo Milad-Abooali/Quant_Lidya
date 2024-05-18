@@ -160,7 +160,7 @@
                     $append['data'] = json_encode($response);
                     global $db;
                     $where = 'id='.$order_id;
-                    $db->append('payment_orders','data', $where, $append);
+                    $db->append('payment_orders', 'data', $append, $where);
 
                     $data['status'] = 0;
                     $db->updateId('payment_orders',$order_id, $data);
@@ -195,7 +195,7 @@
                     $append['data'] = json_encode($response);
                     global $db;
                     $where = 'id='.$order_id;
-                    $db->append('payment_orders','data', $where, $append);
+                    $db->append('payment_orders', 'data', $append, $where);
 
                     $data['status'] = 0;
                     $db->updateId('payment_orders',$order_id, $data);

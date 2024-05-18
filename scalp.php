@@ -169,7 +169,7 @@ if(isset($_POST['submit'])){
                 WHERE     Test2.CLOSE_TIME BETWEEN "'.$startTime.'" AND "'.$endTime.'"
                 AND       TIMESTAMPDIFF(MINUTE,Test2.OPEN_TIME,Test2.CLOSE_TIME) <= "'.$Time.'" 
                 AND       Test2.Action <= 1
-                AND       mt5_users.Group LIKE "real%"
+                AND       mt5_users.Group LIKE "real%4%"
                 AND       mt5_users.Group NOT LIKE "real%TC%"
                 GROUP BY  Test2.Login';
         //echo $sql1;

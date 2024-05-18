@@ -10,7 +10,8 @@ global $_L;
 
 if(($is_include_head) ?? false) {
 
-} else {
+}
+else {
 $is_include_head = true;
 
 require_once "config.php";
@@ -29,27 +30,24 @@ if(mysqli_num_rows($result2) > 0){
 $media2 = 'SELECT media,verify FROM media WHERE user_id = '.$_SESSION["id"].' AND type = "ID"';
 $result3 = $DB_admin->query($media2);
 
+$id = 'broker/' . Broker['favicon'];
+$id_verify = "3";
 if(mysqli_num_rows($result3) > 0){
     while ($ids = mysqli_fetch_array($result3)) {
         $id = $ids['media'];
         $id_verify = $ids['verify'];
     }
-} else {
-    $id = 'broker/'.Broker['favicon'];
-    $id_verify = "3";
 }
-
 $media3 = 'SELECT media,verify FROM media WHERE user_id = '.$_SESSION["id"].' AND type = "Bill"';
 $result4 = $DB_admin->query($media3);
 
+$poa = 'broker/' . Broker['favicon'];
+$poa_verify = "3";
 if(mysqli_num_rows($result4) > 0){
     while ($poas = mysqli_fetch_array($result4)) {
         $poa = $poas['media'];
         $poa_verify = $poas['verify'];
     }
-} else {
-    $poa = 'broker/'.Broker['favicon'];
-    $poa_verify = "3";
 }
 ?>
 <!DOCTYPE html>
@@ -66,22 +64,6 @@ if(mysqli_num_rows($result4) > 0){
 
         <?= factory::header() ?>
 <?php
-    // Version Changer
-    $_version = ($_GET['_vch']) ?? false;
-    if ($_version) {
-        GF::makeJS('f','console.log("VCH is active: v '.$_version.'")');
-        $_vch_file = "_vch/$_version/$_path";
-        if(file_exists($_vch_file)) {
-            $_vch_file = file_get_contents($_vch_file);
-            eval('?> '.$_vch_file.' ');
-
-            // Add actLog
-            global $actLog; $actLog->add('VCH',null,1,'{"File" : "'.$_vch_file.'"}');
-
-            die();
-        }
-    }
-
 }
 ?>
 

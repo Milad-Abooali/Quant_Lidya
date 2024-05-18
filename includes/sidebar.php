@@ -143,9 +143,6 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="download.php" class="waves-effect"><i class="mdi mdi-download"></i><span> <?= $_L->T('Download','sidebar') ?> </span></a>
-                            </li>
-                            <li>
                                 <a href="stats.php" class="waves-effect"><i class="mdi mdi-chart-bar"></i><span> Stats </span></a>
                             </li>
                             <li>
@@ -159,9 +156,6 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="download.php" class="waves-effect"><i class="mdi mdi-download"></i><span> <?= $_L->T('Download','sidebar') ?> </span></a>
-                            </li>
-                            <li>
                                 <a href="stats.php" class="waves-effect"><i class="mdi mdi-chart-bar"></i><span> Stats </span></a>
                             </li>
                             <li>
@@ -173,9 +167,6 @@
                                 <a href="index.php" class="waves-effect">
                                     <i class="mdi mdi-view-dashboard"></i><span> <?= $_L->T('Dashboard','sidebar') ?> </span>
                                 </a>
-                            </li>
-                            <li>
-                                <a href="download.php" class="waves-effect"><i class="mdi mdi-download"></i><span> <?= $_L->T('Download','sidebar') ?> </span></a>
                             </li>
                             <li>
                                 <a href="stats.php" class="waves-effect"><i class="mdi mdi-chart-bar"></i><span> Stats </span></a>
@@ -199,9 +190,6 @@
                             <li>
                                 <a href="ib.php" class="waves-effect"><i class="mdi mdi-account-multiple"></i><span> <?= $_L->T('IBs','sidebar') ?> </span></a>
                             </li>
-                            <li>
-                                <a href="download.php" class="waves-effect"><i class="mdi mdi-download"></i><span> <?= $_L->T('Download','sidebar') ?> </span></a>
-                            </li>
                             <?php }
                             else { ?>
                             <li>
@@ -212,16 +200,15 @@
                             <li>
                                 <a href="profile.php" class="waves-effect"><i class="mdi mdi-account"></i><span> <?= $_L->T('Profile','profile') ?> </span></a>
                             </li>
-                            <li>
-                                <a href="download.php" class="waves-effect"><i class="mdi mdi-download"></i><span> <?= $_L->T('Download','sidebar') ?> </span></a>
-                            </li>
                             <?php } ?>
-                            <li>
+
+                            <!--<li>
                                 <a href="wallet.php" class="waves-effect">
                                     <i class="mdi mdi-coin"></i><span> <?= $_L->T('My_Wallet','wallet') ?> </span>
                                     <sup class="text-warning">NEW</sup>
                                 </a>
                             </li>
+                            -->
                             <li>
                                 <a href="<?= REDIRECT_TO['web_trader'] ?>" class="waves-effect">
                                     <i class="mdi mdi-chart-line"></i><span> <?= $_L->T('Web_Trader','sidebar') ?> </span>

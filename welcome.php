@@ -482,29 +482,66 @@ include('includes/head.php'); ?>
                                 </div>
                             </div>
                         </div>
-                        <?php 
-                            $userManager = new userManager();
-                            $cid = $userManager->getCustom($_SESSION['id'],'cid')['cid'];
-                            if (!in_array($cid, array(null,"0000-00-00 00:00:00"))) {
-                        ?>
-                        <div class="card mb-3 col-lg-12" style="padding: 0px;">
-                            <div class="row no-gutters">
-                                <div class="col-sm-12 col-md-4 bg-dark">
-                                    <a href="https://clientzone.lidyaportal.com/LidyaFX_Forex_E-Book_v1.2.pdf"><img src="assets/e-book/LidyaFX_Forex_E-Book_600-200.png" style="width: 100%;"/></a>
-                                </div>
-                                <div class="col-sm-12 col-md-8">
-                                    <div class="card-body">
-                                        <h5 class="card-title">Yatirim Rehberi</h5>
-                                        <p class="card-text">Forex piyasalarını daha iyi tanımanız ve olumsuz sonuçlanan deneyimlerden uzaklaşmanızı sağlamak adına bilmeniz gereken temel bilgileri sizin için eğitim kitapçığı haline getirdik.
-                                        </br></br>Siz'de bu kitapçığı indirme hakkına sahip olan seçili yatırımcılarımızdan birisiniz.</p>
-                                        <p class="card-text"><a href="https://clientzone.lidyaportal.com/LidyaFX_Forex_E-Book_v1.2.pdf" class="btn bg-gradient-primary text-white">Şimdi İndirin</a></p>
-                                    </div>
+
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="alert alert-warning" role="alert">
+                                    Credit card payment will be closed for a while due to the system update. ( Sistem
+                                    güncellemesinden dolayı bir süre kapalı kalacaktır.)
                                 </div>
                             </div>
                         </div>
-                        <?php 
-                            } 
-                        ?>
+
+                        <!--
+                         <div class="row">
+                            <div class="col-sm-12">
+                                <div class="alert alert-warning" role="alert">
+                                    Dear valued clients,<br>
+                                    Our POS system is temporarily closed due to system update and maintenance by our provider and will be up asap. <br>
+                                    Best Regards,<br>
+                                    4inFX
+                                </div>
+                            </div>
+                        </div>
+                        -->
+
+
+                        <div class="row">
+                            <!-- Start EBook -->
+                            <div class="card mb-3 col-lg-8" style="padding: 0px;">
+                                <div class="row no-gutters">
+                                    <div class="col-sm-12 col-md-4 bg-dark">
+                                        <a href="https://clientzone.fourinfx.com/assets/e-book/E-Book-v1.4-4inFX.pdf"><img
+                                                    src="assets/e-book/4inFX_E-Book-01-01.png"
+                                                    style="width: 100%;"/></a>
+                                    </div>
+                                    <div class="col-sm-12 col-md-8">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Yatirim Rehberi</h5>
+                                            <p class="card-text">Forex piyasalarını daha iyi tanımanız ve olumsuz
+                                                sonuçlanan deneyimlerden uzaklaşmanızı sağlamak adına bilmeniz gereken
+                                                temel bilgileri sizin için eğitim kitapçığı haline getirdik.
+                                                </br></br>Siz'de bu kitapçığı indirme hakkına sahip olan seçili
+                                                yatırımcılarımızdan birisiniz.</p>
+                                            <p class="card-text"><a
+                                                        href="https://clientzone.fourinfx.com/assets/e-book/E-Book-v1.4-4inFX.pdf"
+                                                        class="btn bg-gradient-primary text-white">Şimdi İndirin</a></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- end EBook -->
+                            <!-- Start Video -->
+                            <div class="card mb-3 col-lg-4" style="padding: 0px;">
+                                <video style="width: 100%;height: auto;object-fit: cover;" controls>
+                                    <source src="assets/media/4inFX_Üyelik_ParaTransfer.mp4" type="video/mp4">
+                                    Error Message
+                                </video>
+                            </div>
+
+                            <!-- end Video -->
+                        </div>
+
                         <!-- end row -->
                         <?php 
                             $amountDP = 0;
@@ -812,7 +849,9 @@ include('includes/head.php'); ?>
                                 <div class="col-xl-4">
                                     <div class="card m-b-20">
                                         <div class="card-body" id="stats">
-                                            <h4 class="mt-0 m-b-30 header-title float-left"><?= $_L->T('Total_Statistics','trade') ?> <span class="btn btn-sm bg-gradient-primary text-white waves-effect waves-light openLogin" data-login="">Open Positions</span></h4>
+                                            <h4 class="mt-0 m-b-30 header-title float-left"><?= $_L->T('Total_Statistics', 'trade') ?>
+                                                <span class="btn btn-sm bg-gradient-primary text-white waves-effect waves-light openLogin"
+                                                      data-login=""><?= $_L->T('Open_Positions', 'trade') ?></span></h4>
                                             <span class="float-right">
                                                 <select class="form-control float-right" id="LoginList">
                                                         
@@ -823,7 +862,8 @@ include('includes/head.php'); ?>
                                                 <b class="stateLogin" style="font-size:1rem;"></b>
                                             </div>
                                             <div class="float-right">
-                                                <span class="text-muted">Open Profit:</span> <b class="floating" style="font-size:1rem;"></b>
+                                                <span class="text-muted"><?= $_L->T('Open_Profit', 'trade') ?>:</span>
+                                                <b class="floating" style="font-size:1rem;"></b>
                                             </div>
                                             <div class="clearfix"></div>
                                             <hr>
@@ -1720,12 +1760,12 @@ include('includes/head.php'); ?>
                         "showDropdowns": true,
                         "timePicker": true,
                         ranges: {
-                           'Today': [moment(), moment().add(1, 'days')],
-                           'Yesterday': [moment().subtract(1, 'days'), moment()],
-                           'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-                           'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-                           'This Month': [moment().startOf('month'), moment().endOf('month')],
-                           'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                            '<?= $_L->T('Today', 'general') ?>': [moment(), moment().add(1, 'days')],
+                            '<?= $_L->T('Yesterday', 'general') ?>': [moment().subtract(1, 'days'), moment()],
+                            '<?= $_L->T('Last_7_Days', 'general') ?>': [moment().subtract(6, 'days'), moment()],
+                            '<?= $_L->T('Last_30_Days', 'general') ?>': [moment().subtract(29, 'days'), moment()],
+                            '<?= $_L->T('This_Month', 'general') ?>': [moment().startOf('month'), moment().endOf('month')],
+                            '<?= $_L->T('Last_Month', 'general') ?>': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
                         }
                     }, function(start, end, label){
                         $('#reportrange span').html(start.format('YYYY-MM-DD') + ' - ' + end.format('YYYY-MM-DD'));

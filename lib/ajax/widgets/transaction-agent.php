@@ -151,7 +151,8 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text bg-gradient-info text-white strong" id="basic-addon1">₺</span>
                         </div>
-                        <input type="number" class="form-control" type="number" min="0.00" max="100000.00" step="0.01" id="transferAmountTL" name="amounttl" placeholder="0,00">
+                        <input type="number" class="form-control" type="number" min="0.00" max="16105500.00" step="0.01"
+                               id="transferAmountTL" name="amounttl" placeholder="0,00">
                     </div>
                     <div class="pt-2 col-1">
                         =
@@ -160,7 +161,8 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text bg-gradient-primary text-white strong" id="basic-addon1">$</span>
                         </div>
-                        <input type="number" class="form-control" type="number" min="0.00" max="10000.00" step="0.01" id="transferAmount" name="amount" placeholder="0,00">
+                        <input type="number" class="form-control" type="number" min="0.00" max="500000.00" step="0.01"
+                               id="transferAmount" name="amount" placeholder="0,00">
                     </div>
                 </div>
                 <div class="text-center">
@@ -171,7 +173,8 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text" id="basic-addon1">$</span>
                     </div>
-                    <input type="number" class="form-control" type="number" min="0.00" max="10000.00" step="0.01" id="transferAmount" name="amount" placeholder="0,00">
+                    <input type="number" class="form-control" type="number" min="0.00" max="20000.00" step="0.01"
+                           id="transferAmount" name="amount" placeholder="0,00">
                 </div>
             <?php }  ?>
         </div>

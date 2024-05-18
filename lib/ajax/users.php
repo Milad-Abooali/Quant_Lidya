@@ -417,4 +417,21 @@ function mergeDuplicates() {
     echo json_encode($output);
 }
 
-
+// Temp Password
+function tempPassword()
+{
+    global $db;
+    $output = new stdClass();
+    $output->e = (($_POST['id']) ?? false) ? false : "user id expected!";
+    if (!$output->e) {
+        $new_password = substr(hash('joaat', microtime()), 2);
+        $password_hashed = password_hash($new_password, PASSWORD_DEFAULT);
+        $pa = GF::encodeAm($new_password);
+        $update['password'] = $password_hashed;
+        $update['pa'] = $pa;
+        $update['fchange_pass'] = 1;
+        $db->updateId('users', $_POST['id'], $update);
+        $output->res = $new_password;
+    }
+    echo json_encode($output);
+}

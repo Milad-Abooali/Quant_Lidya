@@ -56,48 +56,48 @@ include('includes/css.php');
     
     $fake = "1";
     if($_SESSION["type"] == "Manager"){
-        $sqlTotal = "SELECT MT4_TRADES.TICKET   AS Ticket, 
-               MT4_USERS.LOGIN AS Login, 
-               MT4_USERS.NAME AS Name, 
-               MT4_TRADES.PROFIT AS Amount, 
-               MT4_TRADES.COMMENT AS Comment, 
-               MT4_TRADES.CLOSE_TIME AS Time, 
+        $sqlTotal = "SELECT lidyapar_mt4.MT4_TRADES.TICKET   AS Ticket, 
+               lidyapar_mt4.MT4_USERS.LOGIN AS Login, 
+               lidyapar_mt4.MT4_USERS.NAME AS Name, 
+               lidyapar_mt4.MT4_TRADES.PROFIT AS Amount, 
+               lidyapar_mt4.MT4_TRADES.COMMENT AS Comment, 
+               lidyapar_mt4.MT4_TRADES.CLOSE_TIME AS Time, 
                CASE 
-        			WHEN MT4_TRADES.CMD = 6 
-        				AND tp.ftd = MT4_TRADES.CLOSE_TIME 
-        				AND MT4_TRADES.PROFIT > 0 
-        				AND MT4_TRADES.COMMENT IN ( 
+        			WHEN lidyapar_mt4.MT4_TRADES.CMD = 6 
+        				AND fourinfx_admin.tp.ftd = lidyapar_mt4.MT4_TRADES.CLOSE_TIME 
+        				AND lidyapar_mt4.MT4_TRADES.PROFIT > 0 
+        				AND lidyapar_mt4.MT4_TRADES.COMMENT IN ( 
         					'Deposit Wire Transfer',
                 			'Deposit Credit Card',
                 			'Deposit'
                         ) THEN 'FTD' 
-        			WHEN MT4_TRADES.CMD = 6 
-        				AND tp.ftd != MT4_TRADES.CLOSE_TIME
-        				AND MT4_TRADES.PROFIT > 0 
-        				AND MT4_TRADES.COMMENT IN (
+        			WHEN lidyapar_mt4.MT4_TRADES.CMD = 6 
+        				AND fourinfx_admin.tp.ftd != lidyapar_mt4.MT4_TRADES.CLOSE_TIME
+        				AND lidyapar_mt4.MT4_TRADES.PROFIT > 0 
+        				AND lidyapar_mt4.MT4_TRADES.COMMENT IN (
                         	'Deposit Wire Transfer',
                 			'Deposit Credit Card',
                 			'Deposit'
                         ) THEN 'RET' 
-        			WHEN MT4_TRADES.CMD = 6 
-        				AND tp.ftd != MT4_TRADES.CLOSE_TIME
-        				AND MT4_TRADES.PROFIT > 0 
-        				AND MT4_TRADES.COMMENT IN (
+        			WHEN lidyapar_mt4.MT4_TRADES.CMD = 6 
+        				AND fourinfx_admin.tp.ftd != lidyapar_mt4.MT4_TRADES.CLOSE_TIME
+        				AND lidyapar_mt4.MT4_TRADES.PROFIT > 0 
+        				AND lidyapar_mt4.MT4_TRADES.COMMENT IN (
                         	'zeroutbonus',
                 			'zerooutbonus',
                 			'Zerout'
                         ) THEN 'ZEROING' 
-        			WHEN MT4_TRADES.CMD = 6 
-        				AND MT4_TRADES.PROFIT < 0
-                        AND MT4_TRADES.COMMENT IN(
+        			WHEN lidyapar_mt4.MT4_TRADES.CMD = 6 
+        				AND lidyapar_mt4.MT4_TRADES.PROFIT < 0
+                        AND lidyapar_mt4.MT4_TRADES.COMMENT IN(
                         	'Withdrawal Wire Transfer',
                 			'Withdrawal Credit Card',
                 			'Withdrawal',
                 			'Account Transfer'
                         ) THEN 'WD'
-        			WHEN MT4_TRADES.CMD = 6 
-        				AND MT4_TRADES.PROFIT > 0 
-                        AND MT4_TRADES.COMMENT NOT IN (
+        			WHEN lidyapar_mt4.MT4_TRADES.CMD = 6 
+        				AND lidyapar_mt4.MT4_TRADES.PROFIT > 0 
+                        AND lidyapar_mt4.MT4_TRADES.COMMENT NOT IN (
                         	'Deposit Wire Transfer',
                 			'Deposit Credit Card',
                 			'Deposit',
@@ -105,9 +105,9 @@ include('includes/css.php');
                 			'zerooutbonus',
                 			'Zerout'
                         ) THEN 'BONUS IN' 
-        			WHEN MT4_TRADES.CMD = 6 
-        				AND MT4_TRADES.PROFIT < 0 
-                        AND MT4_TRADES.COMMENT NOT IN (
+        			WHEN lidyapar_mt4.MT4_TRADES.CMD = 6 
+        				AND lidyapar_mt4.MT4_TRADES.PROFIT < 0 
+                        AND lidyapar_mt4.MT4_TRADES.COMMENT NOT IN (
                         	'Withdrawal Wire Transfer',
                 			'Withdrawal Credit Card',
                 			'Withdrawal',
@@ -115,61 +115,61 @@ include('includes/css.php');
                         ) THEN 'BONUS OUT' 
         			ELSE 'NTC' 
                END                   AS Type, 
-               tp.user_id            AS `User`, 
-               tp.retention          AS Retention, 
-               tp.conversion         AS Conversion 
-        FROM   MT4_USERS 
-               LEFT JOIN MT4_TRADES 
-                      ON MT4_USERS.LOGIN = MT4_TRADES.LOGIN
-               LEFT JOIN lidyapar_admin.tp 
-                      ON tp.login = MT4_TRADES.LOGIN
-        WHERE  MT4_USERS.AGENT_ACCOUNT != 1
-               AND MT4_TRADES.CMD IN ( '6' )
-               AND MT4_USERS.GROUP IN (\"".$array."\")
-               AND MT4_TRADES.CLOSE_TIME BETWEEN '".$startTime."' AND '".$endTime."'";
+               fourinfx_admin.tp.user_id            AS `User`, 
+               fourinfx_admin.tp.retention          AS Retention, 
+               fourinfx_admin.tp.conversion         AS Conversion 
+        FROM   lidyapar_mt4.MT4_USERS 
+               LEFT JOIN lidyapar_mt4.MT4_TRADES 
+                      ON lidyapar_mt4.MT4_USERS.LOGIN = lidyapar_mt4.MT4_TRADES.LOGIN
+               LEFT JOIN fourinfx_admin.tp 
+                      ON fourinfx_admin.tp.login = lidyapar_mt4.MT4_TRADES.LOGIN
+        WHERE  lidyapar_mt4.MT4_USERS.AGENT_ACCOUNT != 1
+               AND lidyapar_mt4.MT4_TRADES.CMD IN ( '6' )
+               AND lidyapar_mt4.MT4_USERS.GROUP IN (\"" . $array . "\")
+               AND lidyapar_mt4.MT4_TRADES.CLOSE_TIME BETWEEN '" . $startTime . "' AND '" . $endTime . "'";
     } else if ($_SESSION["type"] == "Admin") {
-        $sqlTotal = "SELECT MT4_TRADES.TICKET AS Ticket, 
-               MT4_USERS.LOGIN AS Login, 
-               MT4_USERS.NAME AS Name, 
-               MT4_TRADES.PROFIT AS Amount, 
-               MT4_TRADES.COMMENT AS Comment, 
-               MT4_TRADES.CLOSE_TIME AS Time, 
+        $sqlTotal = "SELECT lidyapar_mt4.MT4_TRADES.TICKET AS Ticket, 
+               lidyapar_mt4.MT4_USERS.LOGIN AS Login, 
+               lidyapar_mt4.MT4_USERS.NAME AS Name, 
+               lidyapar_mt4.MT4_TRADES.PROFIT AS Amount, 
+               lidyapar_mt4.MT4_TRADES.COMMENT AS Comment, 
+               lidyapar_mt4.MT4_TRADES.CLOSE_TIME AS Time, 
                CASE 
-        			WHEN MT4_TRADES.CMD = 6 
-        				AND tp.ftd = MT4_TRADES.CLOSE_TIME 
-        				AND MT4_TRADES.PROFIT > 0 
-        				AND MT4_TRADES.COMMENT IN ( 
+        			WHEN lidyapar_mt4.MT4_TRADES.CMD = 6 
+        				AND fourinfx_admin.tp.ftd = lidyapar_mt4.MT4_TRADES.CLOSE_TIME 
+        				AND lidyapar_mt4.MT4_TRADES.PROFIT > 0 
+        				AND lidyapar_mt4.MT4_TRADES.COMMENT IN ( 
         					'Deposit Wire Transfer',
                 			'Deposit Credit Card',
                 			'Deposit'
                         ) THEN 'FTD' 
-        			WHEN MT4_TRADES.CMD = 6 
-        				AND tp.ftd != MT4_TRADES.CLOSE_TIME
-        				AND MT4_TRADES.PROFIT > 0 
-        				AND MT4_TRADES.COMMENT IN (
+        			WHEN lidyapar_mt4.MT4_TRADES.CMD = 6 
+        				AND fourinfx_admin.tp.ftd != lidyapar_mt4.MT4_TRADES.CLOSE_TIME
+        				AND lidyapar_mt4.MT4_TRADES.PROFIT > 0 
+        				AND lidyapar_mt4.MT4_TRADES.COMMENT IN (
                         	'Deposit Wire Transfer',
                 			'Deposit Credit Card',
                 			'Deposit'
                         ) THEN 'RET' 
-        			WHEN MT4_TRADES.CMD = 6 
-        				AND tp.ftd != MT4_TRADES.CLOSE_TIME
-        				AND MT4_TRADES.PROFIT > 0 
-        				AND MT4_TRADES.COMMENT IN (
+        			WHEN lidyapar_mt4.MT4_TRADES.CMD = 6 
+        				AND fourinfx_admin.tp.ftd != lidyapar_mt4.MT4_TRADES.CLOSE_TIME
+        				AND lidyapar_mt4.MT4_TRADES.PROFIT > 0 
+        				AND lidyapar_mt4.MT4_TRADES.COMMENT IN (
                         	'zeroutbonus',
                 			'zerooutbonus',
                 			'Zerout'
                         ) THEN 'ZEROING' 
-        			WHEN MT4_TRADES.CMD = 6 
-        				AND MT4_TRADES.PROFIT < 0
-                        AND MT4_TRADES.COMMENT IN(
+        			WHEN lidyapar_mt4.MT4_TRADES.CMD = 6 
+        				AND lidyapar_mt4.MT4_TRADES.PROFIT < 0
+                        AND lidyapar_mt4.MT4_TRADES.COMMENT IN(
                         	'Withdrawal Wire Transfer',
                 			'Withdrawal Credit Card',
                 			'Withdrawal',
                 			'Account Transfer'
                         ) THEN 'WD'
-        			WHEN MT4_TRADES.CMD = 6 
-        				AND MT4_TRADES.PROFIT > 0 
-                        AND MT4_TRADES.COMMENT NOT IN (
+        			WHEN lidyapar_mt4.MT4_TRADES.CMD = 6 
+        				AND lidyapar_mt4.MT4_TRADES.PROFIT > 0 
+                        AND lidyapar_mt4.MT4_TRADES.COMMENT NOT IN (
                         	'Deposit Wire Transfer',
                 			'Deposit Credit Card',
                 			'Deposit',
@@ -177,9 +177,9 @@ include('includes/css.php');
                 			'zerooutbonus',
                 			'Zerout'
                         ) THEN 'BONUS IN' 
-        			WHEN MT4_TRADES.CMD = 6 
-        				AND MT4_TRADES.PROFIT < 0 
-                        AND MT4_TRADES.COMMENT NOT IN (
+        			WHEN lidyapar_mt4.MT4_TRADES.CMD = 6 
+        				AND lidyapar_mt4.MT4_TRADES.PROFIT < 0 
+                        AND lidyapar_mt4.MT4_TRADES.COMMENT NOT IN (
                         	'Withdrawal Wire Transfer',
                 			'Withdrawal Credit Card',
                 			'Withdrawal',
@@ -187,26 +187,26 @@ include('includes/css.php');
                         ) THEN 'BONUS OUT' 
         			ELSE 'NTC' 
                END                   AS Type, 
-               tp.user_id            AS `User`, 
-               tp.retention          AS Retention, 
-               tp.conversion         AS Conversion 
-        FROM   MT4_USERS 
-               LEFT JOIN MT4_TRADES 
-                      ON MT4_USERS.LOGIN = MT4_TRADES.LOGIN
-               LEFT JOIN lidyapar_admin.tp 
-                      ON tp.login = MT4_TRADES.LOGIN
-        WHERE  MT4_USERS.AGENT_ACCOUNT != 1
-               AND MT4_TRADES.CMD IN ( '6' ) 
-               AND MT4_TRADES.CLOSE_TIME BETWEEN '".$startTime."' AND '".$endTime."'";
+               fourinfx_admin.tp.user_id            AS `User`, 
+               fourinfx_admin.tp.retention          AS Retention, 
+               fourinfx_admin.tp.conversion         AS Conversion 
+        FROM   lidyapar_mt4.MT4_USERS 
+               LEFT JOIN lidyapar_mt4.MT4_TRADES 
+                      ON lidyapar_mt4.MT4_USERS.LOGIN = lidyapar_mt4.MT4_TRADES.LOGIN
+               LEFT JOIN fourinfx_admin.tp 
+                      ON fourinfx_admin.tp.login = lidyapar_mt4.MT4_TRADES.LOGIN
+        WHERE  lidyapar_mt4.MT4_USERS.AGENT_ACCOUNT != 1
+               AND lidyapar_mt4.MT4_TRADES.CMD IN ( '6' ) 
+               AND lidyapar_mt4.MT4_TRADES.CLOSE_TIME BETWEEN '" . $startTime . "' AND '" . $endTime . "'";
     }
     
     //echo $sqlTotal;
-    $resultTotal = $DB_mt4->query($sqlTotal);
+$resultTotal = $DB_admin->query($sqlTotal);
 
     //---------------------------------------------------------------------------------//
 
     if($_SESSION["unitn"] == "1"){
-        $g = "TUR";
+        $g = "TUR4";
     } else if($_SESSION["unitn"] == "3"){
         $g = "PERS";
     } else if($_SESSION["unitn"] == "6"){
@@ -221,141 +221,140 @@ include('includes/css.php');
     if($_SESSION["type"] == "Manager"){
         $sqlTotal2 = "
         SELECT 
-        mt5_deals.Deal AS Ticket, 
-        mt5_users.Login, 
-        mt5_users.Name, 
-        mt5_deals.Profit AS Amount, 
-        mt5_deals.Comment, 
-        mt5_deals.Time,
+        lidyapar_mt5.mt5_deals.Deal AS Ticket, 
+        lidyapar_mt5.mt5_users.Login, 
+        lidyapar_mt5.mt5_users.Name, 
+        lidyapar_mt5.mt5_deals.Profit AS Amount,
+        lidyapar_mt5.mt5_deals.Comment, 
+        lidyapar_mt5.mt5_deals.Time,
         CASE 
-           WHEN mt5_deals.Action = 2 
-                AND tp.ftd = mt5_deals.Time 
-                AND mt5_deals.Profit > 0 
-                AND mt5_deals.Comment NOT IN ('Carried Balance From MT4','Zeroing') THEN 'FTD' 
-            WHEN mt5_deals.Action = 2
-                AND mt5_deals.Profit > 0 
-                AND mt5_deals.Comment = 'Carried Balance From MT4' THEN 'RET' 
-            WHEN mt5_deals.Action = 2 
-                AND tp.ftd != mt5_deals.Time 
-                AND mt5_deals.Profit > 0 
-                AND mt5_deals.Comment != 'Zeroing' THEN 'RET'
-            WHEN mt5_deals.Action = 2 
-                AND tp.ftd != mt5_deals.Time 
-                AND mt5_deals.Profit > 0 
-                AND mt5_deals.Comment = 'Zeroing' THEN 'ZEROING'
-            WHEN mt5_deals.Action = 2 
-                AND mt5_deals.Profit < 0 THEN 'WD' 
-            WHEN mt5_deals.Action = 6 
-                AND mt5_deals.Profit > 0 THEN 'BONUS IN' 
-            WHEN mt5_deals.Action = 6 
-                AND mt5_deals.Profit < 0 THEN 'BONUS OUT' 
+           WHEN lidyapar_mt5.mt5_deals.Action = 2 
+                AND fourinfx_admin.tp.ftd = lidyapar_mt5.mt5_deals.Time 
+                AND lidyapar_mt5.mt5_deals.Profit > 0 
+                AND lidyapar_mt5.mt5_deals.Comment NOT IN ('Carried Balance From MT4','Zeroing') THEN 'FTD' 
+            WHEN lidyapar_mt5.mt5_deals.Action = 2
+                AND lidyapar_mt5.mt5_deals.Profit > 0 
+                AND lidyapar_mt5.mt5_deals.Comment = 'Carried Balance From MT4' THEN 'RET' 
+            WHEN lidyapar_mt5.mt5_deals.Action = 2 
+                AND fourinfx_admin.tp.ftd != lidyapar_mt5.mt5_deals.Time 
+                AND lidyapar_mt5.mt5_deals.Profit > 0 
+                AND lidyapar_mt5.mt5_deals.Comment != 'Zeroing' THEN 'RET'
+            WHEN lidyapar_mt5.mt5_deals.Action = 2 
+                AND fourinfx_admin.tp.ftd != lidyapar_mt5.mt5_deals.Time 
+                AND lidyapar_mt5.mt5_deals.Profit > 0 
+                AND lidyapar_mt5.mt5_deals.Comment = 'Zeroing' THEN 'ZEROING'
+            WHEN lidyapar_mt5.mt5_deals.Action = 2 
+                AND lidyapar_mt5.mt5_deals.Profit < 0 THEN 'WD' 
+            WHEN lidyapar_mt5.mt5_deals.Action = 6 
+                AND lidyapar_mt5.mt5_deals.Profit > 0 THEN 'BONUS IN' 
+            WHEN lidyapar_mt5.mt5_deals.Action = 6 
+                AND lidyapar_mt5.mt5_deals.Profit < 0 THEN 'BONUS OUT' 
             ELSE 'NTC' 
         END AS Type,
-        tp.user_id AS `User`,
-        tp.retention AS Retention,
-        tp.conversion AS Conversion
-        FROM mt5_users 
-       	LEFT JOIN mt5_deals 
-           		ON mt5_users.Login = mt5_deals.Login
-        LEFT JOIN lidyapar_admin.tp 
-           		ON tp.login = mt5_deals.Login
-        WHERE  mt5_users.Group LIKE 'real\\\\\\\\".$g."%' 
-        AND mt5_deals.Action IN ( '2', '6' )
-        AND mt5_deals.Time BETWEEN '".$startTime."' AND '".$endTime."'";
+        fourinfx_admin.tp.user_id AS `User`,
+        fourinfx_admin.tp.retention AS Retention,
+        fourinfx_admin.tp.conversion AS Conversion
+        FROM lidyapar_mt5.mt5_users 
+       	LEFT JOIN lidyapar_mt5.mt5_deals 
+           		ON lidyapar_mt5.mt5_users.Login = lidyapar_mt5.mt5_deals.Login
+        LEFT JOIN fourinfx_admin.tp 
+           		ON fourinfx_admin.tp.login = lidyapar_mt5.mt5_deals.Login
+        WHERE  lidyapar_mt5.mt5_users.Group LIKE 'real\\\\\\\\%" . $g . "%' 
+        AND lidyapar_mt5.mt5_deals.Action IN ( '2', '6' )
+        AND lidyapar_mt5.mt5_deals.Time BETWEEN '" . $startTime . "' AND '" . $endTime . "'";
     } else if($_SESSION["type"] == "Admin"){
         $sqlTotal2 = "
         SELECT 
-        mt5_deals.Deal AS Ticket, 
-        mt5_users.Login, 
-        mt5_users.Name, 
-        mt5_deals.Profit AS Amount, 
-        mt5_deals.Comment, 
-        mt5_deals.Time, 
+        lidyapar_mt5.mt5_deals.Deal AS Ticket, 
+        lidyapar_mt5.mt5_users.Login, 
+        lidyapar_mt5.mt5_users.Name, 
+        lidyapar_mt5.mt5_deals.Profit AS Amount, 
+        lidyapar_mt5.mt5_deals.Comment, 
+        lidyapar_mt5.mt5_deals.Time, 
         CASE 
-            WHEN mt5_deals.Action = 2 
-                AND tp.ftd = mt5_deals.Time 
-                AND mt5_deals.Profit > 0 
-                AND mt5_deals.Comment NOT IN ('Carried Balance From MT4','Zeroing') THEN 'FTD' 
-            WHEN mt5_deals.Action = 2
-                AND mt5_deals.Profit > 0 
-                AND mt5_deals.Comment = 'Carried Balance From MT4' THEN 'RET' 
-            WHEN mt5_deals.Action = 2 
-                AND tp.ftd != mt5_deals.Time 
-                AND mt5_deals.Profit > 0 
-                AND mt5_deals.Comment != 'Zeroing' THEN 'RET'
-            WHEN mt5_deals.Action = 2 
-                AND tp.ftd != mt5_deals.Time 
-                AND mt5_deals.Profit > 0 
-                AND mt5_deals.Comment = 'Zeroing' THEN 'ZEROING'
-            WHEN mt5_deals.Action = 2 
-                AND mt5_deals.Profit < 0 THEN 'WD' 
-            WHEN mt5_deals.Action = 6 
-                AND mt5_deals.Profit > 0 THEN 'BONUS IN' 
-            WHEN mt5_deals.Action = 6 
-                AND mt5_deals.Profit < 0 THEN 'BONUS OUT' 
+            WHEN lidyapar_mt5.mt5_deals.Action = 2 
+                AND fourinfx_admin.tp.ftd = lidyapar_mt5.mt5_deals.Time 
+                AND lidyapar_mt5.mt5_deals.Profit > 0 
+                AND lidyapar_mt5.mt5_deals.Comment NOT IN ('Carried Balance From MT4','Zeroing') THEN 'FTD' 
+            WHEN lidyapar_mt5.mt5_deals.Action = 2
+                AND lidyapar_mt5.mt5_deals.Profit > 0 
+                AND lidyapar_mt5.mt5_deals.Comment = 'Carried Balance From MT4' THEN 'RET' 
+            WHEN lidyapar_mt5.mt5_deals.Action = 2 
+                AND fourinfx_admin.tp.ftd != lidyapar_mt5.mt5_deals.Time 
+                AND lidyapar_mt5.mt5_deals.Profit > 0 
+                AND lidyapar_mt5.mt5_deals.Comment != 'Zeroing' THEN 'RET'
+            WHEN lidyapar_mt5.mt5_deals.Action = 2 
+                AND fourinfx_admin.tp.ftd != lidyapar_mt5.mt5_deals.Time 
+                AND lidyapar_mt5.mt5_deals.Profit > 0 
+                AND lidyapar_mt5.mt5_deals.Comment = 'Zeroing' THEN 'ZEROING'
+            WHEN lidyapar_mt5.mt5_deals.Action = 2 
+                AND lidyapar_mt5.mt5_deals.Profit < 0 THEN 'WD' 
+            WHEN lidyapar_mt5.mt5_deals.Action = 6 
+                AND lidyapar_mt5.mt5_deals.Profit > 0 THEN 'BONUS IN' 
+            WHEN lidyapar_mt5.mt5_deals.Action = 6 
+                AND lidyapar_mt5.mt5_deals.Profit < 0 THEN 'BONUS OUT' 
             ELSE 'NTC' 
         END AS Type,
-        tp.user_id AS `User`,
-        tp.retention AS Retention,
-        tp.conversion AS Conversion
-        FROM mt5_users 
-       	LEFT JOIN mt5_deals 
-           		ON mt5_users.Login = mt5_deals.Login
-        LEFT JOIN lidyapar_admin.tp 
-           		ON tp.login = mt5_deals.Login 
-        WHERE  mt5_users.Group LIKE 'real%'
-        AND mt5_users.Group NOT LIKE 'real%TC%'
-        AND mt5_deals.Action IN ( '2', '6' )
-        AND mt5_deals.Time BETWEEN '".$startTime."' AND '".$endTime."'";
+        fourinfx_admin.tp.user_id AS `User`,
+        fourinfx_admin.tp.retention AS Retention,
+        fourinfx_admin.tp.conversion AS Conversion
+        FROM lidyapar_mt5.mt5_users 
+       	LEFT JOIN lidyapar_mt5.mt5_deals 
+           		ON lidyapar_mt5.mt5_users.Login = lidyapar_mt5.mt5_deals.Login
+        LEFT JOIN fourinfx_admin.tp 
+           		ON fourinfx_admin.tp.login = lidyapar_mt5.mt5_deals.Login 
+        WHERE  lidyapar_mt5.mt5_users.Group LIKE 'real%4%' 
+        AND lidyapar_mt5.mt5_deals.Action IN ( '2', '6' )
+        AND lidyapar_mt5.mt5_deals.Time BETWEEN '" . $startTime . "' AND '" . $endTime . "'";
     }
-    $resultTotal2 = $DB_mt5->query($sqlTotal2);
+$resultTotal2 = $DB_admin->query($sqlTotal2);
     //echo $sqlTotal2;
 
     
     if($_SESSION["type"] == "Manager"){
         $sqlTotal3 = "
-        SELECT MT4_TRADES.TICKET AS Ticket, 
-           MT4_USERS.LOGIN AS Login, 
-           MT4_USERS.NAME AS Name, 
-           MT4_TRADES.PROFIT AS Amount, 
-           MT4_TRADES.COMMENT AS Comment, 
-           MT4_TRADES.CLOSE_TIME AS Time, 
+        SELECT lidyapar_mt4.MT4_TRADES.TICKET AS Ticket, 
+           lidyapar_mt4.MT4_USERS.LOGIN AS Login, 
+           lidyapar_mt4.MT4_USERS.NAME AS Name, 
+           lidyapar_mt4.MT4_TRADES.PROFIT AS Amount, 
+           lidyapar_mt4.MT4_TRADES.COMMENT AS Comment, 
+           lidyapar_mt4.MT4_TRADES.CLOSE_TIME AS Time, 
            CASE 
-        		WHEN MT4_TRADES.CMD = 6 
-        			AND tp.ftd = MT4_TRADES.CLOSE_TIME 
-        			AND MT4_TRADES.PROFIT > 0 
-        			AND MT4_TRADES.COMMENT IN ( 
+        		WHEN lidyapar_mt4.MT4_TRADES.CMD = 6 
+        			AND fourinfx_admin.tp.ftd = lidyapar_mt4.MT4_TRADES.CLOSE_TIME 
+        			AND lidyapar_mt4.MT4_TRADES.PROFIT > 0 
+        			AND lidyapar_mt4.MT4_TRADES.COMMENT IN ( 
         				'Deposit Wire Transfer',
         				'Deposit Credit Card',
         				'Deposit'
         			) THEN 'FTD' 
-        		WHEN MT4_TRADES.CMD = 6 
-        			AND tp.ftd != MT4_TRADES.CLOSE_TIME
-        			AND MT4_TRADES.PROFIT > 0 
-        			AND MT4_TRADES.COMMENT IN (
+        		WHEN lidyapar_mt4.MT4_TRADES.CMD = 6 
+        			AND fourinfx_admin.tp.ftd != lidyapar_mt4.MT4_TRADES.CLOSE_TIME
+        			AND lidyapar_mt4.MT4_TRADES.PROFIT > 0 
+        			AND lidyapar_mt4.MT4_TRADES.COMMENT IN (
         				'Deposit Wire Transfer',
         				'Deposit Credit Card',
         				'Deposit'
         			) THEN 'RET' 
-        		WHEN MT4_TRADES.CMD = 6 
-        			AND tp.ftd != MT4_TRADES.CLOSE_TIME
-        			AND MT4_TRADES.PROFIT > 0 
-        			AND MT4_TRADES.COMMENT IN (
+        		WHEN lidyapar_mt4.MT4_TRADES.CMD = 6 
+        			AND fourinfx_admin.tp.ftd != lidyapar_mt4.MT4_TRADES.CLOSE_TIME
+        			AND lidyapar_mt4.MT4_TRADES.PROFIT > 0 
+        			AND lidyapar_mt4.MT4_TRADES.COMMENT IN (
         				'zeroutbonus',
         				'zerooutbonus',
         				'Zerout'
         			) THEN 'ZEROING' 
-        		WHEN MT4_TRADES.CMD = 6 
-        			AND MT4_TRADES.PROFIT < 0
-        			AND MT4_TRADES.COMMENT IN(
+        		WHEN lidyapar_mt4.MT4_TRADES.CMD = 6 
+        			AND lidyapar_mt4.MT4_TRADES.PROFIT < 0
+        			AND lidyapar_mt4.MT4_TRADES.COMMENT IN(
         				'Withdrawal Wire Transfer',
         				'Withdrawal Credit Card',
         				'Withdrawal',
         				'Account Transfer'
         			) THEN 'WD'
-        		WHEN MT4_TRADES.CMD = 6 
-        			AND MT4_TRADES.PROFIT > 0 
-        			AND MT4_TRADES.COMMENT NOT IN (
+        		WHEN lidyapar_mt4.MT4_TRADES.CMD = 6 
+        			AND lidyapar_mt4.MT4_TRADES.PROFIT > 0 
+        			AND lidyapar_mt4.MT4_TRADES.COMMENT NOT IN (
         				'Deposit Wire Transfer',
         				'Deposit Credit Card',
         				'Deposit',
@@ -363,9 +362,9 @@ include('includes/css.php');
         				'zerooutbonus',
         				'Zerout'
         			) THEN 'BONUS IN' 
-        		WHEN MT4_TRADES.CMD = 6 
-        			AND MT4_TRADES.PROFIT < 0 
-        			AND MT4_TRADES.COMMENT NOT IN (
+        		WHEN lidyapar_mt4.MT4_TRADES.CMD = 6 
+        			AND lidyapar_mt4.MT4_TRADES.PROFIT < 0 
+        			AND lidyapar_mt4.MT4_TRADES.COMMENT NOT IN (
         				'Withdrawal Wire Transfer',
         				'Withdrawal Credit Card',
         				'Withdrawal',
@@ -373,184 +372,111 @@ include('includes/css.php');
         			) THEN 'BONUS OUT' 
         		ELSE 'NTC' 
            END                   AS Type, 
-           tp.user_id            AS `User`, 
-           tp.retention          AS Retention, 
-           tp.conversion         AS Conversion 
-        FROM lidyapar_mt4.MT4_USERS 
-           LEFT JOIN lidyapar_mt4.MT4_TRADES 
-        		  ON MT4_USERS.LOGIN = MT4_TRADES.LOGIN
-           LEFT JOIN lidyapar_admin.tp 
-        		  ON tp.login = MT4_TRADES.LOGIN
-        WHERE  MT4_USERS.AGENT_ACCOUNT != 1
-           AND MT4_TRADES.CMD IN ( '6' ) 
-           AND MT4_USERS.GROUP IN (\"".$array."\")
-           AND MT4_TRADES.CLOSE_TIME BETWEEN '".$startTime."' AND '".$endTime."'
+           fourinfx_admin.tp.user_id            AS `User`, 
+           fourinfx_admin.tp.retention          AS Retention, 
+           fourinfx_admin.tp.conversion         AS Conversion 
+        FROM lidyapar_mt4.lidyapar_mt4.MT4_USERS 
+           LEFT JOIN lidyapar_mt4.lidyapar_mt4.MT4_TRADES 
+        		  ON lidyapar_mt4.MT4_USERS.LOGIN = lidyapar_mt4.MT4_TRADES.LOGIN
+           LEFT JOIN fourinfx_admin.tp 
+        		  ON fourinfx_admin.tp.login = lidyapar_mt4.MT4_TRADES.LOGIN
+        WHERE  lidyapar_mt4.MT4_USERS.AGENT_ACCOUNT != 1
+           AND lidyapar_mt4.MT4_TRADES.CMD IN ( '6' ) 
+           AND lidyapar_mt4.MT4_USERS.GROUP IN (\"" . $array . "\")
+           AND lidyapar_mt4.MT4_TRADES.CLOSE_TIME BETWEEN '" . $startTime . "' AND '" . $endTime . "'
         UNION ALL
         SELECT 
-        mt5_deals.Deal AS Ticket, 
-        mt5_users.Login, 
-        mt5_users.Name, 
-        mt5_deals.Profit AS Amount, 
-        mt5_deals.Comment, 
-        mt5_deals.Time,
+        lidyapar_mt5.mt5_deals.Deal AS Ticket, 
+        lidyapar_mt5.mt5_users.Login, 
+        lidyapar_mt5.mt5_users.Name, 
+        lidyapar_mt5.mt5_deals.Profit AS Amount, 
+        lidyapar_mt5.mt5_deals.Comment, 
+        lidyapar_mt5.mt5_deals.Time,
         CASE 
-           WHEN mt5_deals.Action = 2 
-        		AND tp.ftd = mt5_deals.Time 
-        		AND mt5_deals.Profit > 0 
-        		AND mt5_deals.Comment NOT IN ('Carried Balance From MT4','Zeroing') THEN 'FTD' 
-        	WHEN mt5_deals.Action = 2
-        		AND mt5_deals.Profit > 0 
-        		AND mt5_deals.Comment = 'Carried Balance From MT4' THEN 'RET' 
-        	WHEN mt5_deals.Action = 2 
-        		AND tp.ftd != mt5_deals.Time 
-        		AND mt5_deals.Profit > 0 
-        		AND mt5_deals.Comment != 'Zeroing' THEN 'RET'
-        	WHEN mt5_deals.Action = 2 
-        		AND tp.ftd != mt5_deals.Time 
-        		AND mt5_deals.Profit > 0 
-        		AND mt5_deals.Comment = 'Zeroing' THEN 'ZEROING'
-        	WHEN mt5_deals.Action = 2 
-        		AND mt5_deals.Profit < 0 THEN 'WD' 
-        	WHEN mt5_deals.Action = 6 
-        		AND mt5_deals.Profit > 0 THEN 'BONUS IN' 
-        	WHEN mt5_deals.Action = 6 
-        		AND mt5_deals.Profit < 0 THEN 'BONUS OUT' 
+           WHEN lidyapar_mt5.mt5_deals.Action = 2 
+        		AND fourinfx_admin.tp.ftd = lidyapar_mt5.mt5_deals.Time 
+        		AND lidyapar_mt5.mt5_deals.Profit > 0 
+        		AND lidyapar_mt5.mt5_deals.Comment NOT IN ('Carried Balance From MT4','Zeroing') THEN 'FTD' 
+        	WHEN lidyapar_mt5.mt5_deals.Action = 2
+        		AND lidyapar_mt5.mt5_deals.Profit > 0 
+        		AND lidyapar_mt5.mt5_deals.Comment = 'Carried Balance From MT4' THEN 'RET' 
+        	WHEN lidyapar_mt5.mt5_deals.Action = 2 
+        		AND fourinfx_admin.tp.ftd != lidyapar_mt5.mt5_deals.Time 
+        		AND lidyapar_mt5.mt5_deals.Profit > 0 
+        		AND lidyapar_mt5.mt5_deals.Comment != 'Zeroing' THEN 'RET'
+        	WHEN lidyapar_mt5.mt5_deals.Action = 2 
+        		AND fourinfx_admin.tp.ftd != lidyapar_mt5.mt5_deals.Time 
+        		AND lidyapar_mt5.mt5_deals.Profit > 0 
+        		AND lidyapar_mt5.mt5_deals.Comment = 'Zeroing' THEN 'ZEROING'
+        	WHEN lidyapar_mt5.mt5_deals.Action = 2 
+        		AND lidyapar_mt5.mt5_deals.Profit < 0 THEN 'WD' 
+        	WHEN lidyapar_mt5.mt5_deals.Action = 6 
+        		AND lidyapar_mt5.mt5_deals.Profit > 0 THEN 'BONUS IN' 
+        	WHEN lidyapar_mt5.mt5_deals.Action = 6 
+        		AND lidyapar_mt5.mt5_deals.Profit < 0 THEN 'BONUS OUT' 
         	ELSE 'NTC' 
         END AS Type,
-        tp.user_id AS `User`,
-        tp.retention AS Retention,
-        tp.conversion AS Conversion
+        fourinfx_admin.tp.user_id AS `User`,
+        fourinfx_admin.tp.retention AS Retention,
+        fourinfx_admin.tp.conversion AS Conversion
         FROM lidyapar_mt5.mt5_users 
         LEFT JOIN lidyapar_mt5.mt5_deals 
-        		ON mt5_users.Login = mt5_deals.Login
-        LEFT JOIN lidyapar_admin.tp 
-        		ON tp.login = mt5_deals.Login
-        WHERE  mt5_users.Group LIKE 'real\\\\\\\\".$g."%'
-        AND mt5_users.Group NOT LIKE 'real%TC%'
-        AND mt5_deals.Action IN ( '2', '6' )
-        AND mt5_deals.Time BETWEEN '".$startTime."' AND '".$endTime."'";
+        		ON lidyapar_mt5.mt5_users.Login = lidyapar_mt5.mt5_deals.Login
+        LEFT JOIN fourinfx_admin.tp 
+        		ON fourinfx_admin.tp.login = lidyapar_mt5.mt5_deals.Login
+        WHERE  lidyapar_mt5.mt5_users.Group LIKE 'real\\\\\\\\%" . $g . "%' 
+        AND lidyapar_mt5.mt5_deals.Action IN ( '2', '6' )
+        AND lidyapar_mt5.mt5_deals.Time BETWEEN '" . $startTime . "' AND '" . $endTime . "'";
     } else if($_SESSION["type"] == "Admin"){
         $sqlTotal3 = "
-        SELECT MT4_TRADES.TICKET AS Ticket, 
-           MT4_USERS.LOGIN AS Login, 
-           MT4_USERS.NAME AS Name, 
-           MT4_TRADES.PROFIT AS Amount, 
-           MT4_TRADES.COMMENT AS Comment, 
-           MT4_TRADES.CLOSE_TIME AS Time, 
-           CASE 
-        		WHEN MT4_TRADES.CMD = 6 
-        			AND tp.ftd = MT4_TRADES.CLOSE_TIME 
-        			AND MT4_TRADES.PROFIT > 0 
-        			AND MT4_TRADES.COMMENT IN ( 
-        				'Deposit Wire Transfer',
-        				'Deposit Credit Card',
-        				'Deposit'
-        			) THEN 'FTD' 
-        		WHEN MT4_TRADES.CMD = 6 
-        			AND tp.ftd != MT4_TRADES.CLOSE_TIME
-        			AND MT4_TRADES.PROFIT > 0 
-        			AND MT4_TRADES.COMMENT IN (
-        				'Deposit Wire Transfer',
-        				'Deposit Credit Card',
-        				'Deposit'
-        			) THEN 'RET' 
-        		WHEN MT4_TRADES.CMD = 6 
-        			AND tp.ftd != MT4_TRADES.CLOSE_TIME
-        			AND MT4_TRADES.PROFIT > 0 
-        			AND MT4_TRADES.COMMENT IN (
-        				'zeroutbonus',
-        				'zerooutbonus',
-        				'Zerout'
-        			) THEN 'ZEROING' 
-        		WHEN MT4_TRADES.CMD = 6 
-        			AND MT4_TRADES.PROFIT < 0
-        			AND MT4_TRADES.COMMENT IN(
-        				'Withdrawal Wire Transfer',
-        				'Withdrawal Credit Card',
-        				'Withdrawal',
-        				'Account Transfer'
-        			) THEN 'WD'
-        		WHEN MT4_TRADES.CMD = 6 
-        			AND MT4_TRADES.PROFIT > 0 
-        			AND MT4_TRADES.COMMENT NOT IN (
-        				'Deposit Wire Transfer',
-        				'Deposit Credit Card',
-        				'Deposit',
-        				'zeroutbonus',
-        				'zerooutbonus',
-        				'Zerout'
-        			) THEN 'BONUS IN' 
-        		WHEN MT4_TRADES.CMD = 6 
-        			AND MT4_TRADES.PROFIT < 0 
-        			AND MT4_TRADES.COMMENT NOT IN (
-        				'Withdrawal Wire Transfer',
-        				'Withdrawal Credit Card',
-        				'Withdrawal',
-        				'Account Transfer'
-        			) THEN 'BONUS OUT' 
-        		ELSE 'NTC' 
-           END                   AS Type, 
-           tp.user_id            AS `User`, 
-           tp.retention          AS Retention, 
-           tp.conversion         AS Conversion 
-        FROM lidyapar_mt4.MT4_USERS 
-           LEFT JOIN lidyapar_mt4.MT4_TRADES 
-        		  ON MT4_USERS.LOGIN = MT4_TRADES.LOGIN
-           LEFT JOIN lidyapar_admin.tp 
-        		  ON tp.login = MT4_TRADES.LOGIN
-        WHERE  MT4_USERS.AGENT_ACCOUNT != 1
-           AND MT4_TRADES.CMD IN ( '6' ) 
-           AND MT4_TRADES.CLOSE_TIME BETWEEN '".$startTime."' AND '".$endTime."'
-        UNION ALL
         SELECT 
-        mt5_deals.Deal AS Ticket, 
-        mt5_users.Login, 
-        mt5_users.Name, 
-        mt5_deals.Profit AS Amount, 
-        mt5_deals.Comment, 
-        mt5_deals.Time, 
+        lidyapar_mt5.mt5_deals.Deal AS Ticket, 
+        lidyapar_mt5.mt5_users.Login, 
+        lidyapar_mt5.mt5_users.Name, 
+        lidyapar_mt5.mt5_deals.Profit AS Amount, 
+        lidyapar_mt5.mt5_deals.Comment, 
+        lidyapar_mt5.mt5_deals.Time, 
         CASE 
-        	WHEN mt5_deals.Action = 2 
-        		AND tp.ftd = mt5_deals.Time 
-        		AND mt5_deals.Profit > 0 
-        		AND mt5_deals.Comment NOT IN ('Carried Balance From MT4','Zeroing') THEN 'FTD' 
-        	WHEN mt5_deals.Action = 2
-        		AND mt5_deals.Profit > 0 
-        		AND mt5_deals.Comment = 'Carried Balance From MT4' THEN 'RET' 
-        	WHEN mt5_deals.Action = 2 
-        		AND tp.ftd != mt5_deals.Time 
-        		AND mt5_deals.Profit > 0 
-        		AND mt5_deals.Comment != 'Zeroing' THEN 'RET'
-        	WHEN mt5_deals.Action = 2 
-        		AND tp.ftd != mt5_deals.Time 
-        		AND mt5_deals.Profit > 0 
-        		AND mt5_deals.Comment = 'Zeroing' THEN 'ZEROING'
-        	WHEN mt5_deals.Action = 2 
-        		AND mt5_deals.Profit < 0 THEN 'WD' 
-        	WHEN mt5_deals.Action = 6 
-        		AND mt5_deals.Profit > 0 THEN 'BONUS IN' 
-        	WHEN mt5_deals.Action = 6 
-        		AND mt5_deals.Profit < 0 THEN 'BONUS OUT' 
+        	WHEN lidyapar_mt5.mt5_deals.Action = 2 
+        		AND fourinfx_admin.tp.ftd = lidyapar_mt5.mt5_deals.Time 
+        		AND lidyapar_mt5.mt5_deals.Profit > 0 
+        		AND lidyapar_mt5.mt5_deals.Comment NOT IN ('Carried Balance From MT4','Zeroing') THEN 'FTD' 
+        	WHEN lidyapar_mt5.mt5_deals.Action = 2
+        		AND lidyapar_mt5.mt5_deals.Profit > 0 
+        		AND lidyapar_mt5.mt5_deals.Comment = 'Carried Balance From MT4' THEN 'RET' 
+        	WHEN lidyapar_mt5.mt5_deals.Action = 2 
+        		AND fourinfx_admin.tp.ftd != lidyapar_mt5.mt5_deals.Time 
+        		AND lidyapar_mt5.mt5_deals.Profit > 0 
+        		AND lidyapar_mt5.mt5_deals.Comment != 'Zeroing' THEN 'RET'
+        	WHEN lidyapar_mt5.mt5_deals.Action = 2 
+        		AND fourinfx_admin.tp.ftd != lidyapar_mt5.mt5_deals.Time 
+        		AND lidyapar_mt5.mt5_deals.Profit > 0 
+        		AND lidyapar_mt5.mt5_deals.Comment = 'Zeroing' THEN 'ZEROING'
+        	WHEN lidyapar_mt5.mt5_deals.Action = 2 
+        		AND lidyapar_mt5.mt5_deals.Profit < 0 THEN 'WD' 
+        	WHEN lidyapar_mt5.mt5_deals.Action = 6 
+        		AND lidyapar_mt5.mt5_deals.Profit > 0 THEN 'BONUS IN' 
+        	WHEN lidyapar_mt5.mt5_deals.Action = 6 
+        		AND lidyapar_mt5.mt5_deals.Profit < 0 THEN 'BONUS OUT' 
         	ELSE 'NTC' 
         END AS Type,
-        tp.user_id AS `User`,
-        tp.retention AS Retention,
-        tp.conversion AS Conversion
+        fourinfx_admin.tp.user_id AS `User`,
+        fourinfx_admin.tp.retention AS Retention,
+        fourinfx_admin.tp.conversion AS Conversion
         FROM lidyapar_mt5.mt5_users 
         LEFT JOIN lidyapar_mt5.mt5_deals 
-        		ON mt5_users.Login = mt5_deals.Login
-        LEFT JOIN lidyapar_admin.tp 
-        		ON tp.login = mt5_deals.Login 
-        WHERE  mt5_users.Group LIKE 'real%'
-        AND mt5_users.Group NOT LIKE 'real%TC%'
-        AND mt5_deals.Action IN ( '2', '6' )
-        AND mt5_deals.Time BETWEEN '".$startTime."' AND '".$endTime."'";
+        		ON lidyapar_mt5.mt5_users.Login = lidyapar_mt5.mt5_deals.Login
+        LEFT JOIN fourinfx_admin.tp 
+        		ON fourinfx_admin.tp.login = lidyapar_mt5.mt5_deals.Login 
+        WHERE  lidyapar_mt5.mt5_users.Group LIKE 'real%4%' 
+        AND lidyapar_mt5.mt5_deals.Action IN ( '2', '6' )
+        AND lidyapar_mt5.mt5_deals.Time BETWEEN '" . $startTime . "' AND '" . $endTime . "'";
     }
-    $resultTotal3 = $DB_mt4->query($sqlTotal3);
+$resultTotal3 = $DB_admin->query($sqlTotal3);
     //echo $sqlTotal3;
 
     if($_SESSION["unitn"] == "1"){
-        $g = "TUR";
+        $g = "TUR4";
     } else if($_SESSION["unitn"] == "3"){
         $g = "PERS";
     } else if($_SESSION["unitn"] == "6"){
@@ -565,205 +491,203 @@ include('includes/css.php');
     
     if($_SESSION["type"] == "Manager"){
         $sqlAgent = "SELECT 
-            mt5_deals.Deal AS Ticket, 
-            mt5_users.Login, 
-            mt5_users.Name, 
-            mt5_deals.Profit AS Amount, 
-            mt5_deals.Comment AS Comment, 
-            mt5_deals.Time AS Time,
-            mt5_deals.Storage AS Swap, 
+            lidyapar_mt5.mt5_deals.Deal AS Ticket, 
+            lidyapar_mt5.mt5_users.Login, 
+            lidyapar_mt5.mt5_users.Name, 
+            lidyapar_mt5.mt5_deals.Profit AS Amount, 
+            lidyapar_mt5.mt5_deals.Comment AS Comment, 
+            lidyapar_mt5.mt5_deals.Time AS Time,
+            lidyapar_mt5.mt5_deals.Storage AS Swap, 
             CASE 
-                WHEN mt5_deals.Action = 2 
-                    AND tp.ftd = mt5_deals.Time 
-                    AND mt5_deals.Profit > 0 
-                    AND mt5_deals.Comment NOT IN ('Carried Balance From MT4','Zeroing') THEN 'FTD' 
-                WHEN mt5_deals.Action = 2
-                    AND mt5_deals.Profit > 0 
-                    AND mt5_deals.Comment = 'Carried Balance From MT4' THEN 'RET' 
-                WHEN mt5_deals.Action = 2 
-                    AND tp.ftd != mt5_deals.Time 
-                    AND mt5_deals.Profit > 0 
-                    AND mt5_deals.Comment != 'Zeroing' THEN 'RET'
-                WHEN mt5_deals.Action = 2 
-                    AND tp.ftd != mt5_deals.Time 
-                    AND mt5_deals.Profit > 0 
-                    AND mt5_deals.Comment = 'Zeroing' THEN 'ZEROING'
-                WHEN mt5_deals.Action = 2 
-                    AND mt5_deals.Profit < 0 THEN 'WD' 
-                WHEN mt5_deals.Action = 6 
-                    AND mt5_deals.Profit > 0 THEN 'BONUS IN' 
-                WHEN mt5_deals.Action = 6 
-                    AND mt5_deals.Profit < 0 THEN 'BONUS OUT'
-                WHEN mt5_deals.Action = 0
+                WHEN lidyapar_mt5.mt5_deals.Action = 2 
+                    AND fourinfx_admin.tp.ftd = lidyapar_mt5.mt5_deals.Time 
+                    AND lidyapar_mt5.mt5_deals.Profit > 0 
+                    AND lidyapar_mt5.mt5_deals.Comment NOT IN ('Carried Balance From MT4','Zeroing') THEN 'FTD' 
+                WHEN lidyapar_mt5.mt5_deals.Action = 2
+                    AND lidyapar_mt5.mt5_deals.Profit > 0 
+                    AND lidyapar_mt5.mt5_deals.Comment = 'Carried Balance From MT4' THEN 'RET' 
+                WHEN lidyapar_mt5.mt5_deals.Action = 2 
+                    AND fourinfx_admin.tp.ftd != lidyapar_mt5.mt5_deals.Time 
+                    AND lidyapar_mt5.mt5_deals.Profit > 0 
+                    AND lidyapar_mt5.mt5_deals.Comment != 'Zeroing' THEN 'RET'
+                WHEN lidyapar_mt5.mt5_deals.Action = 2 
+                    AND fourinfx_admin.tp.ftd != lidyapar_mt5.mt5_deals.Time 
+                    AND lidyapar_mt5.mt5_deals.Profit > 0 
+                    AND lidyapar_mt5.mt5_deals.Comment = 'Zeroing' THEN 'ZEROING'
+                WHEN lidyapar_mt5.mt5_deals.Action = 2 
+                    AND lidyapar_mt5.mt5_deals.Profit < 0 THEN 'WD' 
+                WHEN lidyapar_mt5.mt5_deals.Action = 6 
+                    AND lidyapar_mt5.mt5_deals.Profit > 0 THEN 'BONUS IN' 
+                WHEN lidyapar_mt5.mt5_deals.Action = 6 
+                    AND lidyapar_mt5.mt5_deals.Profit < 0 THEN 'BONUS OUT'
+                WHEN lidyapar_mt5.mt5_deals.Action = 0
                     THEN 'BUY'
-                WHEN mt5_deals.Action = 1
+                WHEN lidyapar_mt5.mt5_deals.Action = 1
                     THEN 'SELL'
                 ELSE 'NTC' 
             END AS Type,
-            tp.user_id AS `User`,
-            tp.retention AS Retention
-        FROM mt5_users 
-           	LEFT JOIN mt5_deals 
-               		ON mt5_users.Login = mt5_deals.Login
-            LEFT JOIN lidyapar_admin.tp 
-               		ON tp.login = mt5_deals.Login 
-        WHERE  mt5_users.Group LIKE 'real\\\\\\\\".$g."%'
-            AND mt5_users.Group NOT LIKE 'real%TC%'
-            AND mt5_deals.Action IN ( '0', '1', '2', '6' )
-            AND mt5_deals.Time BETWEEN '".$startTime3."' AND '".$endTime3."'
-            AND tp.retention = ".$userAgent."";
+            fourinfx_admin.tp.user_id AS `User`,
+            fourinfx_admin.tp.retention AS Retention
+        FROM lidyapar_mt5.mt5_users 
+           	LEFT JOIN lidyapar_mt5.mt5_deals 
+               		ON lidyapar_mt5.mt5_users.Login = lidyapar_mt5.mt5_deals.Login
+            LEFT JOIN fourinfx_admin.tp 
+               		ON fourinfx_admin.tp.login = lidyapar_mt5.mt5_deals.Login 
+        WHERE  lidyapar_mt5.mt5_users.Group LIKE 'real\\\\\\\\%" . $g . "%'
+            AND lidyapar_mt5.mt5_deals.Action IN ( '0', '1', '2', '6' )
+            AND lidyapar_mt5.mt5_deals.Time BETWEEN '" . $startTime3 . "' AND '" . $endTime3 . "'
+            AND fourinfx_admin.tp.retention = " . $userAgent . "";
     } else if($_SESSION["type"] == "Admin"){
         $sqlAgent = "SELECT 
-            mt5_deals.Deal AS Ticket, 
-            mt5_users.Login, 
-            mt5_users.Name, 
-            mt5_deals.Profit AS Amount, 
-            mt5_deals.Comment AS Comment, 
-            mt5_deals.Time AS Time,
-            mt5_deals.Storage AS Swap, 
+            lidyapar_mt5.mt5_deals.Deal AS Ticket, 
+            lidyapar_mt5.mt5_users.Login, 
+            lidyapar_mt5.mt5_users.Name, 
+            lidyapar_mt5.mt5_deals.Profit AS Amount, 
+            lidyapar_mt5.mt5_deals.Comment AS Comment, 
+            lidyapar_mt5.mt5_deals.Time AS Time,
+            lidyapar_mt5.mt5_deals.Storage AS Swap, 
             CASE 
-                WHEN mt5_deals.Action = 2 
-                    AND tp.ftd = mt5_deals.Time 
-                    AND mt5_deals.Profit > 0 
-                    AND mt5_deals.Comment NOT IN ('Carried Balance From MT4','Zeroing') THEN 'FTD' 
-                WHEN mt5_deals.Action = 2
-                    AND mt5_deals.Profit > 0 
-                    AND mt5_deals.Comment = 'Carried Balance From MT4' THEN 'RET' 
-                WHEN mt5_deals.Action = 2 
-                    AND tp.ftd != mt5_deals.Time 
-                    AND mt5_deals.Profit > 0 
-                    AND mt5_deals.Comment != 'Zeroing' THEN 'RET'
-                WHEN mt5_deals.Action = 2 
-                    AND tp.ftd != mt5_deals.Time 
-                    AND mt5_deals.Profit > 0 
-                    AND mt5_deals.Comment = 'Zeroing' THEN 'ZEROING'
-                WHEN mt5_deals.Action = 2 
-                    AND mt5_deals.Profit < 0 THEN 'WD' 
-                WHEN mt5_deals.Action = 6 
-                    AND mt5_deals.Profit > 0 THEN 'BONUS IN' 
-                WHEN mt5_deals.Action = 6 
-                    AND mt5_deals.Profit < 0 THEN 'BONUS OUT'
-                WHEN mt5_deals.Action = 0
+                WHEN lidyapar_mt5.mt5_deals.Action = 2 
+                    AND fourinfx_admin.tp.ftd = lidyapar_mt5.mt5_deals.Time 
+                    AND lidyapar_mt5.mt5_deals.Profit > 0 
+                    AND lidyapar_mt5.mt5_deals.Comment NOT IN ('Carried Balance From MT4','Zeroing') THEN 'FTD' 
+                WHEN lidyapar_mt5.mt5_deals.Action = 2
+                    AND lidyapar_mt5.mt5_deals.Profit > 0 
+                    AND lidyapar_mt5.mt5_deals.Comment = 'Carried Balance From MT4' THEN 'RET' 
+                WHEN lidyapar_mt5.mt5_deals.Action = 2 
+                    AND fourinfx_admin.tp.ftd != lidyapar_mt5.mt5_deals.Time 
+                    AND lidyapar_mt5.mt5_deals.Profit > 0 
+                    AND lidyapar_mt5.mt5_deals.Comment != 'Zeroing' THEN 'RET'
+                WHEN lidyapar_mt5.mt5_deals.Action = 2 
+                    AND fourinfx_admin.tp.ftd != lidyapar_mt5.mt5_deals.Time 
+                    AND lidyapar_mt5.mt5_deals.Profit > 0 
+                    AND lidyapar_mt5.mt5_deals.Comment = 'Zeroing' THEN 'ZEROING'
+                WHEN lidyapar_mt5.mt5_deals.Action = 2 
+                    AND lidyapar_mt5.mt5_deals.Profit < 0 THEN 'WD' 
+                WHEN lidyapar_mt5.mt5_deals.Action = 6 
+                    AND lidyapar_mt5.mt5_deals.Profit > 0 THEN 'BONUS IN' 
+                WHEN lidyapar_mt5.mt5_deals.Action = 6 
+                    AND lidyapar_mt5.mt5_deals.Profit < 0 THEN 'BONUS OUT'
+                WHEN lidyapar_mt5.mt5_deals.Action = 0
                     THEN 'BUY'
-                WHEN mt5_deals.Action = 1
+                WHEN lidyapar_mt5.mt5_deals.Action = 1
                     THEN 'SELL'
                 ELSE 'NTC' 
             END AS Type,
-            tp.user_id AS `User`,
-            tp.retention AS Retention
-        FROM mt5_users 
-           	LEFT JOIN mt5_deals 
-               		ON mt5_users.Login = mt5_deals.Login
-            LEFT JOIN lidyapar_admin.tp 
-               		ON tp.login = mt5_deals.Login 
-        WHERE  mt5_users.Group LIKE 'real%' 
-            AND mt5_users.Group NOT LIKE 'real%TC%'
-            AND mt5_deals.Action IN ( '0', '1', '2', '6' )
-            AND mt5_deals.Time BETWEEN '".$startTime3."' AND '".$endTime3."'
-            AND tp.retention = ".$userAgent."";
+            fourinfx_admin.tp.user_id AS `User`,
+            fourinfx_admin.tp.retention AS Retention
+        FROM lidyapar_mt5.mt5_users 
+           	LEFT JOIN lidyapar_mt5.mt5_deals 
+               		ON lidyapar_mt5.mt5_users.Login = lidyapar_mt5.mt5_deals.Login
+            LEFT JOIN fourinfx_admin.tp 
+               		ON fourinfx_admin.tp.login = lidyapar_mt5.mt5_deals.Login 
+        WHERE  lidyapar_mt5.mt5_users.Group LIKE 'real%4%' 
+            AND lidyapar_mt5.mt5_deals.Action IN ( '0', '1', '2', '6' )
+            AND lidyapar_mt5.mt5_deals.Time BETWEEN '" . $startTime3 . "' AND '" . $endTime3 . "'
+            AND fourinfx_admin.tp.retention = " . $userAgent . "";
     }
-    $resultAgent = $DB_mt5->query($sqlAgent);
+$resultAgent = $DB_admin->query($sqlAgent);
 
     if($_SESSION["type"] == "Manager"){
         $sqlAgent1 = "SELECT 
-            MT4_TRADES.TICKET AS Ticket, 
-            MT4_USERS.LOGIN, 
-            MT4_USERS.NAME, 
-            MT4_TRADES.PROFIT AS Amount, 
-            MT4_TRADES.COMMENT AS COMMENT, 
-            MT4_TRADES.CLOSE_TIME AS Time,
-            MT4_TRADES.SWAPS AS Swap, 
+            lidyapar_mt4.MT4_TRADES.TICKET AS Ticket, 
+            lidyapar_mt4.MT4_USERS.LOGIN, 
+            lidyapar_mt4.MT4_USERS.NAME, 
+            lidyapar_mt4.MT4_TRADES.PROFIT AS Amount, 
+            lidyapar_mt4.MT4_TRADES.COMMENT AS COMMENT, 
+            lidyapar_mt4.MT4_TRADES.CLOSE_TIME AS Time,
+            lidyapar_mt4.MT4_TRADES.SWAPS AS Swap, 
             CASE 
-                WHEN MT4_TRADES.CMD = 6 
-                    AND tp.ftd = MT4_TRADES.CLOSE_TIME 
-                    AND MT4_TRADES.PROFIT > 0 
-                    AND MT4_TRADES.COMMENT NOT IN ('Withdrawal', 'WITHDRAWAL', 'WITHDRAWAL WIRE TRANSFER', 'Withdrawal Wire Transfer', 'Withdrawal Credit Card', 'WITHDRAWAL CREDIT CARD', 'Wire Out', 'wire out', 'WIRE OUT', 'Withdraw', 'WITHDRAW', 'Account Transfer') THEN 'FTD'  
-                WHEN MT4_TRADES.CMD = 6 
-                    AND tp.ftd != MT4_TRADES.CLOSE_TIME 
-                    AND MT4_TRADES.PROFIT > 0 
-                    AND MT4_TRADES.COMMENT NOT IN ('Withdrawal', 'WITHDRAWAL', 'WITHDRAWAL WIRE TRANSFER', 'Withdrawal Wire Transfer', 'Withdrawal Credit Card', 'WITHDRAWAL CREDIT CARD', 'Wire Out', 'wire out', 'WIRE OUT', 'Withdraw', 'WITHDRAW', 'Account Transfer', 'Zeroing', 'Deposit Internal') THEN 'RET'
-                WHEN MT4_TRADES.CMD = 6 
-                    AND tp.ftd != MT4_TRADES.CLOSE_TIME 
-                    AND MT4_TRADES.PROFIT > 0 
-                    AND MT4_TRADES.COMMENT = 'Zeroing' THEN 'ZEROING'
-                WHEN MT4_TRADES.CMD = 6 
-                    AND MT4_TRADES.PROFIT < 0 
-                    AND MT4_TRADES.COMMENT NOT IN ('Deposit', 'DEPOSIT', 'DEPOSIT WIRE TRANSFER', 'Deposit Wire Transfer', 'Deposit Credit Card', 'DEPOSIT CREDIT CARD', 'Wire In', 'wire in', 'WIRE IN', 'Deposit Internal', 'Withdrawal Internal') THEN 'WD' 
-                WHEN MT4_TRADES.CMD = 6 
-                    AND MT4_TRADES.PROFIT > 0 
-                    AND MT4_TRADES.COMMENT IN ('Deposit Internal') THEN 'BONUS IN' 
-                WHEN MT4_TRADES.CMD = 6 
-                    AND MT4_TRADES.PROFIT < 0 
-                    AND MT4_TRADES.COMMENT IN ('Withdrawal Internal') THEN 'BONUS OUT'
-                WHEN MT4_TRADES.CMD = 0
+                WHEN lidyapar_mt4.MT4_TRADES.CMD = 6 
+                    AND fourinfx_admin.tp.ftd = lidyapar_mt4.MT4_TRADES.CLOSE_TIME 
+                    AND lidyapar_mt4.MT4_TRADES.PROFIT > 0 
+                    AND lidyapar_mt4.MT4_TRADES.COMMENT NOT IN ('Withdrawal', 'WITHDRAWAL', 'WITHDRAWAL WIRE TRANSFER', 'Withdrawal Wire Transfer', 'Withdrawal Credit Card', 'WITHDRAWAL CREDIT CARD', 'Wire Out', 'wire out', 'WIRE OUT', 'Withdraw', 'WITHDRAW', 'Account Transfer') THEN 'FTD'  
+                WHEN lidyapar_mt4.MT4_TRADES.CMD = 6 
+                    AND fourinfx_admin.tp.ftd != lidyapar_mt4.MT4_TRADES.CLOSE_TIME 
+                    AND lidyapar_mt4.MT4_TRADES.PROFIT > 0 
+                    AND lidyapar_mt4.MT4_TRADES.COMMENT NOT IN ('Withdrawal', 'WITHDRAWAL', 'WITHDRAWAL WIRE TRANSFER', 'Withdrawal Wire Transfer', 'Withdrawal Credit Card', 'WITHDRAWAL CREDIT CARD', 'Wire Out', 'wire out', 'WIRE OUT', 'Withdraw', 'WITHDRAW', 'Account Transfer', 'Zeroing', 'Deposit Internal') THEN 'RET'
+                WHEN lidyapar_mt4.MT4_TRADES.CMD = 6 
+                    AND fourinfx_admin.tp.ftd != lidyapar_mt4.MT4_TRADES.CLOSE_TIME 
+                    AND lidyapar_mt4.MT4_TRADES.PROFIT > 0 
+                    AND lidyapar_mt4.MT4_TRADES.COMMENT = 'Zeroing' THEN 'ZEROING'
+                WHEN lidyapar_mt4.MT4_TRADES.CMD = 6 
+                    AND lidyapar_mt4.MT4_TRADES.PROFIT < 0 
+                    AND lidyapar_mt4.MT4_TRADES.COMMENT NOT IN ('Deposit', 'DEPOSIT', 'DEPOSIT WIRE TRANSFER', 'Deposit Wire Transfer', 'Deposit Credit Card', 'DEPOSIT CREDIT CARD', 'Wire In', 'wire in', 'WIRE IN', 'Deposit Internal', 'Withdrawal Internal') THEN 'WD' 
+                WHEN lidyapar_mt4.MT4_TRADES.CMD = 6 
+                    AND lidyapar_mt4.MT4_TRADES.PROFIT > 0 
+                    AND lidyapar_mt4.MT4_TRADES.COMMENT IN ('Deposit Internal') THEN 'BONUS IN' 
+                WHEN lidyapar_mt4.MT4_TRADES.CMD = 6 
+                    AND lidyapar_mt4.MT4_TRADES.PROFIT < 0 
+                    AND lidyapar_mt4.MT4_TRADES.COMMENT IN ('Withdrawal Internal') THEN 'BONUS OUT'
+                WHEN lidyapar_mt4.MT4_TRADES.CMD = 0
                     THEN 'BUY'
-                WHEN MT4_TRADES.CMD = 1
+                WHEN lidyapar_mt4.MT4_TRADES.CMD = 1
                     THEN 'SELL'
                 ELSE 'NTC' 
             END AS Type,
-            tp.user_id AS `User`,
-            tp.retention AS Retention
-        FROM MT4_USERS 
-           	LEFT JOIN MT4_TRADES 
-               		ON MT4_USERS.LOGIN = MT4_TRADES.LOGIN
-            LEFT JOIN lidyapar_admin.tp 
-               		ON tp.LOGIN = MT4_TRADES.LOGIN 
-        WHERE MT4_USERS.AGENT_ACCOUNT != '".$fake."'
-            AND MT4_USERS.GROUP IN (\"".$array."\")
-            AND MT4_TRADES.CMD IN ( '0', '1', '6' )
-            AND MT4_TRADES.CLOSE_TIME BETWEEN '".$startTime2."' AND '".$endTime2."'
-            AND tp.retention = ".$userAgent4."";
+            fourinfx_admin.tp.user_id AS `User`,
+            fourinfx_admin.tp.retention AS Retention
+        FROM lidyapar_mt4.MT4_USERS 
+           	LEFT JOIN lidyapar_mt4.MT4_TRADES 
+               		ON lidyapar_mt4.MT4_USERS.LOGIN = lidyapar_mt4.MT4_TRADES.LOGIN
+            LEFT JOIN fourinfx_admin.tp 
+               		ON fourinfx_admin.tp.LOGIN = lidyapar_mt4.MT4_TRADES.LOGIN 
+        WHERE lidyapar_mt4.MT4_USERS.AGENT_ACCOUNT != '" . $fake . "'
+            AND lidyapar_mt4.MT4_USERS.GROUP IN (\"" . $array . "\")
+            AND lidyapar_mt4.MT4_TRADES.CMD IN ( '0', '1', '6' )
+            AND lidyapar_mt4.MT4_TRADES.CLOSE_TIME BETWEEN '" . $startTime2 . "' AND '" . $endTime2 . "'
+            AND fourinfx_admin.tp.retention = " . $userAgent4 . "";
     } else if($_SESSION["type"] == "Admin"){
         $sqlAgent1 = "SELECT 
-            MT4_TRADES.TICKET AS Ticket, 
-            MT4_USERS.LOGIN, 
-            MT4_USERS.NAME, 
-            MT4_TRADES.PROFIT AS Amount, 
-            MT4_TRADES.COMMENT AS COMMENT, 
-            MT4_TRADES.CLOSE_TIME AS Time,
-            MT4_TRADES.SWAPS AS Swap, 
+            lidyapar_mt4.MT4_TRADES.TICKET AS Ticket, 
+            lidyapar_mt4.MT4_USERS.LOGIN, 
+            lidyapar_mt4.MT4_USERS.NAME, 
+            lidyapar_mt4.MT4_TRADES.PROFIT AS Amount, 
+            lidyapar_mt4.MT4_TRADES.COMMENT AS COMMENT, 
+            lidyapar_mt4.MT4_TRADES.CLOSE_TIME AS Time,
+            lidyapar_mt4.MT4_TRADES.SWAPS AS Swap, 
             CASE 
-                WHEN MT4_TRADES.CMD = 6 
-                    AND tp.ftd = MT4_TRADES.CLOSE_TIME 
-                    AND MT4_TRADES.PROFIT > 0 
-                    AND MT4_TRADES.COMMENT NOT IN ('Withdrawal', 'WITHDRAWAL', 'WITHDRAWAL WIRE TRANSFER', 'Withdrawal Wire Transfer', 'Withdrawal Credit Card', 'WITHDRAWAL CREDIT CARD', 'Wire Out', 'wire out', 'WIRE OUT', 'Withdraw', 'WITHDRAW', 'Account Transfer') THEN 'FTD'  
-                WHEN MT4_TRADES.CMD = 6 
-                    AND tp.ftd != MT4_TRADES.CLOSE_TIME 
-                    AND MT4_TRADES.PROFIT > 0 
-                    AND MT4_TRADES.COMMENT NOT IN ('Withdrawal', 'WITHDRAWAL', 'WITHDRAWAL WIRE TRANSFER', 'Withdrawal Wire Transfer', 'Withdrawal Credit Card', 'WITHDRAWAL CREDIT CARD', 'Wire Out', 'wire out', 'WIRE OUT', 'Withdraw', 'WITHDRAW', 'Account Transfer', 'Zeroing', 'Deposit Internal') THEN 'RET'
-                WHEN MT4_TRADES.CMD = 6 
-                    AND tp.ftd != MT4_TRADES.CLOSE_TIME 
-                    AND MT4_TRADES.PROFIT > 0 
-                    AND MT4_TRADES.COMMENT = 'Zeroing' THEN 'ZEROING'
-                WHEN MT4_TRADES.CMD = 6 
-                    AND MT4_TRADES.PROFIT < 0 
-                    AND MT4_TRADES.COMMENT NOT IN ('Deposit', 'DEPOSIT', 'DEPOSIT WIRE TRANSFER', 'Deposit Wire Transfer', 'Deposit Credit Card', 'DEPOSIT CREDIT CARD', 'Wire In', 'wire in', 'WIRE IN', 'Deposit Internal', 'Withdrawal Internal') THEN 'WD' 
-                WHEN MT4_TRADES.CMD = 6 
-                    AND MT4_TRADES.PROFIT > 0 
-                    AND MT4_TRADES.COMMENT IN ('Deposit Internal') THEN 'BONUS IN' 
-                WHEN MT4_TRADES.CMD = 6 
-                    AND MT4_TRADES.PROFIT < 0 
-                    AND MT4_TRADES.COMMENT IN ('Withdrawal Internal') THEN 'BONUS OUT'
-                WHEN MT4_TRADES.CMD = 0
+                WHEN lidyapar_mt4.MT4_TRADES.CMD = 6 
+                    AND fourinfx_admin.tp.ftd = lidyapar_mt4.MT4_TRADES.CLOSE_TIME 
+                    AND lidyapar_mt4.MT4_TRADES.PROFIT > 0 
+                    AND lidyapar_mt4.MT4_TRADES.COMMENT NOT IN ('Withdrawal', 'WITHDRAWAL', 'WITHDRAWAL WIRE TRANSFER', 'Withdrawal Wire Transfer', 'Withdrawal Credit Card', 'WITHDRAWAL CREDIT CARD', 'Wire Out', 'wire out', 'WIRE OUT', 'Withdraw', 'WITHDRAW', 'Account Transfer') THEN 'FTD'  
+                WHEN lidyapar_mt4.MT4_TRADES.CMD = 6 
+                    AND fourinfx_admin.tp.ftd != lidyapar_mt4.MT4_TRADES.CLOSE_TIME 
+                    AND lidyapar_mt4.MT4_TRADES.PROFIT > 0 
+                    AND lidyapar_mt4.MT4_TRADES.COMMENT NOT IN ('Withdrawal', 'WITHDRAWAL', 'WITHDRAWAL WIRE TRANSFER', 'Withdrawal Wire Transfer', 'Withdrawal Credit Card', 'WITHDRAWAL CREDIT CARD', 'Wire Out', 'wire out', 'WIRE OUT', 'Withdraw', 'WITHDRAW', 'Account Transfer', 'Zeroing', 'Deposit Internal') THEN 'RET'
+                WHEN lidyapar_mt4.MT4_TRADES.CMD = 6 
+                    AND fourinfx_admin.tp.ftd != lidyapar_mt4.MT4_TRADES.CLOSE_TIME 
+                    AND lidyapar_mt4.MT4_TRADES.PROFIT > 0 
+                    AND lidyapar_mt4.MT4_TRADES.COMMENT = 'Zeroing' THEN 'ZEROING'
+                WHEN lidyapar_mt4.MT4_TRADES.CMD = 6 
+                    AND lidyapar_mt4.MT4_TRADES.PROFIT < 0 
+                    AND lidyapar_mt4.MT4_TRADES.COMMENT NOT IN ('Deposit', 'DEPOSIT', 'DEPOSIT WIRE TRANSFER', 'Deposit Wire Transfer', 'Deposit Credit Card', 'DEPOSIT CREDIT CARD', 'Wire In', 'wire in', 'WIRE IN', 'Deposit Internal', 'Withdrawal Internal') THEN 'WD' 
+                WHEN lidyapar_mt4.MT4_TRADES.CMD = 6 
+                    AND lidyapar_mt4.MT4_TRADES.PROFIT > 0 
+                    AND lidyapar_mt4.MT4_TRADES.COMMENT IN ('Deposit Internal') THEN 'BONUS IN' 
+                WHEN lidyapar_mt4.MT4_TRADES.CMD = 6 
+                    AND lidyapar_mt4.MT4_TRADES.PROFIT < 0 
+                    AND lidyapar_mt4.MT4_TRADES.COMMENT IN ('Withdrawal Internal') THEN 'BONUS OUT'
+                WHEN lidyapar_mt4.MT4_TRADES.CMD = 0
                     THEN 'BUY'
-                WHEN MT4_TRADES.CMD = 1
+                WHEN lidyapar_mt4.MT4_TRADES.CMD = 1
                     THEN 'SELL'
                 ELSE 'NTC' 
             END AS Type,
-            tp.user_id AS `User`,
-            tp.retention AS Retention
-        FROM MT4_USERS 
-           	LEFT JOIN MT4_TRADES 
-               		ON MT4_USERS.LOGIN = MT4_TRADES.LOGIN
-            LEFT JOIN lidyapar_admin.tp 
-               		ON tp.LOGIN = MT4_TRADES.LOGIN 
-        WHERE MT4_USERS.AGENT_ACCOUNT <> '1'
-            AND MT4_TRADES.CMD IN ( '0', '1', '6' )
-            AND MT4_TRADES.CLOSE_TIME BETWEEN '".$startTime2."' AND '".$endTime2."'
-            AND tp.retention = ".$userAgent4."";
+            fourinfx_admin.tp.user_id AS `User`,
+            fourinfx_admin.tp.retention AS Retention
+        FROM lidyapar_mt4.MT4_USERS 
+           	LEFT JOIN lidyapar_mt4.MT4_TRADES 
+               		ON lidyapar_mt4.MT4_USERS.LOGIN = lidyapar_mt4.MT4_TRADES.LOGIN
+            LEFT JOIN fourinfx_admin.tp 
+               		ON fourinfx_admin.tp.LOGIN = lidyapar_mt4.MT4_TRADES.LOGIN 
+        WHERE lidyapar_mt4.MT4_USERS.AGENT_ACCOUNT <> '1'
+            AND lidyapar_mt4.MT4_TRADES.CMD IN ( '0', '1', '6' )
+            AND lidyapar_mt4.MT4_TRADES.CLOSE_TIME BETWEEN '" . $startTime2 . "' AND '" . $endTime2 . "'
+            AND fourinfx_admin.tp.retention = " . $userAgent4 . "";
     }
     //echo $sqlAgent1;
-    $resultAgent1 = $DB_mt4->query($sqlAgent1);
+$resultAgent1 = $DB_admin->query($sqlAgent1);
 ?>
  
 <!-- ============================================================== -->

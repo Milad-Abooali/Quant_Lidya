@@ -102,12 +102,19 @@ global $_L;
                                 <?php } ?>
                             </div>
                         </li>
-                        <li class="dropdown notification-list">
+                        <li id='notifications' class="dropdown notification-list">
                             <a class="nav-link right-bar-toggle arrow-none waves-effect" href="javascript:;">
                                 <i class="ti-bell noti-icon"></i>
                                 <span class="badge badge-pill badge-danger noti-icon-badge">0</span>
                             </a>
                         </li>
+                        <li id='followups' class="dropdown notification-list">
+                            <a class="nav-link right-bar-toggle arrow-none waves-effect" href="javascript:;">
+                                <i class="fa fa-business-time fa-2x"></i>
+                                <span class="badge badge-pill badge-danger noti-icon-badge">0</span>
+                            </a>
+                        </li>
+
                         <!--<li class="dropdown notification-list">
                             <a class="nav-link dropdown-toggle arrow-none waves-effect" data-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
                                 <i class="ti-bell noti-icon"></i>

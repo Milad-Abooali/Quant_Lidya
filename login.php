@@ -33,7 +33,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
     if(is_numeric($_POST['username'])) {
         $_POST['username'] = $sess->getUsernamebyPhone($_POST['username']);
     }
-    $sess->login($_POST['timeoffset'], $_POST['username'], $_POST['password'], $_POST['remember'], true, $_POST['target']);
+    $sess->login($_POST['timeoffset'], $_POST['username'], $_POST['password'], $_POST['remember'] ?? false, true, $_POST['target']);
 
 }
 ?>

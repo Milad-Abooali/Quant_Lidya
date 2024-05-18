@@ -22,7 +22,7 @@
          * @var string $DATE Server Date (y-m-d H:i:s)
          * @var object $LINK MySQL Connection object
          */
-        private $hostname, $port , $database , $username , $password , $prefix, $sql=array();
+        private $hostname, $port, $database, $username, $password, $prefix, $sql = array(), $error = array();
         public  $DATE, $LINK;
 
         /**
@@ -61,13 +61,12 @@
          * @return mixed    Return mySQL Object or false on error
          */
         private function _run($sql, $insert=false){
-            $insert_id = null;
             $this->sql[] = $sql;
             $sql_number = count($this->sql)-1;
-            $result = mysqli_query($this->LINK, $sql) or false;
-            ($result!=false) ?: $this->error[$sql_number] =  "Error: ".mysqli_error($this->LINK);
+            $result = mysqli_query($this->LINK, $sql);
             if ($insert && $result) {$result = mysqli_insert_id($this->LINK);}
-            return ($this->error[$sql_number]) ? false : $result;
+            if (!$result) $this->error[$sql_number] = "Error: " . mysqli_error($this->LINK);
+            return $result;
         }
 
         /**
@@ -365,11 +364,11 @@
          * Append string.
          * @param string $table Table name
          * @param string $column Target $column
+         * @param string $string Appended String
          * @param string|null $where    WHERE Condition
-         * @param $string Appended String
          * @return bool
          */
-        public function append($table, $column, $where=null,$string)
+        public function append($table, $column, $string, $where = null)
         {
             $table      = $this->escape($table);
             $column     = $this->escape($column);
