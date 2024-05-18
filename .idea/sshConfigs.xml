@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SshConfigs">
+    <configs>
+      <sshConfig connectionConfig="{&quot;hostKeyVerifier&quot;:{&quot;stringHostKeyChecking&quot;:&quot;ACCEPT_NEW&quot;},&quot;proxyParams&quot;:{&quot;proxyHost&quot;:&quot;&quot;,&quot;proxyPort&quot;:-1,&quot;proxyType&quot;:&quot;IDE_WIDE_PROXY&quot;}}" host="136.243.109.195" id="28304264-148a-4e46-933c-3e4e0d0636a1" keyPath="C:\wamp64\www\4insoft\ssh_keys\id_rsa\Private" port="9845" customName="lidyapartners@136.243.109.195:9845" nameFormat="CUSTOM" username="lidyapartners" useOpenSSHConfig="true">
+        <option name="customName" value="lidyapartners@136.243.109.195:9845" />
+      </sshConfig>
+    </configs>
+  </component>
+</project>

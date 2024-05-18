@@ -92,14 +92,12 @@
                 if (is_array($input)) {
                     foreach ($input as $key => $value)
                     {
-                        $this->note[count($this->sql)][] =  "Escaped $value";
                         $key = mysqli_real_escape_string($this->LINK, $key);
                         $value = mysqli_real_escape_string($this->LINK, $value);
                         $escaped[$key] = $value;
 
                     }
                 } else {
-                    $this->note[count($this->sql)][] =  "Escaped $input";
                     $escaped = mysqli_real_escape_string($this->LINK, $input);
                 }
             }
@@ -144,7 +142,6 @@
         public function ver()
         {
             $result = $this->query("SELECT version() as ver")[0]['ver'];
-            $this->note[count($this->sql)][] =  "version: $result";
             return $result;
         }
 
